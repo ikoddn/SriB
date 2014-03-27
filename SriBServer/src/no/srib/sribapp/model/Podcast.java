@@ -3,17 +3,12 @@ package no.srib.sribapp.model;
 import java.io.Serializable;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * The persistent class for the podcast database table.
  * 
  */
-
-@XmlRootElement(name = "podcast")
-@XmlType(propOrder = {"refnr","bitrate","createdate","createtime","duration","filename","remark","samplerate","title","definition"})
 @Entity
 @Table(name="podcast")
 @NamedQuery(name="Podcast.findAll", query="SELECT p FROM Podcast p")
