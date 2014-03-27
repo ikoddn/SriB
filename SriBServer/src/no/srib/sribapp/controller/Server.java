@@ -1,4 +1,4 @@
-package no.srib.app.servlet;
+package no.srib.sribapp.controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
