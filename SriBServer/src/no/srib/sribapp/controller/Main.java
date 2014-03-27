@@ -1,10 +1,13 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.controller;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+
+import no.srib.sribapp.model.Definition;
+import no.srib.sribapp.model.Podcast;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,7 +16,9 @@ public class Main {
         List<Podcast> list = em.createNamedQuery("Podcast.findAll", Podcast.class).getResultList();
         
         for (Podcast p : list) {
-            System.out.println(p.getTitle());
+            System.out.println("Title: " + p.getTitle());
+            Definition d = p.getDefinition();
+            System.out.println("Program: " + d.getName());
         }
     }
 }

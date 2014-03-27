@@ -3,115 +3,132 @@ package no.srib.sribapp.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+
 /**
  * The persistent class for the podcast database table.
  * 
  */
 @Entity
-@Table(name = "podcast")
-@NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p")
-public class Podcast implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private int refnr; //
+@Table(name="podcast")
+@NamedQuery(name="Podcast.findAll", query="SELECT p FROM Podcast p")
+public class Podcast extends AbstractModel implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private int refnr;
+	private int bitrate;
+	private int createdate;
+	private int createtime;
+	private int duration;
+	private String filename;
+	private String remark;
+	private int samplerate;
+	private String title;
+	private Definition definition;
 
-    private int bitrate; 
-    private int createdate; 
-    private int createtime; 
-    private int duration; 
-    private String filename; 
-    private int program; 
-    private String remark; 
-    private int samplerate; 
-    private String title; 
+	public Podcast() {
+	}
 
-    public Podcast() {
-    }
 
-    
-    
-    @Id
-    @Column(unique = true, nullable = false)
-    public int getRefnr() {
-        return this.refnr;
-    }
+	@Id
+	@Column(insertable=false, updatable=false, unique=true, nullable=false)
+	public int getRefnr() {
+		return this.refnr;
+	}
 
-    public void setRefnr(int refnr) {
-        this.refnr = refnr;
-    }
+	public void setRefnr(int refnr) {
+		this.refnr = refnr;
+	}
 
-    public int getBitrate() {
-        return this.bitrate;
-    }
 
-    public void setBitrate(int bitrate) {
-        this.bitrate = bitrate;
-    }
+	@Column(insertable=false, updatable=false)
+	public int getBitrate() {
+		return this.bitrate;
+	}
 
-    public int getCreatedate() {
-        return this.createdate;
-    }
+	public void setBitrate(int bitrate) {
+		this.bitrate = bitrate;
+	}
 
-    public void setCreatedate(int createdate) {
-        this.createdate = createdate;
-    }
 
-    public int getCreatetime() {
-        return this.createtime;
-    }
+	@Column(insertable=false, updatable=false)
+	public int getCreatedate() {
+		return this.createdate;
+	}
 
-    public void setCreatetime(int createtime) {
-        this.createtime = createtime;
-    }
+	public void setCreatedate(int createdate) {
+		this.createdate = createdate;
+	}
 
-    public int getDuration() {
-        return this.duration;
-    }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
+	@Column(insertable=false, updatable=false)
+	public int getCreatetime() {
+		return this.createtime;
+	}
 
-    @Column(length = 254)
-    public String getFilename() {
-        return this.filename;
-    }
+	public void setCreatetime(int createtime) {
+		this.createtime = createtime;
+	}
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
 
-    public int getProgram() {
-        return this.program;
-    }
+	@Column(insertable=false, updatable=false)
+	public int getDuration() {
+		return this.duration;
+	}
 
-    public void setProgram(int program) {
-        this.program = program;
-    }
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
 
-    @Lob
-    public String getRemark() {
-        return this.remark;
-    }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
+	@Column(insertable=false, updatable=false, length=254)
+	public String getFilename() {
+		return this.filename;
+	}
 
-    public int getSamplerate() {
-        return this.samplerate;
-    }
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 
-    public void setSamplerate(int samplerate) {
-        this.samplerate = samplerate;
-    }
 
-    @Column(length = 80)
-    public String getTitle() {
-        return this.title;
-    }
+	@Lob
+	@Column(insertable=false, updatable=false)
+	public String getRemark() {
+		return this.remark;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+
+	@Column(insertable=false, updatable=false)
+	public int getSamplerate() {
+		return this.samplerate;
+	}
+
+	public void setSamplerate(int samplerate) {
+		this.samplerate = samplerate;
+	}
+
+
+	@Column(insertable=false, updatable=false, length=80)
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+
+	//bi-directional many-to-one association to Definition
+	@ManyToOne
+	@JoinColumn(name="PROGRAM")
+	public Definition getDefinition() {
+		return this.definition;
+	}
+
+	public void setDefinition(Definition definition) {
+		this.definition = definition;
+	}
 
 }
