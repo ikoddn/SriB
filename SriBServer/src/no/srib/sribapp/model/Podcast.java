@@ -27,6 +27,8 @@ public class Podcast implements Serializable {
     public Podcast() {
     }
 
+    
+    
     @Id
     @Column(unique = true, nullable = false)
     public int getRefnr() {

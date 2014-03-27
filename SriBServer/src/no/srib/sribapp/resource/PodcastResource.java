@@ -1,5 +1,6 @@
 package no.srib.sribapp.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -21,7 +22,14 @@ public class PodcastResource {
     @GET
     public final List<Podcast> getAllPodcast() {
 
-        return null;
+        List<Podcast> listPodcast = new ArrayList<Podcast>();
+        
+        Podcast p = new Podcast();
+        p.setTitle("YOLO SHOW");
+        
+        listPodcast.add(p);
+        
+        return listPodcast;
     }
 
     /**
