@@ -1,8 +1,14 @@
 package no.srib;
 
+
+
+import no.srib.sribapp.util.DebugPrint;
+import no.srib.sribapp.util.RequestTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +61,12 @@ public class MainActivity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			DebugPrint a = new DebugPrint();
+			new RequestTask(a).execute("http://158.37.225.174:8080/SriBServer/rest/podcast");
+			
+			
+			
+			
 			return rootView;
 		}
 	}
