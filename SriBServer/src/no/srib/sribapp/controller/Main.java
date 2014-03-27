@@ -2,18 +2,22 @@ package no.srib.sribapp.controller;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
+import no.srib.sribapp.dao.exception.DAOException;
+import no.srib.sribapp.dao.hibernate.PodcastDAOImpl;
+import no.srib.sribapp.dao.interfaces.PodcastDAO;
 import no.srib.sribapp.model.Definition;
 import no.srib.sribapp.model.Podcast;
 
 public class Main {
     public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("heroku_080ddff3a8918b6");
-        EntityManager em = emf.createEntityManager();
-        List<Podcast> list = em.createNamedQuery("Podcast.findAll", Podcast.class).getResultList();
+        PodcastDAO dao = new PodcastDAOImpl();
+        
+        List<Podcast> list = null;
+        try {
+            list = dao.getList();
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
         
         for (Podcast p : list) {
             System.out.println("Title: " + p.getTitle());
