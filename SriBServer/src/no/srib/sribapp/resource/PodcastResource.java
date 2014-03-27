@@ -1,15 +1,39 @@
 package no.srib.sribapp.resource;
 
+import java.util.List;
+
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import no.srib.sribapp.model.Podcast;
+
 @Path("/podcast")
-
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-
 public class PodcastResource {
 
-    
-    
+    /**
+     * 
+     * @return A list with all recent podcasts.
+     */
+    @GET
+    public final List<Podcast> getAllPodcast() {
+
+        return null;
+    }
+
+    /**
+     * 
+     * @param id - The id for the podcast
+     * @return The podcast with id given.
+     */
+    @GET
+    @Path("{id}")
+    public Podcast getPodcast(@PathParam("id") final int id) {
+
+        return null;
+
+    }
 }
