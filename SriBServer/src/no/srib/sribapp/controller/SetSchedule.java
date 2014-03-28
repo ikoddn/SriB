@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class Schedule
  */
-@WebServlet("/Schedule")
+@WebServlet("/SetSchedule")
 public class SetSchedule extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
