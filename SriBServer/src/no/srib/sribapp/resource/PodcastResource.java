@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.hibernate.PodcastDAOImpl;
 import no.srib.sribapp.dao.interfaces.PodcastDAO;
-import no.srib.sribapp.model.Definition;
+
 import no.srib.sribapp.model.Podcast;
 
 @Path("/podcast")
@@ -32,11 +32,6 @@ public class PodcastResource {
             e.printStackTrace();
         }
         
-        for (Podcast p : podcastList) {
-            System.out.println("Title: " + p.getTitle());
-            Definition d = p.getDefinition();
-            System.out.println("Program: " + d.getName());
-        }
         
       
         
