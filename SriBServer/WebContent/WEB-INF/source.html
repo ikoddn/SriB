@@ -6,5 +6,68 @@
 </head>
 <body>
 <h1>Sett kilde</h1>
+<form id="sourceForm">
+Hovedkilde:<input type="url" value="http://wwww.srib.no/lyd" name="mainSource" size="60"><br>
+Sekunderkilde:<input type="url" value="http://wwww.srib.no/lyd2" name="secondSource" size="60"><br>
+Skift til sekunderkilde i desse tidsromma:<br>
+<select>
+<option>Mandag</option>
+<option>Tirsdag</option>
+<option>Onsdag</option>
+<option>Torsdag</option>
+<option>Fredag</option>
+<option>Lørdag</option>
+<option>Søndag</option>
+</select>
+
+
+Fra:<input type="time" name="fromTime"> Til: <input type="time"> <input type="button" name="addMore" value="Legg til tidspunkt">
+<input type="submit" value="Lagre">
+</form>
+
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<script type="text/javascript">
+var dayArray = ["Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag","Søndag"];
+var count = 0;
+
+$( "input[name*='addMore']" ).click(function() {
+	
+	addTimeRow(count);
+	  
+	  $.each(dayArray, function(key, value) {   
+		     $("select[name*='"+count +"']").append($("<option></option>")
+	         .attr("value",key).text(value)); 
+	});
+	  
+	  
+	  count++;
+	});
+	
+
+
+function addTimeRow(count){
+	
+	$("#sourceForm").append("<br><Select name=" +count +" class='"+count+"'></Select>Fra:<input type='time' class='"+count+"' name='fromTime'> Til: <input type='time' class='"+count+"'>"
+			+ "<input type='button' class='"+count+"' id="+ count +" value='Slett' name='deleteButton'>  ");
+
+
+$("button").click(function(){
+	//alert(this.id);
+	removeRow(this.id);
+	
+});
+
+}
+
+
+function removeRow(id){
+
+}
+
+</script>
+
+
 </body>
 </html>
