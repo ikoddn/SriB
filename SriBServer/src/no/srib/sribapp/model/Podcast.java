@@ -1,7 +1,5 @@
 package no.srib.sribapp.model;
 
-import java.io.Serializable;
-
 import javax.persistence.*;
 
 
@@ -12,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="podcast")
 @NamedQuery(name="Podcast.findAll", query="SELECT p FROM Podcast p")
-public class Podcast extends AbstractModel implements Serializable {
+public class Podcast extends AbstractModel  {
 	private static final long serialVersionUID = 1L;
 	private int refnr;
 	private int bitrate;
@@ -23,7 +21,7 @@ public class Podcast extends AbstractModel implements Serializable {
 	private String remark;
 	private int samplerate;
 	private String title;
-	private Definition definition;
+	private Programinfo programinfo;
 
 	public Podcast() {
 	}
@@ -121,15 +119,15 @@ public class Podcast extends AbstractModel implements Serializable {
 	}
 
 
-	//bi-directional many-to-one association to Definition
+	//bi-directional many-to-one association to Programinfo
 	@ManyToOne
 	@JoinColumn(name="PROGRAM")
-	public Definition getDefinition() {
-		return this.definition;
+	public Programinfo getPrograminfo() {
+		return this.programinfo;
 	}
 
-	public void setDefinition(Definition definition) {
-		this.definition = definition;
+	public void setPrograminfo(Programinfo programinfo) {
+		this.programinfo = programinfo;
 	}
 
 }

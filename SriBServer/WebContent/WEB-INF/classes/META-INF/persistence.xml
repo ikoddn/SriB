@@ -6,8 +6,8 @@
              version="2.1">
              
 	<persistence-unit name="heroku_080ddff3a8918b6">
-		<class>no.srib.sribapp.model.Definition</class>
 		<class>no.srib.sribapp.model.Podcast</class>
+		<class>no.srib.sribapp.model.Programinfo</class>
 
 		<properties>
 			<property name="hibernate.default_schema" value="heroku_080ddff3a8918b6" />
