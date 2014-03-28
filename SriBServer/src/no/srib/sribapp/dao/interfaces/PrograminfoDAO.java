@@ -1,5 +1,6 @@
 package no.srib.sribapp.dao.interfaces;
 
+import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.model.Programinfo;
 
 /**
@@ -10,4 +11,5 @@ import no.srib.sribapp.model.Programinfo;
  */
 public interface PrograminfoDAO extends AbstractModelDAO<Programinfo> {
 
+    Programinfo getById(final int id) throws DAOException;
 }
