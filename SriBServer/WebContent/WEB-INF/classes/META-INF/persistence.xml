@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
-             version="2.1">
-             
-	<persistence-unit name="heroku_080ddff3a8918b6">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	version="2.1">
+
+	<persistence-unit name="heroku_test">
 		<class>no.srib.sribapp.model.Podcast</class>
 		<class>no.srib.sribapp.model.Programinfo</class>
 
 		<properties>
-			<property name="hibernate.default_schema" value="heroku_080ddff3a8918b6" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-			<property name="hibernate.hbm2ddl.auto" value="update" />
-			
-			<!-- SET TO FALSE BEFORE DEPLOYING -->
-			<property name="hibernate.show_sql" value="true" />
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:mysql://eu-cdbr-west-01.cleardb.com:3306/heroku_080ddff3a8918b6" />
+			<property name="javax.persistence.jdbc.user" value="b3eaf9704bb2c5" />
+			<property name="javax.persistence.jdbc.password" value="e9b6ae79" />
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 
-			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-			<property name="hibernate.connection.url"
-				value="jdbc:mysql://eu-cdbr-west-01.cleardb.com:3306" />
-			<property name="hibernate.connection.username" value="b3eaf9704bb2c5" />
-			<property name="hibernate.connection.password" value="e9b6ae79" />
+			<property name="hibernate.show_sql" value="true" />
 		</properties>
 	</persistence-unit>
 </persistence>

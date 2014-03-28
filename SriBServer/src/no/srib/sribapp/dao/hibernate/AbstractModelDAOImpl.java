@@ -14,12 +14,12 @@ import no.srib.sribapp.model.AbstractModel;
 
 class AbstractModelDAOImpl<T extends AbstractModel> implements AbstractModelDAO<T> {
 
-    private static EntityManagerFactory emf;
+    private final static EntityManagerFactory emf;
     private final Class<T> typeClass;
     private final String getAllNamedQuery;
     
     static {
-        emf = Persistence.createEntityManagerFactory("heroku_080ddff3a8918b6");
+        emf = Persistence.createEntityManagerFactory("heroku_test");
     }
     
     protected AbstractModelDAOImpl(final Class<T> typeClass) {

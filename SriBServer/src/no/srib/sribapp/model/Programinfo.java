@@ -1,8 +1,6 @@
 package no.srib.sribapp.model;
 
-
 import javax.persistence.*;
-import java.util.List;
 
 
 /**
@@ -21,7 +19,6 @@ public class Programinfo extends AbstractModel  {
 	private String subtitle;
 	private String summary;
 	private String title;
-	private List<Podcast> podcasts;
 
 	public Programinfo() {
 	}
@@ -98,31 +95,6 @@ public class Programinfo extends AbstractModel  {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-
-	//bi-directional many-to-one association to Podcast
-	@OneToMany(mappedBy="programinfo")
-	public List<Podcast> getPodcasts() {
-		return this.podcasts;
-	}
-
-	public void setPodcasts(List<Podcast> podcasts) {
-		this.podcasts = podcasts;
-	}
-
-	public Podcast addPodcast(Podcast podcast) {
-		getPodcasts().add(podcast);
-		podcast.setPrograminfo(this);
-
-		return podcast;
-	}
-
-	public Podcast removePodcast(Podcast podcast) {
-		getPodcasts().remove(podcast);
-		podcast.setPrograminfo(null);
-
-		return podcast;
 	}
 
 }

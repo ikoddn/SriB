@@ -21,8 +21,6 @@ public class Main {
         System.out.println("asdf");
         for (Podcast p : list) {
             System.out.println("Title: " + p.getTitle());
-            Programinfo info = p.getPrograminfo();
-            System.out.println("Program: " + info.getTitle());
         }
     }
 }

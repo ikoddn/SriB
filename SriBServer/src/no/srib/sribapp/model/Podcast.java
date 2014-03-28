@@ -18,10 +18,10 @@ public class Podcast extends AbstractModel  {
 	private int createtime;
 	private int duration;
 	private String filename;
+	private int program;
 	private String remark;
 	private int samplerate;
 	private String title;
-	private Programinfo programinfo;
 
 	public Podcast() {
 	}
@@ -88,6 +88,16 @@ public class Podcast extends AbstractModel  {
 	}
 
 
+	@Column(insertable=false, updatable=false)
+	public int getProgram() {
+		return this.program;
+	}
+
+	public void setProgram(int program) {
+		this.program = program;
+	}
+
+
 	@Lob
 	@Column(insertable=false, updatable=false)
 	public String getRemark() {
@@ -116,18 +126,6 @@ public class Podcast extends AbstractModel  {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-
-	//bi-directional many-to-one association to Programinfo
-	@ManyToOne
-	@JoinColumn(name="PROGRAM")
-	public Programinfo getPrograminfo() {
-		return this.programinfo;
-	}
-
-	public void setPrograminfo(Programinfo programinfo) {
-		this.programinfo = programinfo;
 	}
 
 }
