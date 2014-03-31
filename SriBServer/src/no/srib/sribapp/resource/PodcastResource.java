@@ -2,7 +2,6 @@ package no.srib.sribapp.resource;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,11 +24,8 @@ public class PodcastResource {
     private PodcastDAO dao;
     private StreamurlDAO sDao;
     private List<Podcast> podcastList = null;
-    private Random ran;
     
     public PodcastResource() {
-
-        ran = new Random();
         dao = new PodcastDAOImpl();
         sDao = new StreamurlDAOImpl();
         
@@ -59,10 +55,12 @@ public class PodcastResource {
 
     public final StreamSchedule getCurrentStreamSchedule() throws DAOException {
         Streamurl streamurl = sDao.getList().get(index);
-        index = index + 1 % 2;
+        index = (index + 1) % 2;
         Calendar time = Calendar.getInstance();
         time.set(Calendar.HOUR_OF_DAY, 14);
+        time.set(Calendar.MINUTE, 0);
+        time.set(Calendar.SECOND, 0);
+        time.set(Calendar.MILLISECOND, 0);
         return new StreamSchedule(streamurl.getUrl(), time);
-
     }
 }
