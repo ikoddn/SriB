@@ -10,6 +10,7 @@
 		<class>no.srib.sribapp.model.Programinfo</class>
 		<class>no.srib.sribapp.model.Definition</class>
 		<class>no.srib.sribapp.model.Streamurl</class>
+		<class>no.srib.sribapp.model.Schedule</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.url"

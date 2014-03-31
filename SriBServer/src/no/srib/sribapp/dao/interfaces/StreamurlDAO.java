@@ -11,8 +11,5 @@ import no.srib.sribapp.model.Streamurl;
  */
 public interface StreamurlDAO extends AbstractModelDAO<Streamurl> {
 
-    
-    public Streamurl getById(int id) throws DAOException;
+    Streamurl getById(int id) throws DAOException;
 }
-
-
