@@ -8,6 +8,7 @@
 	<persistence-unit name="heroku_test">
 		<class>no.srib.sribapp.model.Podcast</class>
 		<class>no.srib.sribapp.model.Programinfo</class>
+		<class>no.srib.sribapp.model.Definition</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.url"
