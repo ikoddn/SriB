@@ -54,13 +54,13 @@ public class PodcastResource {
     @GET
 
     public final StreamSchedule getCurrentStreamSchedule() throws DAOException {
-        Streamurl streamurl = sDao.getList().get(index);
+        Streamurl stream = sDao.getList().get(index);
         index = (index + 1) % 2;
         Calendar time = Calendar.getInstance();
         time.set(Calendar.HOUR_OF_DAY, 14);
         time.set(Calendar.MINUTE, 0);
         time.set(Calendar.SECOND, 0);
         time.set(Calendar.MILLISECOND, 0);
-        return new StreamSchedule(streamurl.getUrl(), time);
+        return new StreamSchedule(stream.getName(), stream.getUrl(), time);
     }
 }

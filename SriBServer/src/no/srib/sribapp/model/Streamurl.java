@@ -13,6 +13,7 @@ import javax.persistence.*;
 public class Streamurl extends AbstractModel  {
 	private static final long serialVersionUID = 1L;
 	private int id;
+	private String name;
 	private String url;
 
 	public Streamurl() {
@@ -28,6 +29,16 @@ public class Streamurl extends AbstractModel  {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+
+	@Column(nullable=false, length=100)
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 
