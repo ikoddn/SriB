@@ -26,7 +26,7 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo> implem
         try {
             result = query.getSingleResult();
         } catch (PersistenceException e) {
-            throw new DAOException();
+            throw new DAOException(e);
         } finally {
             em.close();
         }

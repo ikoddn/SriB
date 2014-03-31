@@ -28,7 +28,7 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements Pod
         try {
             result = query.getResultList();
         } catch (PersistenceException e) {
-            throw new DAOException();
+            throw new DAOException(e);
         } finally {
             em.close();
         }

@@ -39,7 +39,7 @@ class AbstractModelDAOImpl<T extends AbstractModel> implements AbstractModelDAO<
         try {
             list = em.createNamedQuery(getAllNamedQuery, typeClass).getResultList();
         } catch (PersistenceException e) {
-            throw new DAOException();
+            throw new DAOException(e);
         } finally {
             em.close();
         }
