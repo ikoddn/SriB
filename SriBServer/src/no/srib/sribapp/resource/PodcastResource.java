@@ -1,12 +1,11 @@
 package no.srib.sribapp.resource;
 
+import java.util.Calendar;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import no.srib.sribapp.dao.exception.DAOException;
@@ -20,6 +19,7 @@ import no.srib.sribapp.model.Streamurl;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class PodcastResource {
+    private static int index = 0;
 
     private PodcastDAO dao;
     private StreamurlDAO sDao;
@@ -53,14 +53,11 @@ public class PodcastResource {
     
     @Path("radiourl")
     @GET
-    public final Streamurl getCurrentRadioURL() throws DAOException{
-       
-       
-        
-        
-        
-            return sDao.getList().get(1);
-      
-        
+    public final StreamSchedule getCurrentStreamSchedule() throws DAOException {
+        Streamurl streamurl = sDao.getList().get(index);
+        index = index + 1 % 2;
+        Calendar time = Calendar.getInstance();
+        time.set(Calendar.HOUR_OF_DAY, 14);
+        return new StreamSchedule(streamurl.getUrl(), time);
     }
 }

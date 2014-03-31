@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="streamurl")
 @NamedQuery(name="Streamurl.findAll", query="SELECT s FROM Streamurl s")
-public class Streamurl extends no.srib.sribapp.model.AbstractModel  {
+public class Streamurl extends AbstractModel  {
 	private static final long serialVersionUID = 1L;
 	private int id;
 	private String url;
