@@ -10,6 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import no.srib.sribapp.dao.exception.DAOException;
+import no.srib.sribapp.dao.hibernate.BackendUserDAOImpl;
+import no.srib.sribapp.dao.interfaces.BackendUserDAO;
+import no.srib.sribapp.model.Backenduser;
+
 /**
  * Servlet implementation class Login
  */
@@ -58,6 +63,17 @@ public class Login extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        BackendUserDAO dao = new BackendUserDAOImpl();
+        Backenduser back = null;
+        try {
+           back = dao.getByUserName("test");
+        } catch (DAOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if(back != null){
+            System.out.println(back.getPassword());
+        }
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         HttpSession ses = request.getSession(false);
