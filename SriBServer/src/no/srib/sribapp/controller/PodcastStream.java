@@ -12,55 +12,59 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import no.srib.sribapp.controller.exception.InvalidParameterException;
+
 /**
  * Servlet implementation class PodcastStream
  */
 @WebServlet("/PodcastStream")
 public class PodcastStream extends HttpServlet {
+    
     private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
-        ServletOutputStream stream = null;
-        BufferedInputStream buf = null;
-        String fileName = "pipershut.mp3";
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        BufferedInputStream bufferStream = null;
+        ServletOutputStream outStream = null;
+
+        String fileName = req.getParameter("file");
 
         try {
-            stream = response.getOutputStream();
-
-            // File[] roots = File.listRoots();
-            // File dir = new File(roots[0], "podcast");
-            // File mp3 = new File(dir, fileName);
+            if (fileName == null || fileName.equals("")) {
+                throw new InvalidParameterException();
+            }
 
             File mp3 = new File(getServletContext().getRealPath("/")
                     + "podcast", fileName);
 
-            response.setContentType("audio/mpeg");
-            response.addHeader("Content-Disposition", "attachment; filename="
-                    + fileName);
-
-            response.setContentLength((int) mp3.length());
-
-            FileInputStream input = new FileInputStream(mp3);
-            buf = new BufferedInputStream(input);
-            int readBytes = 0;
-
-            while ((readBytes = buf.read()) != -1) {
-                stream.write(readBytes);
+            FileInputStream inputStream = new FileInputStream(mp3);
+            bufferStream = new BufferedInputStream(inputStream);
+            
+            resp.setContentType("audio/mpeg");
+            resp.setContentLength((int) mp3.length());
+            
+            outStream = resp.getOutputStream();
+            int readByte = bufferStream.read();
+            
+            while (readByte != -1) {
+                outStream.write(readByte);
+                readByte = bufferStream.read();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | InvalidParameterException e) {
+            // TODO Treat exceptions, this will currently display an Apache error page
+            throw new ServletException(e);
         } finally {
-            if (stream != null) {
-                stream.close();
+            if (outStream != null) {
+                outStream.close();
             }
 
-            if (buf != null) {
-                buf.close();
+            if (bufferStream != null) {
+                bufferStream.close();
             }
         }
     }
