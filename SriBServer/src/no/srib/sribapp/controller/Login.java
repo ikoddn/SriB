@@ -23,6 +23,7 @@ import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.hibernate.BackendUserDAOImpl;
 import no.srib.sribapp.dao.interfaces.BackendUserDAO;
 import no.srib.sribapp.model.Backenduser;
+import no.srib.sribapp.util.Security;
 
 /**
  * Servlet implementation class Login
@@ -69,39 +70,34 @@ public class Login extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        BackendUserDAO dao = new BackendUserDAOImpl();
-        Backenduser back = null;
-        MessageDigest digester = null;
-        try {
-            back = dao.getByUserName("test");
-        } catch (DAOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        try {
-            digester = MessageDigest.getInstance("SHA-512");
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        digester.update("test".getBytes("UTF-8"));
-        byte[] raw = digester.digest();
-        if (back != null) {
-            System.out.println(back.getPassword());
-
-            System.out.println(Hex.encodeHexString(raw));
-        }
+      
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        
+        if(username == null || password == null){
+            response.sendRedirect("index.html");
+            return;
+        }
+       
+        BackendUserDAO dao = new BackendUserDAOImpl();
+        Backenduser back = null;
+        String hashInDB = null;
+        
         HttpSession ses = request.getSession(false);
+        String hash = Security.toSHA512(password, username);
+        try {
+            back = dao.getByUserName(username);
+        } catch (DAOException e) {
+        
+            e.printStackTrace();
+        }
 
         if (ses == null) {
             ses = request.getSession();
 
-        } else {
-            if (ses.getAttribute("loggedIn").equals("true")
-                    && username.equals("test") && password.equals("test")) {
+        } else if (back != null) {
+            hashInDB = back.getPassword();
+            if (hash.equals(hashInDB)) {
                 RequestDispatcher reqD = request
                         .getRequestDispatcher("/WEB-INF/admin.html");
                 reqD.forward(request, response);
