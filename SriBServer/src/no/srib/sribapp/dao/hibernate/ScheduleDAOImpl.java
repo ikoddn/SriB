@@ -6,7 +6,7 @@ import no.srib.sribapp.model.Schedule;
 public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
         ScheduleDAO {
 
-    protected ScheduleDAOImpl() {
+    public ScheduleDAOImpl() {
         super(Schedule.class);
     }
 }
