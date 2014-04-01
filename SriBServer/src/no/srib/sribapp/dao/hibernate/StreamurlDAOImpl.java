@@ -20,7 +20,7 @@ public class StreamurlDAOImpl extends AbstractModelDAOImpl<Streamurl> implements
         Streamurl stream = null;
         EntityManager em = getEntityManager();
 
-        String queryString = "SELECT S FROM STREAMURL S WHERE ID=:id";
+        String queryString = "SELECT S FROM Streamurl S WHERE id=:id";
 
         TypedQuery<Streamurl> query = em.createQuery(queryString,
                 Streamurl.class);
