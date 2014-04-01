@@ -3,7 +3,7 @@ package no.srib.sribapp.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import no.srib.MainActivity.PlaceholderFragment;
+import no.srib.fragment.*;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

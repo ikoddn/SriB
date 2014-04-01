@@ -1,20 +1,16 @@
 package no.srib.sribapp.util;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
+
 import android.os.AsyncTask;
-import android.os.Build;
-import android.util.Log;
-import android.widget.TextView;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
-import no.srib.MainActivity.PlaceholderFragment;
 
-import org.apache.http.HttpEntity;
+import no.srib.fragment.*;
+
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
