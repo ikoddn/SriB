@@ -3,6 +3,7 @@ package no.srib;
 
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +11,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import no.srib.sribapp.util.GetUrlTask;
 import no.srib.sribapp.util.RequestTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -24,17 +28,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-	public void exceptionHandeling(Activity t){
-		Toast to = new Toast(t.getApplicationContext());
-		to.setText("Hei hei");
-		to.show();
-		
-		
-	}
+	
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,8 @@ public class MainActivity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-
+		
+		
 		public PlaceholderFragment() {
 		}
 
@@ -87,11 +87,46 @@ public class MainActivity extends ActionBarActivity {
 			RequestTask rq = new RequestTask(this);
 			
 		
-			rq.execute("http://129.177.114.189:8080/SriBServer/rest/podcast");
+			rq.execute("http://srib-app-dev.herokuapp.com/rest/podcast");
 					
+			GetUrlTask gu = new GetUrlTask(this);
+			
+			gu.execute("http://srib-app-dev.herokuapp.com/rest/radiourl");
 			
 			
 			return rootView;
+		}
+		
+		public void startMediaPlayer(final String result) throws IllegalArgumentException, SecurityException, IllegalStateException, IOException{
+			final MediaPlayer mp = new MediaPlayer();
+			Uri url = null;
+			
+			JSONObject podO = null;
+			
+			try {
+				
+				podO = new JSONObject(result);
+				url = Uri.parse(podO.getString("url"));
+			
+			} catch (JSONException e) {
+				e.printStackTrace();
+
+			}
+			
+			
+			mp.setDataSource(getActivity().getApplicationContext(), url);
+			mp.prepareAsync();
+			mp.setOnPreparedListener(new OnPreparedListener() {
+				
+				@Override
+				public void onPrepared(MediaPlayer mp) {
+					mp.start();
+					
+				}
+			});
+			
+			
+			
 		}
 		
 		

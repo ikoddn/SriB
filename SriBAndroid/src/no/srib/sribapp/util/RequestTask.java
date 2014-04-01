@@ -26,8 +26,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class RequestTask extends AsyncTask<String, PlaceholderFragment, String> {
 
-	
-	private Exception e;
 	private PlaceholderFragment a;
 
 	public RequestTask(PlaceholderFragment a) {
@@ -56,12 +54,10 @@ public class RequestTask extends AsyncTask<String, PlaceholderFragment, String> 
 				throw new IOException(statusLine.getReasonPhrase());
 			}
 		} catch (ClientProtocolException e) {
-			this.e = e;
-			return null;
+			
 
 		} catch (IOException e) {
-			this.e = e;
-			return null;
+			
 		}
 		
 		return responseString;
