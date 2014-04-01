@@ -48,9 +48,10 @@ public class PodcastStream extends HttpServlet {
             FileInputStream input = new FileInputStream(mp3);
             buf = new BufferedInputStream(input);
             int readBytes = 0;
-            // read from the file; write to the ServletOutputStream
-            while ((readBytes = buf.read()) != -1)
+
+            while ((readBytes = buf.read()) != -1) {
                 stream.write(readBytes);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
