@@ -27,7 +27,7 @@ public class BackendUserDAOImpl extends AbstractModelDAOImpl<Backenduser> implem
             result = query.getSingleResult();
         } catch (PersistenceException e) {
            
-                throw new DAOException(e);
+                
            
         } finally {
             em.close();
