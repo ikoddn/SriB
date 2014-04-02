@@ -1,4 +1,4 @@
-package no.srib.sribapp.resource;
+package no.srib.sribapp.resource.helper;
 
 import java.io.Serializable;
 import java.util.Calendar;

@@ -15,6 +15,7 @@ import no.srib.sribapp.dao.interfaces.PodcastDAO;
 import no.srib.sribapp.dao.interfaces.StreamurlDAO;
 import no.srib.sribapp.model.Podcast;
 import no.srib.sribapp.model.Streamurl;
+import no.srib.sribapp.resource.helper.StreamSchedule;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
