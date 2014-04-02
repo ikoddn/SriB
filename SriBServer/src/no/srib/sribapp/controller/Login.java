@@ -1,8 +1,6 @@
 package no.srib.sribapp.controller;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,13 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
-
-import sun.misc.BASE64Encoder;
-
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.hibernate.BackendUserDAOImpl;
