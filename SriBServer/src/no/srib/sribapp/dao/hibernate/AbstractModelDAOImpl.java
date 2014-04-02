@@ -11,39 +11,40 @@ import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.AbstractModelDAO;
 import no.srib.sribapp.model.AbstractModel;
 
+abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
+        AbstractModelDAO<T> {
 
-class AbstractModelDAOImpl<T extends AbstractModel> implements AbstractModelDAO<T> {
+    private static final EntityManagerFactory EMF;
+    private final Class<T> TYPECLASS;
+    private final String GET_ALL_NAMED_QUERY;
 
-    private final static EntityManagerFactory emf;
-    private final Class<T> typeClass;
-    private final String getAllNamedQuery;
-    
     static {
-        emf = Persistence.createEntityManagerFactory("heroku_test");
+        EMF = Persistence.createEntityManagerFactory("heroku_test");
     }
-    
+
     protected AbstractModelDAOImpl(final Class<T> typeClass) {
-        this.typeClass = typeClass;
-        getAllNamedQuery = typeClass.getSimpleName() + ".findAll";
+        this.TYPECLASS = typeClass;
+        GET_ALL_NAMED_QUERY = typeClass.getSimpleName() + ".findAll";
     }
-    
+
     protected EntityManager getEntityManager() {
-        return emf.createEntityManager();
+        return EMF.createEntityManager();
     }
 
     @Override
     public List<T> getList() throws DAOException {
         EntityManager em = getEntityManager();
         List<T> list = null;
-        
+
         try {
-            list = em.createNamedQuery(getAllNamedQuery, typeClass).getResultList();
+            list = em.createNamedQuery(GET_ALL_NAMED_QUERY, TYPECLASS)
+                    .getResultList();
         } catch (PersistenceException e) {
             throw new DAOException(e);
         } finally {
             em.close();
         }
-        
+
         return list;
     }
 }
