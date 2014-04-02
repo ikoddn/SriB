@@ -3,15 +3,19 @@ package no.srib;
 import no.srib.fragment.PlaceholderFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity {
-
-		
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+		StrictMode.setThreadPolicy(policy);
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
