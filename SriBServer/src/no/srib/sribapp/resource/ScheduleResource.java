@@ -16,7 +16,7 @@ import no.srib.sribapp.dao.hibernate.ScheduleDAOImpl;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
 import no.srib.sribapp.model.Schedule;
 
-@Path("schedule")
+@Path("/schedule")
 @Produces(MediaType.APPLICATION_JSON)
 public class ScheduleResource {
     
@@ -43,7 +43,7 @@ public class ScheduleResource {
         return list;
     }
     
-    @GET
+   /* @GET
     @Path("{day}")
     public final List<Schedule> getSchedulesForDay(@PathParam("day") final int day) {
         if (day < Calendar.SUNDAY || day > Calendar.SATURDAY) {
@@ -63,7 +63,7 @@ public class ScheduleResource {
         }
         
         return list;
-    }
+    } */
     
     @GET
     @Path("now")

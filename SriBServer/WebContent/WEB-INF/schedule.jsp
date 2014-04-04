@@ -16,17 +16,15 @@
 	</select>
 	</div>
 	<div id="showTable">
-	<table id="planTable">
-	<tr>
-	<th>Mandag</th>
-	<th>Tirsdag</th>
-	<th>Onsdag</th>
-	<th>Torsdag</th>
-	<th>Fredag</th>
-	<th>Lørdag</th>
-	<th>Søndag</th>
-	</tr>
-	</table>
+	<ul>
+	<c:forEach items="${tuesdayList}" var="monday">
+       <c:set var="map" value="${definitionMap}"/>
+        <li >${monday.fromtime},${monday.totime},${map[monday.program].name}<a href="DeleteScheduleEntry?id=${monday.id}">Slett</a></li>
+    </c:forEach>
+   
+   
+	</ul>
+	
 	</div>
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>

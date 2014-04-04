@@ -15,14 +15,13 @@ import no.srib.sribapp.model.Schedule;
 public interface ScheduleDAO extends AbstractModelDAO<Schedule> {
 
     /**
-     * Returns a list of schedules for the given day.
+     * Returns a list of sorted schedules, sorting on from time, and end time.
      * 
-     * @param day
-     *            - The day as an integer in the range 1-7, where 1 is Sunday.
+     * 
      * @return A list of Schedule entities.
      * @throws DAOException
      */
-    List<Schedule> getSchedulesForDay(final int day) throws DAOException;
+    List<Schedule> getSortedSchedule() throws DAOException;
 
     /**
      * Returns a schedule for the given instant in time.
@@ -33,4 +32,12 @@ public interface ScheduleDAO extends AbstractModelDAO<Schedule> {
      * @throws DAOException
      */
     Schedule getScheduleForTime(final Calendar time) throws DAOException;
+    
+    /**
+     * Delete the Schedule with the given id.
+     * @param - The id for schedule
+     * @throws DAOException
+     */
+    
+    void deleteSchedule(final int id) throws DAOException;
 }
