@@ -23,7 +23,9 @@ import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -43,8 +45,9 @@ import android.widget.TextView;
 			
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			Button knapp = (Button) rootView.findViewById(R.id.knapp);
+			knapp.setOnClickListener((OnClickListener) getActivity());
 			
-		
 			RequestTask rq = new RequestTask(this);
 			
 		
@@ -54,9 +57,9 @@ import android.widget.TextView;
 			
 			gu.execute("http://srib-app-dev.herokuapp.com/rest/radiourl");
 			
-			GetNewsTask news = new GetNewsTask(this);
+			//GetNewsTask news = new GetNewsTask(this);
 			
-			news.execute();
+			//news.execute();
 			
 			return rootView;
 		}
