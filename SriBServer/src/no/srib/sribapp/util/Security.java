@@ -1,5 +1,6 @@
 package no.srib.sribapp.util;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -7,26 +8,21 @@ import org.apache.commons.codec.binary.Hex;
 
 public class Security {
 
-    
-    public static String toSHA512(String input, String username){
-       
-        String salt = "sribbackendsalt";
-        MessageDigest digest = null;
+    private static final String SALT = "sribbackendsalt";
+
+    public static String toSHA512(String input, String username) {
+        String result = null;
+        
         try {
-            digest = MessageDigest.getInstance("SHA-512");
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            String pwWithSaltAndUsername = SALT + input + username;
+            digest.update(pwWithSaltAndUsername.getBytes(StandardCharsets.UTF_8));
+            byte[] raw = digest.digest();
+            result = Hex.encodeHexString(raw);
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-        String pwWithSaltAndUsername = salt + input + username;
-        digest.update(pwWithSaltAndUsername.getBytes());
-        byte[] raw = digest.digest();
-        String result = Hex.encodeHexString(raw);
-        
+
         return result;
-        
+
     }
-    
-    
-    
 }
