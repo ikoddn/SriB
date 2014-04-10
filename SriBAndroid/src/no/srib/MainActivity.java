@@ -1,131 +1,139 @@
 package no.srib;
 
-import java.io.File;
 
-import no.srib.fragment.PlaceholderFragment;
-import no.srib.fragment.PodcastList;
+
+import no.srib.adapter.TabsPagerAdapter;
+
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
-import android.app.DownloadManager;
+import android.annotation.SuppressLint;
+
 import android.app.Notification;
-import android.app.Notification.Builder;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.LightingColorFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.os.Vibrator;
-import android.os.storage.StorageManager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 
 
-public class MainActivity extends ActionBarActivity implements OnClickListener, SensorEventListener{
-	
+@SuppressLint("NewApi")
+public class MainActivity extends ActionBarActivity implements 
+		SensorEventListener,  android.support.v7.app.ActionBar.TabListener {
+
+	private ViewPager viewPager;
+	private TabsPagerAdapter adapter;
+	private ActionBar actionbar;
+	public Fragment frag = new Fragment();
+
+	//
+	private String[] tabs = { "Radio", "Podcast list" };
+	private int[] icon = {R.drawable.ic_tab_radio_unselected,R.drawable.ic_tab_example_unselected};
+
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		//StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-		//StrictMode.setThreadPolicy(policy);
-		
 		super.onCreate(savedInstanceState);
-	
-		
 		setContentView(R.layout.activity_main);
-
+		
+		viewPager = (ViewPager) findViewById(R.id.pager);
+		actionbar = getSupportActionBar();
+		adapter = new TabsPagerAdapter(getSupportFragmentManager());
+		viewPager.setAdapter(adapter);
+		actionbar.setHomeButtonEnabled(false);
+		actionbar.setDisplayHomeAsUpEnabled(false);
+		actionbar.setDisplayShowHomeEnabled(false);
+		actionbar.setDisplayShowTitleEnabled(false);
+		
+		actionbar.setDisplayShowCustomEnabled(false);
+		actionbar.setDisplayUseLogoEnabled(false);
+		
+		//actionbar.hide();
+		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		
+		//Adding tabs
+		for(int i = 0; i < tabs.length; i++){
+			actionbar.addTab(actionbar.newTab().setText(tabs[i]).setTabListener(this).setIcon(icon[i]));
+			
+		}
+		
+		 viewPager
+	        .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+	            @Override
+	            public void onPageSelected(int position) {
+	            actionbar.setSelectedNavigationItem(position);
+	            }
+	        });
+		
+		/*
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
+					.add(R.id.pager, new PlaceholderFragment()).commit();
 		}
-		
-		//Vibrator manager = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		//manager.vibrate(3000);
+		*/
+		// Vibrator manager = (Vibrator)
+		// getSystemService(Context.VIBRATOR_SERVICE);
+		// manager.vibrate(3000);
 		SensorManager manager1 = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		Sensor sen = manager1.getDefaultSensor(Sensor.TYPE_LIGHT);
-		
+
 		manager1.registerListener(this, sen, SensorManager.SENSOR_DELAY_FASTEST);
-	
-		
+
 		Notification not = new Notification();
-		not.vibrate = new long[] {0,100,150,100};
+		not.vibrate = new long[] { 0, 100, 150, 100 };
 		not.flags |= Notification.FLAG_INSISTENT;
-		
-	    not.defaults |=  Notification.DEFAULT_VIBRATE;          
+
+		not.defaults |= Notification.DEFAULT_VIBRATE;
 
 		not.ledARGB = 0xff0dff;
-	
+
 		not.ledOnMS = 1000;
 		not.ledOffMS = 1000;
-		
+
 		not.flags |= Notification.FLAG_SHOW_LIGHTS;
-		NotificationManager nman = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
-		nman.notify(1, not);
+		//NotificationManager nman = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+		// nman.notify(1, not);
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onClick(View v) {
-		Fragment fragment = null;
-		if(v.getId() == R.id.knapp){
-			fragment = new PodcastList();
-		}else if(v.getId() == R.id.tilbakeknapp){
-			fragment = new PlaceholderFragment();
-		}
-		
-		
-		  FragmentManager fm = getSupportFragmentManager();
-		  FragmentTransaction transaction = fm.beginTransaction();
-		    transaction.addToBackStack(null);
-		  transaction.replace(R.id.container, fragment); //Container -> R.id.contentFragment
-		  transaction.commit();
-		
-	}
+	
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		float value = event.values[0];
-		
-		Log.i("deub",value + "");
+		//float value = event.values[0];
+
+		// Log.i("deub",value + "");
 	}
+
 	
-	
-	
-	
-	
+
+	@Override
+	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction arg1) {
+		viewPager.setCurrentItem(tab.getPosition());
+		
+	}
+
+
+	@Override
+	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

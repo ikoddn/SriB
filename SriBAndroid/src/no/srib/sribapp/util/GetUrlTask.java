@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class GetUrlTask extends AsyncTask<String, PlaceholderFragment, String> {
 
@@ -58,7 +59,8 @@ public class GetUrlTask extends AsyncTask<String, PlaceholderFragment, String> {
 	
 	@Override
 	protected void onPostExecute(String result) {
-		
+		if(result != null){
+			Log.i("debug",result);
 		try {
 			place.startMediaPlayer(result);
 		} catch (IllegalArgumentException e) {
@@ -73,6 +75,7 @@ public class GetUrlTask extends AsyncTask<String, PlaceholderFragment, String> {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
 		}
 	}
 	

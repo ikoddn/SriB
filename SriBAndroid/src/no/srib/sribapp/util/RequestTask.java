@@ -61,8 +61,9 @@ public class RequestTask extends AsyncTask<String, PlaceholderFragment, String> 
 
 	
 	protected void onPostExecute(String result) {
-		a.populateTextView(result);
-		
+		if(result !=null){
+			a.populateTextView(result);
+		}
 
 		super.onPostExecute(result);
 	}
