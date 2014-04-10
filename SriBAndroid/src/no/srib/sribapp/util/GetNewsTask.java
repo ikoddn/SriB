@@ -4,17 +4,17 @@ import java.net.URL;
 
 
 
-import no.srib.fragment.PlaceholderFragment;
+import no.srib.fragment.LiveRadioFragment;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Html.ImageGetter;
 import android.util.Log;
 
-public class GetNewsTask extends AsyncTask<Void, PlaceholderFragment, ImageGetter>{
+public class GetNewsTask extends AsyncTask<Void, LiveRadioFragment, ImageGetter>{
 
-	private PlaceholderFragment a;
+	private LiveRadioFragment a;
 	
-	public GetNewsTask(PlaceholderFragment a) {
+	public GetNewsTask(LiveRadioFragment a) {
 		this.a = a;
 	}
 

@@ -39,22 +39,22 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PodcastList extends Fragment implements OnItemClickListener {
+public class PodcastListFragment extends Fragment implements OnItemClickListener {
 
 	private HashMap<Integer, String> mIdMap = new HashMap<Integer, String>();
 
-	public PodcastList() {
+	public PodcastListFragment() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.podcastlist_main, container,
+		View rootView = inflater.inflate(R.layout.podcastlist_fragment, container,
 				false);
 		
 		GetPodcastTask pod = new GetPodcastTask(this);
-		pod.execute("http://129.177.114.172:8080/SriBServer/rest/podcast");
+		pod.execute("http://10.0.2.2:8080/SriBServer/rest/podcast");
 
 		return rootView;
 	}
@@ -172,12 +172,12 @@ public class PodcastList extends Fragment implements OnItemClickListener {
 
 	private class GetPodcastTask extends AsyncTask<String, Void, List<Podcast>> {
 
-		private WeakReference<PodcastList> podcast = null;
+		private WeakReference<PodcastListFragment> podcast = null;
 		
 		private ProgressDialog dialog;
 
-		public GetPodcastTask(PodcastList pod){
-			this.podcast = new WeakReference<PodcastList>(pod);
+		public GetPodcastTask(PodcastListFragment pod){
+			this.podcast = new WeakReference<PodcastListFragment>(pod);
 		}
 		
 

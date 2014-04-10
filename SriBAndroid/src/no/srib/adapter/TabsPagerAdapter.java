@@ -1,7 +1,9 @@
 package no.srib.adapter;
 
-import no.srib.fragment.PlaceholderFragment;
-import no.srib.fragment.PodcastList;
+import no.srib.fragment.ArticleFragment;
+import no.srib.fragment.LiveRadioFragment;
+
+import no.srib.fragment.PodcastListFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,13 +19,16 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 	public Fragment getItem(int index) {
 		switch (index) {
 		case 0:
-			return new PlaceholderFragment();
+			return new ArticleFragment();
 			
 		case 1:
+			return new LiveRadioFragment();
 			
-			return new PodcastList();
 	
+		case 2:
+			return new PodcastListFragment();
 		}
+		
 		
 		return null;
 	}
@@ -31,7 +36,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return 2;
+		return 3;
 	}
 
 }

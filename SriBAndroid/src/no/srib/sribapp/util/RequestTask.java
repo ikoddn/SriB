@@ -20,11 +20,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 
-public class RequestTask extends AsyncTask<String, PlaceholderFragment, String> {
+public class RequestTask extends AsyncTask<String, LiveRadioFragment, String> {
 
-	private PlaceholderFragment a;
+	private LiveRadioFragment a;
 
-	public RequestTask(PlaceholderFragment a) {
+	public RequestTask(LiveRadioFragment a) {
 		this.a = a;
 
 	}

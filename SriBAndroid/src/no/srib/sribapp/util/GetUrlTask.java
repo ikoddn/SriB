@@ -16,11 +16,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class GetUrlTask extends AsyncTask<String, PlaceholderFragment, String> {
+public class GetUrlTask extends AsyncTask<String, LiveRadioFragment, String> {
 
-	private PlaceholderFragment place;
+	private LiveRadioFragment place;
 	
-	public GetUrlTask(PlaceholderFragment place){
+	public GetUrlTask(LiveRadioFragment place){
 		this.place = place;
 		
 	}

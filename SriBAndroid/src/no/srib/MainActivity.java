@@ -2,14 +2,15 @@ package no.srib;
 
 
 
+import com.viewpagerindicator.UnderlinePageIndicator;
+
 import no.srib.adapter.TabsPagerAdapter;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.annotation.SuppressLint;
 
 import android.app.Notification;
@@ -18,12 +19,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 
 
 @SuppressLint("NewApi")
 public class MainActivity extends ActionBarActivity implements 
-		SensorEventListener,  android.support.v7.app.ActionBar.TabListener {
+		SensorEventListener {
 
 	private ViewPager viewPager;
 	private TabsPagerAdapter adapter;
@@ -31,8 +33,7 @@ public class MainActivity extends ActionBarActivity implements
 	public Fragment frag = new Fragment();
 
 	//
-	private String[] tabs = { "Radio", "Podcast list" };
-	private int[] icon = {R.drawable.ic_tab_radio_unselected,R.drawable.ic_tab_example_unselected};
+
 
 	@SuppressLint("NewApi")
 	@Override
@@ -41,25 +42,25 @@ public class MainActivity extends ActionBarActivity implements
 		setContentView(R.layout.activity_main);
 		
 		viewPager = (ViewPager) findViewById(R.id.pager);
+		adapter = new TabsPagerAdapter(getSupportFragmentManager());
+		viewPager.setAdapter(adapter);
+		viewPager.setCurrentItem(1);
+		UnderlinePageIndicator titleIndicator = (UnderlinePageIndicator)findViewById(R.id.indicator);
+		titleIndicator.setFades(false);
+	
+		
+		titleIndicator.setViewPager(viewPager);
+		
+		
 		actionbar = getSupportActionBar();
 		adapter = new TabsPagerAdapter(getSupportFragmentManager());
 		viewPager.setAdapter(adapter);
-		actionbar.setHomeButtonEnabled(false);
-		actionbar.setDisplayHomeAsUpEnabled(false);
-		actionbar.setDisplayShowHomeEnabled(false);
-		actionbar.setDisplayShowTitleEnabled(false);
-		
-		actionbar.setDisplayShowCustomEnabled(false);
-		actionbar.setDisplayUseLogoEnabled(false);
+		actionbar.hide();
 		
 		//actionbar.hide();
-		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
-		//Adding tabs
-		for(int i = 0; i < tabs.length; i++){
-			actionbar.addTab(actionbar.newTab().setText(tabs[i]).setTabListener(this).setIcon(icon[i]));
-			
-		}
+		/*
+		
 		
 		 viewPager
 	        .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -69,6 +70,7 @@ public class MainActivity extends ActionBarActivity implements
 	            }
 	        });
 		
+		*/
 		/*
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -115,25 +117,6 @@ public class MainActivity extends ActionBarActivity implements
 
 	
 
-	@Override
-	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction arg1) {
-		viewPager.setCurrentItem(tab.getPosition());
-		
-	}
-
-
-	@Override
-	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 }

@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -30,29 +29,29 @@ import android.widget.TextView;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends Fragment {
+public class LiveRadioFragment extends Fragment {
 	private Spanned spannedValue;
 	static final String mpObject = "mpObject";
 	static MediaPlayer mp = null;
 
-	public PlaceholderFragment() {
+	public LiveRadioFragment() {
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.fragment_main, container,
+		View rootView = inflater.inflate(R.layout.liveradio_fragment, container,
 				false);
 	
 		RequestTask rq = new RequestTask(this);
 
-		rq.execute("http://129.177.114.172:8080/SriBServer/rest/podcast");
+		rq.execute("http://10.0.2.2:8080/SriBServer/rest/podcast");
 
 		if (mp == null || !mp.isPlaying()) {
 			GetUrlTask gu = new GetUrlTask(this);
 
-			gu.execute("http://129.177.114.172:8080/SriBServer/rest/radiourl");
+			gu.execute("http://10.0.2.2:8080/SriBServer/rest/radiourl");
 		}else{
 			Log.i("Debug","Mp speler eller er ikkje null");
 		}
@@ -86,14 +85,7 @@ public class PlaceholderFragment extends Fragment {
 
 	}
 	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		SharedPreferences preferences = getActivity().getApplicationContext().getSharedPreferences("Data", 0); 
-		SharedPreferences.Editor editor = preferences.edit();
-
-		 
-		super.onSaveInstanceState(outState);
-	}
+	
 	@Override
 	public void onDestroy() {
 		Log.i("onDestroy","onDestroy vart kjørt");
