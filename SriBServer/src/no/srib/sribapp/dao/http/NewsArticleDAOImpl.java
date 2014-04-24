@@ -22,7 +22,7 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
 
     static {
         MAPPER = new ObjectMapper();
-        APIURL = "http://public-api.wordpress.com/rest/v1/sites/46783417/";
+        APIURL = "http://srib.no/wp_api/v1/";
     }
 
     @Override
@@ -30,7 +30,7 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         List<NewsArticle> list = null;
 
         try {
-            URL url = new URL(APIURL + "posts");
+            URL url = new URL(APIURL + "posts?post_type=post");
             NewsArticles newsArticles = MAPPER.readValue(url,
                     NewsArticles.class);
             list = newsArticles.getPosts();
@@ -47,7 +47,7 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         List<NewsArticle> list = null;
 
         try {
-            URL url = new URL(APIURL + "posts?number=" + number);
+            URL url = new URL(APIURL + "posts?post_type=post&per_page=" + number);
             NewsArticles newsArticles = MAPPER.readValue(url,
                     NewsArticles.class);
             list = newsArticles.getPosts();
