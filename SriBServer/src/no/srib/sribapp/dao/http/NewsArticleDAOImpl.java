@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import javax.ejb.Stateless;
+
 import org.codehaus.jackson.map.ObjectMapper;
 
 import no.srib.sribapp.dao.exception.DAOException;
@@ -11,6 +13,7 @@ import no.srib.sribapp.dao.http.helper.NewsArticles;
 import no.srib.sribapp.dao.interfaces.NewsArticleDAO;
 import no.srib.sribapp.model.NewsArticle;
 
+@Stateless
 public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         implements NewsArticleDAO {
 
