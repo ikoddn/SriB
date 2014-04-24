@@ -45,6 +45,7 @@ public class NewsArticleResource {
         try {
             list = newsArticleDAO.getRecentArticles(number);
         } catch (DAOException e) {
+            e.printStackTrace();
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
