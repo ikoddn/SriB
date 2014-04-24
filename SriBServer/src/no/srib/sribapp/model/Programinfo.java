@@ -25,7 +25,7 @@ public class Programinfo extends AbstractModel  {
 
 
 	@Id
-	@Column(insertable=false, updatable=false, unique=true, nullable=false)
+	@Column(insertable=false, unique=true, nullable=false)
 	public int getProgram() {
 		return this.program;
 	}

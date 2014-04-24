@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.hibernate.ScheduleDAOImpl;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
+import no.srib.sribapp.dao.jpa.ScheduleDAOImpl;
 
 /**
  * Servlet implementation class DeleteScheduleEntry

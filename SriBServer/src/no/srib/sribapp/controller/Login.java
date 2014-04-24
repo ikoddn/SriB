@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.hibernate.BackendUserDAOImpl;
+import no.srib.sribapp.dao.jpa.BackendUserDAOImpl;
 import no.srib.sribapp.dao.interfaces.BackendUserDAO;
 import no.srib.sribapp.model.Backenduser;
 import no.srib.sribapp.util.Security;

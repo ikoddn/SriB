@@ -28,7 +28,7 @@ public class Podcast extends AbstractModel  {
 
 
 	@Id
-	@Column(insertable=false, updatable=false, unique=true, nullable=false)
+	@Column(insertable=false, unique=true, nullable=false)
 	public int getRefnr() {
 		return this.refnr;
 	}

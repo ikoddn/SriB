@@ -2,6 +2,8 @@ package no.srib.sribapp.resource;
 
 import java.util.List;
 
+import javax.annotation.ManagedBean;
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -10,19 +12,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.hibernate.PodcastDAOImpl;
 import no.srib.sribapp.dao.interfaces.PodcastDAO;
 import no.srib.sribapp.model.Podcast;
 
 @Path("podcast")
 @Produces(MediaType.APPLICATION_JSON)
+@ManagedBean
 public class PodcastResource {
 
+    @EJB
     private PodcastDAO podcastDAO;
-
-    public PodcastResource() {
-        podcastDAO = new PodcastDAOImpl();
-    }
 
     /**
      * 

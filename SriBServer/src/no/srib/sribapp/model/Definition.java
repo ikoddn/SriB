@@ -20,7 +20,7 @@ public class Definition extends AbstractModel  {
 
 
 	@Id
-	@Column(insertable=false, updatable=false, unique=true, nullable=false)
+	@Column(insertable=false, unique=true, nullable=false)
 	public int getDefnr() {
 		return this.defnr;
 	}

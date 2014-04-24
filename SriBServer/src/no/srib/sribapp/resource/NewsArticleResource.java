@@ -2,6 +2,8 @@ package no.srib.sribapp.resource;
 
 import java.util.List;
 
+import javax.annotation.ManagedBean;
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -11,21 +13,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.http.NewsArticleDAOImpl;
 import no.srib.sribapp.dao.interfaces.NewsArticleDAO;
 import no.srib.sribapp.model.NewsArticle;
 
 @Path("news")
 @Produces(MediaType.APPLICATION_JSON)
+@ManagedBean
 public class NewsArticleResource {
 
     private static final int DEFAULT_NUMBER_OF_ARTICLES = 10;
 
+    @EJB
     private NewsArticleDAO newsArticleDAO;
-
-    public NewsArticleResource() {
-        newsArticleDAO = new NewsArticleDAOImpl();
-    }
 
     @GET
     public List<NewsArticle> getRecentArticles(

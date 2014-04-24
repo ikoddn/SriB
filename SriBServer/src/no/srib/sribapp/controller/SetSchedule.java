@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.hibernate.DefinitionDAOImpl;
-import no.srib.sribapp.dao.hibernate.ScheduleDAOImpl;
+import no.srib.sribapp.dao.jpa.DefinitionDAOImpl;
+import no.srib.sribapp.dao.jpa.ScheduleDAOImpl;
 import no.srib.sribapp.dao.interfaces.DefinitionDAO;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
 import no.srib.sribapp.model.Definition;

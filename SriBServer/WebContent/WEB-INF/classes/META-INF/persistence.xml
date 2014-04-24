@@ -5,7 +5,9 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 	version="2.1">
 
-	<persistence-unit name="heroku_test">
+	<persistence-unit name="heroku_test" transaction-type="JTA">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<jta-data-source>MyDatabaseResource</jta-data-source>
 		<class>no.srib.sribapp.model.Podcast</class>
 		<class>no.srib.sribapp.model.Programinfo</class>
 		<class>no.srib.sribapp.model.Definition</class>
@@ -13,26 +15,8 @@
 		<class>no.srib.sribapp.model.Backenduser</class>
 		<class>no.srib.sribapp.model.Schedule</class>
 
-
 		<properties>
-			<property name="javax.persistence.jdbc.url"
-				value="jdbc:mysql://eu-cdbr-west-01.cleardb.com:3306/heroku_080ddff3a8918b6" />
-			<property name="javax.persistence.jdbc.user" value="b3eaf9704bb2c5" />
-			<property name="javax.persistence.jdbc.password" value="e9b6ae79" />
-			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-			<property name="hibernate.show_sql" value="true" />
-
-			<property name="hibernate.connection.provider_class"
-				value="org.hibernate.connection.C3P0ConnectionProvider" />
-
-			<property name="hibernate.c3p0.max_size" value="100" />
-			<property name="hibernate.c3p0.min_size" value="0" />
-			<property name="hibernate.c3p0.acquire_increment" value="1" />
-			<property name="hibernate.c3p0.idle_test_period" value="300" />
-			<property name="hibernate.c3p0.max_statements" value="0" />
-			<property name="hibernate.c3p0.timeout" value="100" />
+			<property name="eclipselink.logging.level" value="FINE" />
 		</properties>
 	</persistence-unit>
 </persistence>
