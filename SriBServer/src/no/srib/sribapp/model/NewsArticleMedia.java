@@ -2,8 +2,8 @@ package no.srib.sribapp.model;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NewsArticleMedia extends AbstractModel {
@@ -11,11 +11,11 @@ public class NewsArticleMedia extends AbstractModel {
     private static final long serialVersionUID = 1L;
 
     private int id;
-    
+
     @JsonProperty("alt_text")
     private String altText;
     private List<NewsArticleImage> sizes;
-    
+
     public NewsArticleMedia() {
     }
 

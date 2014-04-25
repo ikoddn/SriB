@@ -2,8 +2,8 @@ package no.srib.sribapp.model;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NewsArticle extends AbstractModel {
@@ -14,10 +14,10 @@ public class NewsArticle extends AbstractModel {
     private String date;
     private String title;
     private String permalink;
-    
+
     @JsonProperty("excerpt_display")
     private String excerptDisplay;
-    
+
     @JsonProperty("content_display")
     private String contentDisplay;
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.http.helper.NewsArticles;
@@ -47,7 +47,8 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         List<NewsArticle> list = null;
 
         try {
-            URL url = new URL(APIURL + "posts?post_type=post&per_page=" + number);
+            URL url = new URL(APIURL + "posts?post_type=post&per_page="
+                    + number);
             NewsArticles newsArticles = MAPPER.readValue(url,
                     NewsArticles.class);
             list = newsArticles.getPosts();
