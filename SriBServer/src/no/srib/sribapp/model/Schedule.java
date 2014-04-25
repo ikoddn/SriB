@@ -1,6 +1,8 @@
 package no.srib.sribapp.model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlType;
+
 import java.sql.Time;
 
 
@@ -11,6 +13,7 @@ import java.sql.Time;
 @Entity
 @Table(name="schedule")
 @NamedQuery(name="Schedule.findAll", query="SELECT s FROM Schedule s")
+@XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class Schedule extends AbstractModel  {
 	private static final long serialVersionUID = 1L;
 	private int id;

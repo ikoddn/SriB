@@ -2,10 +2,13 @@ package no.srib.sribapp.model;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlType;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class NewsArticle extends AbstractModel {
 
     private static final long serialVersionUID = 1L;
