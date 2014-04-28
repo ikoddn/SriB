@@ -10,29 +10,38 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import no.srib.sribapp.dao.exception.DAOException;
+import no.srib.sribapp.dao.interfaces.StreamUrlScheduleDAO;
 import no.srib.sribapp.dao.interfaces.StreamurlDAO;
 import no.srib.sribapp.model.Streamurl;
+import no.srib.sribapp.model.Streamurlschedule;
 import no.srib.sribapp.resource.helper.StreamSchedule;
 
 @Path("radiourl")
 @Produces(MediaType.APPLICATION_JSON)
 @ManagedBean
 public class StreamURLResource {
-    private static int index = 0;
+    private static int index = 1;
 
     @EJB
     private StreamurlDAO streamURLDAO;
+    @EJB
+    private StreamUrlScheduleDAO streamUrlScheduleDAO;
 
     @GET
     public final StreamSchedule getCurrentStreamSchedule() throws DAOException {        
         Streamurl stream = streamURLDAO.getById(index);
-        index = (index + 1) % 2;
+       // Streamurlschedule st = streamUrlScheduleDAO.getNext();
+        //System.out.printf("%s %s",st.getFromtime(),st.getDay());
+        System.out.println(streamUrlScheduleDAO.isMainSourceActive());
+        if(index == 1){
+            index = 11;
+        }else{
+            index = 1;
+        }
 
         Calendar time = Calendar.getInstance();
-        time.set(Calendar.HOUR_OF_DAY, 14);
-        time.set(Calendar.MINUTE, 0);
-        time.set(Calendar.SECOND, 0);
-        time.set(Calendar.MILLISECOND, 0);
+        time.setTimeInMillis(System.currentTimeMillis());
+        
         
         return new StreamSchedule(stream.getName(), stream.getUrl(), time);
     }

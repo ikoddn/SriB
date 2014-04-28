@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Time;
 
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -62,7 +61,6 @@ public class AddUrlSchedule extends HttpServlet {
                 
                 try{
                     if(fromTimeString != null && toTimeString != null && dayString != null){
-                       System.out.printf("Fra : %s Til: %s Dag%s",fromTimeString, toTimeString,dayString);
                         if(fromTimeString.length() == 5 ){
                             fromTimeString += ":00";
                         }if(toTimeString.length() == 5){
@@ -71,6 +69,9 @@ public class AddUrlSchedule extends HttpServlet {
                         fromTime = Time.valueOf(fromTimeString);
                         toTime = Time.valueOf(toTimeString); 
                         day = Integer.valueOf(dayString);
+                        if(!fromTime.before(toTime)){
+                            throw new IllegalArgumentException();
+                        }
                     }else{
                        
                         throw new IllegalArgumentException();

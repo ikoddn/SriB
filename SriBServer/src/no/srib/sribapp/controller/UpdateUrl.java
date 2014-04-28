@@ -3,8 +3,8 @@ package no.srib.sribapp.controller;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.ejb.EJB;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.StreamurlDAO;
+import no.srib.sribapp.model.Streamurl;
 
 /**
  * Servlet implementation class UpdateUrl
@@ -22,6 +24,7 @@ import no.srib.sribapp.dao.interfaces.StreamurlDAO;
 public class UpdateUrl extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @EJB
     private StreamurlDAO streamurldao;
 
     public UpdateUrl() {
@@ -50,28 +53,47 @@ public class UpdateUrl extends HttpServlet {
         if (ses != null) {
             ses.setAttribute("errorUrl", new Boolean(false));
             if (ses.getAttribute("loggedIn").equals("true")) {
-                String url1 = request.getParameter("mainSource");
-                String url2 = request.getParameter("secondSource");
-                
+                String url = request.getParameter("url");
+                String name = request.getParameter("name");
+                String idString = request.getParameter("id");
+                System.out.println(idString);
+               
                 
                 try {
-                  URL urlTest1 = new URL(url1);
-                  URL urlTest2 = new URL(url2);
+                  new URL(url);
+                  
                 } catch (MalformedURLException e) {
-                  // it wasn't a URL
+                    ses.setAttribute("errorUrl", new Boolean(true));
+                    response.sendRedirect("/SriBServer/SetSource");
+                    return;
                 }
                 
-                if (url1 != null && url2 != null ) {
-                       
-                   // streamurldao.addElement(el);
+                if (url != null && name != null && idString != null ) {
+                    int id = Integer.valueOf(idString);
+                    Streamurl streamUrl = new Streamurl();
+                      streamUrl.setId(id);
+                      streamUrl.setName(name);
+                      streamUrl.setUrl(url);
                     
+                   try {
+                    streamurldao.updateElement(streamUrl);
+                } catch (DAOException e) {
+                    ses.setAttribute("errorUrl", new Boolean(true));
+                    response.sendRedirect("/SriBServer/SetSource");
+                    e.printStackTrace();
+                }
                     
+                response.sendRedirect("/SriBServer/SetSource");
+                return;
+                   
                 } else {
                     ses.setAttribute("errorUrl", new Boolean(true));
-                    response.sendRedirect("SribServer/SetSource");
+                    response.sendRedirect("/SriBServer/SetSource");
+                    return;
                 }
             }else{
                 response.sendRedirect("index.html");
+                return;
             }
         }
     }

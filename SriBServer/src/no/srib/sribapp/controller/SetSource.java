@@ -45,8 +45,8 @@ public class SetSource extends HttpServlet {
                 
                 List<Streamurl> streamUrlList = null;
                 List<Streamurlschedule> streamScheduleList = null;
-                String url1 = null;
-                String url2 = null;
+                Streamurl url1 = null;
+                Streamurl url2 = null;
                String [] dayArray = {"Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"};
                try {
                 streamUrlList = streamurlDAO.getList();
@@ -56,8 +56,8 @@ public class SetSource extends HttpServlet {
                 e.printStackTrace();
             }
                if(streamUrlList != null){
-                   url1 = streamUrlList.get(0).getUrl();
-                   url2 = streamUrlList.get(1).getUrl();
+                   url1 = streamUrlList.get(0);
+                   url2 = streamUrlList.get(1);
                }
                
                request.setAttribute("days", dayArray);

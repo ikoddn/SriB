@@ -33,4 +33,11 @@ public class StreamurlDAOImpl extends AbstractModelDAOImpl<Streamurl> implements
 
         return stream;
     }
+
+    @Override
+    public Streamurl getCurrent() throws DAOException {
+        
+        return null;
+    }
+ 
 }

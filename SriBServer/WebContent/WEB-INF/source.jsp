@@ -9,60 +9,71 @@
 <body>
 	<h1>Sett kilde</h1>
 	<c:if test="${errorUrl == true}">
-	<span style="color:red">Ugyldig url</span></c:if>
-	<form action="UpdateUrl" method="post"> 
-		Hovedkilde:<input type="url" value="${url1}" name="mainSource"
-			size="60"><br> Sekunderkilde:<input type="url"
-			value="${url2}" name="secondSource" size="60"><br>
+		<span style="color: red">Ugyldig url</span>
+	</c:if>
+	<form action="UpdateUrl" method="post">
+		<h4>Hovedkilde:</h4>
+		Navn:<input type="text" name="name" value='<c:out value="${url1.name}"/>' />
+		URL:<input type="url" value='<c:out value="${url1.url}"/>' name="url"
+			size="60">
+			<input type="hidden" name="id" value="${url1.id}" />
 			<input type="submit" value="Lagre" />
-			</form>
-		<h3>Skift til sekunderkilde i desse tidsromma:</h3>
-		
-		<c:if test="${errorUpdate == true}">
-		<span style="color:red">Ugyldig input</span>
-		</c:if>
-		<c:forEach items="${schedule}" var="el">
+	</form>
+	<form action="UpdateUrl" method="post">
+		<h4>Sekunderkilde:</h4>
+		Navn:<input type="text" name="name" value='<c:out value="${url2.name}"/>' />
+		URL:<input type="url" value='<c:out value="${url2.url}"/>' name="url"
+			size="60"> 
+			<input type="hidden" name="id" value="${url2.id}" />
+			<input type="submit" value="Lagre" />
+	</form>
+
+
+	<h3>Skift til sekunderkilde i desse tidsromma:</h3>
+
+	<c:if test="${errorUpdate == true}">
+		<span style="color: red">Ugyldig input</span>
+	</c:if>
+	<c:forEach items="${schedule}" var="el">
 		<form action="UpdateUrlSchedule" method="post">
 			<select name="day">
 				<c:forEach items="${days}" var="day" varStatus="loop">
-				
+
 
 					<c:if test="${loop.index+1 != el.day}">
 						<option value="${loop.index+1}">
-					<c:out value="${day}" />
-					</option>
+							<c:out value="${day}" />
+						</option>
 					</c:if>
-					
+
 					<c:if test="${loop.index+1 == el.day}">
-						<option value="${loop.index+1}" selected="selected" >
-					<c:out value="${day}" />
-					</option>
+						<option value="${loop.index+1}" selected="selected">
+							<c:out value="${day}" />
+						</option>
 					</c:if>
 
 
 				</c:forEach>
-			</select>
-			Fra:<input type="time" name="fromTime" value="${el.fromtime}"> Til: <input
-				type="time" name="toTime" value="${el.totime}">
-				<input type="hidden" name="id" value="${el.id}">
-			<input type="Submit" name="edit" value="Endre">
-			<input type="Submit" name="delete" value="Slett">
-			<br>
+			</select> Fra:<input type="time" name="fromTime" value="${el.fromtime}">
+			Til: <input type="time" name="toTime" value="${el.totime}"> <input
+				type="hidden" name="id" value="${el.id}"> <input
+				type="Submit" name="edit" value="Endre"> <input
+				type="Submit" name="delete" value="Slett"> <br>
 		</form>
-		</c:forEach>
-		
-		<h3>Legg til nytt tidspunkt</h3>
-		<form action="AddUrlSchedule" method="post">
+	</c:forEach>
+
+	<h3>Legg til nytt tidspunkt</h3>
+	<form action="AddUrlSchedule" method="post">
 		<c:if test="${errorNew == true}">
-		<span style="color:red">Ugyldig input</span>
+			<span style="color: red">Ugyldig input</span>
 		</c:if>
 		Fra: <select name="day">
-		
+
 			<c:forEach items="${days}" var="day" varStatus="loop">
 				<option value="${loop.index+1}"><c:out value="${day}" /></option>
 			</c:forEach>
-		</select> <input type="time" name="fromTime"> Til: <input type="time" name="toTime">
-		<input type="submit" value="Legg til">
+		</select> <input type="time" name="fromTime"> Til: <input type="time"
+			name="toTime"> <input type="submit" value="Legg til">
 
 	</form>
 

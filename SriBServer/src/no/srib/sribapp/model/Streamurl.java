@@ -23,7 +23,7 @@ public class Streamurl extends AbstractModel  {
 
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(unique=true, nullable=false)
 	public int getId() {
 		return this.id;

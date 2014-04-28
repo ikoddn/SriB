@@ -9,5 +9,9 @@ public interface StreamUrlScheduleDAO extends
         AbstractModelDAO<Streamurlschedule> {
     
     List<Streamurlschedule> getbyDay(int day) throws DAOException;
+    
+    Streamurlschedule getNext() throws DAOException;
+    
+    boolean isMainSourceActive() throws DAOException;
 
 }
