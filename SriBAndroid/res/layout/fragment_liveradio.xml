@@ -15,10 +15,18 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/button_liveradio"
+        android:id="@+id/button_liveradio_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/label_liveradio"
-        android:text="@string/button_liveradio" />
+        android:text="@string/button_liveradio_play" />
+    
+    <Button
+        android:id="@+id/button_liveradio_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_liveradio"
+        android:layout_toRightOf="@id/button_liveradio_play"
+        android:text="@string/button_liveradio_pause" />
 
 </RelativeLayout>
