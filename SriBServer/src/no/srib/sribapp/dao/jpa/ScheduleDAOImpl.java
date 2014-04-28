@@ -25,7 +25,7 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
     public List<Schedule> getSortedSchedule() throws DAOException {
         List<Schedule> result = null;
 
-        String queryString = "SELECT S FROM Schedule S ORDER BY DAY, FROMTIME, TOTIME";
+        String queryString = "SELECT S FROM Schedule S ORDER BY S.day, S.fromtime, S.totime";
         TypedQuery<Schedule> query = em
                 .createQuery(queryString, Schedule.class);
 
@@ -46,7 +46,7 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
         int day = time.get(Calendar.DAY_OF_WEEK);
         String timeString = dateFormat.format(time.getTime());
 
-        String queryString = "SELECT S FROM Schedule S WHERE DAY=:day AND FROMTIME<=:timeString AND TOTIME>:timeString";
+        String queryString = "SELECT S FROM Schedule S WHERE S.day=:day AND S.fromtime<=:timeString AND S.totime>:timeString";
         TypedQuery<Schedule> query = em
                 .createQuery(queryString, Schedule.class);
         query.setParameter("day", day);
@@ -66,7 +66,7 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
     @Override
     public void deleteSchedule(int id) throws DAOException {
         em.getTransaction().begin();
-        String queryString = "DELETE FROM Schedule S WHERE ID=:id";
+        String queryString = "DELETE FROM Schedule S WHERE S.id=:id";
         Query query = em.createQuery(queryString);
         query.setParameter("id", id);
         try {

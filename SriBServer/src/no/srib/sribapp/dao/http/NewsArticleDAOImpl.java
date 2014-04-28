@@ -72,4 +72,22 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
 
         return result;
     }
+
+    @Override
+    public void addElement(NewsArticle el) throws DAOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void updateElement(NewsArticle el) throws DAOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void removeElement(NewsArticle el) throws DAOException {
+        // TODO Auto-generated method stub
+        
+    }
 }

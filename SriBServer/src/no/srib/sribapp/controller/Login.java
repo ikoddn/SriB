@@ -2,6 +2,7 @@ package no.srib.sribapp.controller;
 
 import java.io.IOException;
 
+import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,9 +24,9 @@ import no.srib.sribapp.util.Security;
 public class Login extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    @EJB
+    private BackendUserDAO dao;
+    
     public Login() {
         super();
         // TODO Auto-generated constructor stub
@@ -70,7 +71,7 @@ public class Login extends HttpServlet {
             return;
         }
        
-        BackendUserDAO dao = new BackendUserDAOImpl();
+        
         Backenduser back = null;
         String hashInDB = null;
         

@@ -55,7 +55,7 @@ public class PodcastStream extends HttpServlet {
                 outStream.write(readByte);
                 readByte = bufferStream.read();
             }
-        } catch (IOException | InvalidParameterException e) {
+        } catch (InvalidParameterException e) {
             // TODO Treat exceptions, this will currently display an Apache error page
             throw new ServletException(e);
         } finally {

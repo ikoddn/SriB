@@ -18,7 +18,7 @@ public class BackendUserDAOImpl extends AbstractModelDAOImpl<Backenduser>
     @Override
     public Backenduser getByUserName(String username) throws DAOException {
         Backenduser result = null;
-        String queryString = "SELECT B FROM Backenduser B WHERE username=:username";
+        String queryString = "SELECT B FROM Backenduser B WHERE B.username=:username";
         TypedQuery<Backenduser> query = em.createQuery(queryString,
                 Backenduser.class);
         query.setParameter("username", username);

@@ -21,4 +21,28 @@ public interface AbstractModelDAO<T extends AbstractModel> {
      * @throws DAOException
      */
     List<T> getList() throws DAOException;
+    
+    /**
+     * Add a entity to the database.
+     * @param el - Element to be inserted.
+     * @throws DAOException
+     */
+    
+    void addElement(T el) throws DAOException;
+    
+    /**
+     * Update entity in database.
+     * @param el - Element to be updated.
+     * @throws DAOException
+     */
+    
+    void updateElement(T el) throws DAOException;
+    
+    
+    /**
+     * Remove element from database.
+     * @param el - Element to be removed.
+     * @throws DAOException
+     */
+    void removeElement(T el) throws DAOException;
 }

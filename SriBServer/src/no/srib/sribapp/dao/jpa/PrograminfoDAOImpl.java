@@ -19,7 +19,7 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
     public Programinfo getById(final int id) throws DAOException {
         Programinfo result = null;
 
-        String queryString = "SELECT P FROM PROGRAMINFO P WHERE PROGRAM=:id";
+        String queryString = "SELECT P FROM PROGRAMINFO P WHERE P.PROGRAM=:id";
         TypedQuery<Programinfo> query = em.createQuery(queryString,
                 Programinfo.class);
         query.setParameter("id", id);

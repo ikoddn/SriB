@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,9 +31,11 @@ import no.srib.sribapp.model.Schedule;
 public class SetSchedule extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    @EJB
+    private ScheduleDAO scheduleDAO;
+    @EJB
+    private DefinitionDAO dao;
+    
     public SetSchedule() {
         super();
         // TODO Auto-generated constructor stub
@@ -49,7 +52,7 @@ public class SetSchedule extends HttpServlet {
             if (ses.getAttribute("loggedIn").equals("true")) {
 
                 List<Definition> defList = null;
-                DefinitionDAO dao = new DefinitionDAOImpl();
+                
                 try {
                     defList = dao.getList();
                 } catch (DAOException e) {
@@ -57,7 +60,7 @@ public class SetSchedule extends HttpServlet {
                     e.printStackTrace();
                 }
 
-                ScheduleDAO scheduleDAO = new ScheduleDAOImpl();
+               
                 List<Schedule> scheduleList = null;
                 try {
                     scheduleList = scheduleDAO.getSortedSchedule();

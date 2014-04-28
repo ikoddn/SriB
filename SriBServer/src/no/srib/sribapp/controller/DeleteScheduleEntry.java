@@ -2,6 +2,7 @@ package no.srib.sribapp.controller;
 
 import java.io.IOException;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,9 +20,9 @@ import no.srib.sribapp.dao.jpa.ScheduleDAOImpl;
 public class DeleteScheduleEntry extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    @EJB
+    private ScheduleDAO scheduleDAO;
+    
     public DeleteScheduleEntry() {
         super();
         // TODO Auto-generated constructor stub
@@ -38,7 +39,7 @@ public class DeleteScheduleEntry extends HttpServlet {
         if (id != null) {
             idInt = Integer.parseInt(id);
         }
-        ScheduleDAO scheduleDAO = new ScheduleDAOImpl();
+       
         try {
             scheduleDAO.deleteSchedule(idInt);
         } catch (DAOException e) {
