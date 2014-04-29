@@ -2,7 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.R;
 import no.srib.app.client.MainActivity;
-import android.media.MediaPlayer;
+import no.srib.app.client.service.AudioPlayerService;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,12 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class LiveRadioFragment extends Fragment {
-
-	private boolean paused;
-
-	public LiveRadioFragment() {
-		paused = false;
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,21 +38,17 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View button) {
-			MediaPlayer mediaPlayer = ((MainActivity) getActivity())
-					.getAudioPlayerService().getMediaPlayer();
+			AudioPlayerService audioPlayer = ((MainActivity) getActivity())
+					.getAudioPlayerService();
 			TextView label = (TextView) getActivity().findViewById(
 					R.id.label_liveradio);
 
-			if (paused) {
-				mediaPlayer.start();
-				paused = false;
-				label.setText("start");
-			} else if (mediaPlayer.isPlaying()) {
-				mediaPlayer.stop();
+			if (audioPlayer.getState() == AudioPlayerService.State.STARTED) {
+				audioPlayer.stop();
 				label.setText("stop");
 			} else {
-				mediaPlayer.prepareAsync();
-				label.setText("prepareAsync");
+				audioPlayer.start();
+				label.setText("start");
 			}
 		}
 	}
@@ -67,16 +57,13 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			MediaPlayer mediaPlayer = ((MainActivity) getActivity())
-					.getAudioPlayerService().getMediaPlayer();
+			AudioPlayerService audioPlayer = ((MainActivity) getActivity())
+					.getAudioPlayerService();
 			TextView label = (TextView) getActivity().findViewById(
 					R.id.label_liveradio);
 
-			if (!paused && mediaPlayer.isPlaying()) {
-				mediaPlayer.pause();
-				paused = true;
-				label.setText("pause");
-			}
+			audioPlayer.pause();
+			label.setText("pause");
 		}
 	}
 

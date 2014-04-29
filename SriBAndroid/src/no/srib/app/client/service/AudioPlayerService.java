@@ -15,22 +15,69 @@ import android.util.Log;
 
 public class AudioPlayerService extends Service {
 
+	public enum State {
+		STOPPED,
+		PREPARING,
+		STARTED,
+		PAUSED
+	}
+
 	private final IBinder binder;
 
+	private State state;
 	private MediaPlayer mediaPlayer;
 
 	public AudioPlayerService() {
 		binder = new AudioPlayerBinder();
 	}
 
-	public MediaPlayer getMediaPlayer() {
-		return mediaPlayer;
+	public State getState() {
+		return state;
+	}
+
+	public void start() {
+		switch (state) {
+		case STOPPED:
+			mediaPlayer.prepareAsync();
+			state = State.PREPARING;
+			break;
+		case PAUSED:
+			mediaPlayer.start();
+			state = State.STARTED;
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void pause() {
+		switch (state) {
+		case STARTED:
+			mediaPlayer.pause();
+			state = State.PAUSED;
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void stop() {
+		switch (state) {
+		case STARTED:
+		case PAUSED:
+			mediaPlayer.stop();
+			state = State.STOPPED;
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
+		state = State.STOPPED;
 		mediaPlayer = new MediaPlayer();
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -53,7 +100,6 @@ public class AudioPlayerService extends Service {
 		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
 		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
 		mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
-		//mediaPlayer.prepareAsync();
 	}
 
 	@Override
@@ -68,35 +114,6 @@ public class AudioPlayerService extends Service {
 			mediaPlayer.reset();
 			mediaPlayer.release();
 		}
-	}
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-		try {
-			mediaPlayer.setDataSource("http://radio.srib.no:8888/srib.mp3");
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
-		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
-		mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
-		//mediaPlayer.prepareAsync();
-
-		return START_STICKY;
 	}
 
 	@Override
@@ -115,6 +132,7 @@ public class AudioPlayerService extends Service {
 		@Override
 		public void onPrepared(MediaPlayer mediaPlayer) {
 			mediaPlayer.start();
+			state = State.STARTED;
 		}
 	}
 
