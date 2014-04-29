@@ -30,6 +30,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="no.srib.app.client.service.AudioPlayerService"
+            android:exported="false" />
     </application>
 
 </manifest>

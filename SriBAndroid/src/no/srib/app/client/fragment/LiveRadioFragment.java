@@ -1,11 +1,8 @@
 package no.srib.app.client.fragment;
 
-import java.io.IOException;
-
 import no.srib.R;
-import android.media.AudioManager;
+import no.srib.app.client.MainActivity;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,12 +15,9 @@ import android.widget.TextView;
 public class LiveRadioFragment extends Fragment {
 
 	private boolean paused;
-	private MediaPlayer mediaPlayer;
 
 	public LiveRadioFragment() {
 		paused = false;
-		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 	}
 
 	@Override
@@ -43,24 +37,6 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_pause);
 		pauseButton.setOnClickListener(new PauseButtonListener());
 
-		try {
-			mediaPlayer.setDataSource("http://radio.srib.no:8888/srib.mp3");
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
-
 		return rootView;
 	}
 
@@ -68,6 +44,8 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View button) {
+			MediaPlayer mediaPlayer = ((MainActivity) getActivity())
+					.getAudioPlayerService().getMediaPlayer();
 			TextView label = (TextView) getActivity().findViewById(
 					R.id.label_liveradio);
 
@@ -89,22 +67,17 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
+			MediaPlayer mediaPlayer = ((MainActivity) getActivity())
+					.getAudioPlayerService().getMediaPlayer();
 			TextView label = (TextView) getActivity().findViewById(
 					R.id.label_liveradio);
 
 			if (!paused && mediaPlayer.isPlaying()) {
 				mediaPlayer.pause();
-				label.setText("pause");
 				paused = true;
+				label.setText("pause");
 			}
 		}
 	}
 
-	private class MediaPlayerPreparedListener implements OnPreparedListener {
-
-		@Override
-		public void onPrepared(MediaPlayer mp) {
-			mediaPlayer.start();
-		}
-	}
 }
