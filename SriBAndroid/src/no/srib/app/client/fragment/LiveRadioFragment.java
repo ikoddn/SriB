@@ -63,7 +63,10 @@ public class LiveRadioFragment extends Fragment {
 					R.id.label_liveradio);
 
 			audioPlayer.pause();
-			label.setText("pause");
+
+			if (audioPlayer.getState() == AudioPlayerService.State.PAUSED) {
+				label.setText("pause");
+			}
 		}
 	}
 
