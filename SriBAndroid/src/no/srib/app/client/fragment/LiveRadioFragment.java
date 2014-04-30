@@ -14,14 +14,15 @@ import android.widget.TextView;
 
 public class LiveRadioFragment extends Fragment {
 
+	private TextView label;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_liveradio,
 				container, false);
-		TextView textView = (TextView) rootView
-				.findViewById(R.id.label_liveradio);
-		textView.setText("Live radio fragment");
+		label = (TextView) rootView.findViewById(R.id.label_liveradio);
+		label.setText("Live radio fragment");
 
 		Button playButton = (Button) rootView
 				.findViewById(R.id.button_liveradio_play);
@@ -40,8 +41,6 @@ public class LiveRadioFragment extends Fragment {
 		public void onClick(View button) {
 			AudioPlayerService audioPlayer = ((MainActivity) getActivity())
 					.getAudioPlayerService();
-			TextView label = (TextView) getActivity().findViewById(
-					R.id.label_liveradio);
 
 			if (audioPlayer.getState() == AudioPlayerService.State.STARTED) {
 				audioPlayer.stop();
@@ -59,8 +58,6 @@ public class LiveRadioFragment extends Fragment {
 		public void onClick(View v) {
 			AudioPlayerService audioPlayer = ((MainActivity) getActivity())
 					.getAudioPlayerService();
-			TextView label = (TextView) getActivity().findViewById(
-					R.id.label_liveradio);
 
 			audioPlayer.pause();
 
