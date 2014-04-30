@@ -26,6 +26,8 @@ public class MainActivity extends ActionBarActivity {
 	private final static int PODCAST_FRAGMENT = 1;
 	private final static int ARTICLES_FRAGMENT = 2;
 
+	private final static int NUMBER_OF_FRAGMENTS = 3;
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -33,14 +35,15 @@ public class MainActivity extends ActionBarActivity {
 	 * becomes too memory intensive, it may be best to switch to a
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
-	private SectionsPagerAdapter mSectionsPagerAdapter;
+	private SectionsPagerAdapter sectionsPagerAdapter;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
-	private ViewPager mViewPager;
-	private AudioPlayerService audioPlayerService;
+	private ViewPager viewPager;
+
 	private boolean serviceBound;
+	private AudioPlayerService audioPlayerService;
 	private ServiceConnection serviceConnection;
 
 	public AudioPlayerService getAudioPlayerService() {
@@ -54,15 +57,15 @@ public class MainActivity extends ActionBarActivity {
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
+		sectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		viewPager = (ViewPager) findViewById(R.id.pager);
+		viewPager.setAdapter(sectionsPagerAdapter);
 
-		audioPlayerService = null;
 		serviceBound = false;
+		audioPlayerService = null;
 		serviceConnection = new AudioPlayerServiceConnection();
 
 		doBindService();
@@ -92,7 +95,6 @@ public class MainActivity extends ActionBarActivity {
 		// class name because we want a specific service implementation that
 		// we know will be running in our own process (and thus won't be
 		// supporting component replacement by other applications).
-
 		bindService(new Intent(MainActivity.this, AudioPlayerService.class),
 				serviceConnection, Context.BIND_AUTO_CREATE);
 		serviceBound = true;
@@ -132,8 +134,7 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 3;
+			return NUMBER_OF_FRAGMENTS;
 		}
 	}
 
@@ -146,11 +147,10 @@ public class MainActivity extends ActionBarActivity {
 			// interact with the service. Because we have bound to a explicit
 			// service that we know is running in our own process, we can
 			// cast its IBinder to a concrete class and directly access it.
-
 			audioPlayerService = ((AudioPlayerService.AudioPlayerBinder) service)
 					.getService();
 
-			String tag = getFragmentTag(mViewPager.getId(), LIVERADIO_FRAGMENT);
+			String tag = getFragmentTag(viewPager.getId(), LIVERADIO_FRAGMENT);
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
 					.findFragmentByTag(tag);
 			liveRadioFragment.setAudioPlayer(audioPlayerService);
@@ -162,7 +162,6 @@ public class MainActivity extends ActionBarActivity {
 			// unexpectedly disconnected -- that is, its process crashed.
 			// Because it is running in our same process, we should never
 			// see this happen.
-
 			audioPlayerService = null;
 		}
 	}
