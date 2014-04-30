@@ -17,78 +17,18 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 	private final IBinder binder;
 
-	private State state;
-	private StateListener stateListener;
+	private StateHandler stateHandler;
 	private MediaPlayer mediaPlayer;
 
 	public AudioPlayerService() {
 		binder = new AudioPlayerBinder();
 	}
 
-	private void setState(State state) {
-		this.state = state;
-
-		if (stateListener != null) {
-			stateListener.onStateChanged(state);
-		}
-	}
-
-	@Override
-	public void setStateListener(StateListener stateListener) {
-		this.stateListener = stateListener;
-	}
-
-	@Override
-	public void start() {
-		switch (state) {
-		case STOPPED:
-			mediaPlayer.prepareAsync();
-			setState(State.PREPARING);
-			break;
-		case PAUSED:
-			mediaPlayer.start();
-			setState(State.STARTED);
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void pause() {
-		switch (state) {
-		case STARTED:
-			mediaPlayer.pause();
-			setState(State.PAUSED);
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void stop() {
-		switch (state) {
-		case STARTED:
-		case PAUSED:
-			mediaPlayer.stop();
-			setState(State.STOPPED);
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public boolean isPlaying() {
-		return state == State.STARTED;
-	}
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		setState(State.STOPPED);
+		stateHandler = new StateHandler();
 		mediaPlayer = new MediaPlayer();
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -111,6 +51,8 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
 		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
 		mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
+
+		stateHandler.setState(State.STOPPED);
 	}
 
 	@Override
@@ -124,12 +66,70 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 			mediaPlayer.reset();
 			mediaPlayer.release();
+
+			stateHandler.setState(State.UNINITIALIZED);
 		}
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return binder;
+	}
+
+	@Override
+	public void start() {
+		switch (stateHandler.getState()) {
+		case STOPPED:
+			mediaPlayer.prepareAsync();
+			stateHandler.setState(State.PREPARING);
+			break;
+		case PAUSED:
+			mediaPlayer.start();
+			stateHandler.setState(State.STARTED);
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void pause() {
+		switch (stateHandler.getState()) {
+		case STARTED:
+			mediaPlayer.pause();
+			stateHandler.setState(State.PAUSED);
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void stop() {
+		switch (stateHandler.getState()) {
+		case STARTED:
+		case PAUSED:
+			mediaPlayer.stop();
+			stateHandler.setState(State.STOPPED);
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public boolean isPlaying() {
+		return stateHandler.getState() == State.STARTED;
+	}
+
+	@Override
+	public State getState() {
+		return stateHandler.getState();
+	}
+
+	@Override
+	public void setStateListener(StateListener stateListener) {
+		stateHandler.setStateListener(stateListener);
 	}
 
 	public class AudioPlayerBinder extends Binder {
@@ -143,7 +143,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		@Override
 		public void onPrepared(MediaPlayer mediaPlayer) {
 			mediaPlayer.start();
-			setState(State.STARTED);
+			stateHandler.setState(State.STARTED);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		@Override
 		public void onCompletion(MediaPlayer arg0) {
 			stopSelf();
-			setState(State.STOPPED);
+			stateHandler.setState(State.UNINITIALIZED);
 		}
 	}
 
@@ -192,10 +192,9 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 			Log.e("SriB::AudioPlayerService", sb.toString());
 
 			mediaPlayer.reset();
-			setState(State.STOPPED);
+			stateHandler.setState(State.STOPPED);
 
 			return false;
 		}
 	}
-
 }

@@ -2,6 +2,8 @@ package no.srib.app.client.audioplayer;
 
 public interface AudioPlayer {
 
+	State getState();
+
 	void setStateListener(StateListener stateListener);
 
 	/**
@@ -28,6 +30,7 @@ public interface AudioPlayer {
 	boolean isPlaying();
 
 	enum State {
+		UNINITIALIZED,
 		STOPPED,
 		PREPARING,
 		STARTED,
