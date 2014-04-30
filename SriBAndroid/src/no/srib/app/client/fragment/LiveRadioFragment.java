@@ -2,8 +2,10 @@ package no.srib.app.client.fragment;
 
 import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
+import no.srib.app.client.audioplayer.AudioPlayerException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +39,10 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_pause);
 		pauseButton.setOnClickListener(new PauseButtonListener());
 
+		Button dataSourceButton = (Button) rootView
+				.findViewById(R.id.button_liveradio_datasource);
+		dataSourceButton.setOnClickListener(new DataSourceButtonListener());
+
 		return rootView;
 	}
 
@@ -57,6 +63,19 @@ public class LiveRadioFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			audioPlayer.pause();
+		}
+	}
+
+	private class DataSourceButtonListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			try {
+				audioPlayer.setDataSource("http://radio.srib.no:8888/srib.mp3");
+			} catch (AudioPlayerException e) {
+				// TODO Auto-generated catch block
+				Log.e("SriB", e.getMessage());
+			}
 		}
 	}
 

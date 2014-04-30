@@ -2,7 +2,6 @@ package no.srib.app.client;
 
 import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
-import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.audioplayer.AudioPlayerService;
 import no.srib.app.client.fragment.ArticlesFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
@@ -19,7 +18,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -160,13 +158,6 @@ public class MainActivity extends ActionBarActivity {
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
 					.findFragmentByTag(tag);
 			liveRadioFragment.setAudioPlayer(audioPlayer);
-
-			try {
-				audioPlayer.setDataSource("http://radio.srib.no:8888/srib.mp3");
-			} catch (AudioPlayerException e) {
-				// TODO Auto-generated catch block
-				Log.e("SriB", e.getMessage());
-			}
 		}
 
 		@Override

@@ -34,19 +34,22 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
 	}
 
+	private void uninitializeMediaPlayer() {
+		if (mediaPlayer.isPlaying()) {
+			mediaPlayer.stop();
+		}
+
+		mediaPlayer.reset();
+		stateHandler.setState(State.UNINITIALIZED);
+	}
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 
 		if (mediaPlayer != null) {
-			if (mediaPlayer.isPlaying()) {
-				mediaPlayer.stop();
-			}
-
-			mediaPlayer.reset();
+			uninitializeMediaPlayer();
 			mediaPlayer.release();
-
-			stateHandler.setState(State.UNINITIALIZED);
 		}
 	}
 
@@ -57,6 +60,10 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 	@Override
 	public void setDataSource(String dataSource) throws AudioPlayerException {
+		if (stateHandler.getState() != State.UNINITIALIZED) {
+			uninitializeMediaPlayer();
+		}
+
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 		try {

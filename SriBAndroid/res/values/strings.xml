@@ -9,5 +9,6 @@
     <!-- Live radio fragment -->
     <string name="button_liveradio_play">Play/Stop</string>
     <string name="button_liveradio_pause">Pause</string>
+    <string name="button_liveradio_datasource">Set datasource</string>
 
 </resources>
