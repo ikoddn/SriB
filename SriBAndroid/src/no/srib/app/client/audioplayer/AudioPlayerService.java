@@ -1,4 +1,4 @@
-package no.srib.app.client.service;
+package no.srib.app.client.audioplayer;
 
 import java.io.IOException;
 
@@ -13,14 +13,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-public class AudioPlayerService extends Service {
-
-	public enum State {
-		STOPPED,
-		PREPARING,
-		STARTED,
-		PAUSED
-	}
+public class AudioPlayerService extends Service implements AudioPlayer {
 
 	private final IBinder binder;
 
@@ -32,11 +25,7 @@ public class AudioPlayerService extends Service {
 		binder = new AudioPlayerBinder();
 	}
 
-	public State getState() {
-		return state;
-	}
-
-	public void setState(State state) {
+	private void setState(State state) {
 		this.state = state;
 
 		if (stateListener != null) {
@@ -44,10 +33,12 @@ public class AudioPlayerService extends Service {
 		}
 	}
 
+	@Override
 	public void setStateListener(StateListener stateListener) {
 		this.stateListener = stateListener;
 	}
 
+	@Override
 	public void start() {
 		switch (state) {
 		case STOPPED:
@@ -56,13 +47,14 @@ public class AudioPlayerService extends Service {
 			break;
 		case PAUSED:
 			mediaPlayer.start();
-			setState(state = State.STARTED);
+			setState(State.STARTED);
 			break;
 		default:
 			break;
 		}
 	}
 
+	@Override
 	public void pause() {
 		switch (state) {
 		case STARTED:
@@ -74,6 +66,7 @@ public class AudioPlayerService extends Service {
 		}
 	}
 
+	@Override
 	public void stop() {
 		switch (state) {
 		case STARTED:
@@ -84,6 +77,11 @@ public class AudioPlayerService extends Service {
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public boolean isPlaying() {
+		return state == State.STARTED;
 	}
 
 	@Override
@@ -134,10 +132,6 @@ public class AudioPlayerService extends Service {
 		return binder;
 	}
 
-	public interface StateListener {
-		void onStateChanged(State state);
-	}
-
 	public class AudioPlayerBinder extends Binder {
 		public AudioPlayerService getService() {
 			return AudioPlayerService.this;
@@ -158,6 +152,7 @@ public class AudioPlayerService extends Service {
 		@Override
 		public void onCompletion(MediaPlayer arg0) {
 			stopSelf();
+			setState(State.STOPPED);
 		}
 	}
 
@@ -197,8 +192,10 @@ public class AudioPlayerService extends Service {
 			Log.e("SriB::AudioPlayerService", sb.toString());
 
 			mediaPlayer.reset();
+			setState(State.STOPPED);
 
 			return false;
 		}
 	}
+
 }

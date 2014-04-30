@@ -32,7 +32,7 @@
         </activity>
 
         <service
-            android:name="no.srib.app.client.service.AudioPlayerService"
+            android:name="no.srib.app.client.audioplayer.AudioPlayerService"
             android:exported="false" />
     </application>
 

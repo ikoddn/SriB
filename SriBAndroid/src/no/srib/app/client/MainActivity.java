@@ -1,10 +1,11 @@
 package no.srib.app.client;
 
 import no.srib.R;
+import no.srib.app.client.audioplayer.AudioPlayer;
+import no.srib.app.client.audioplayer.AudioPlayerService;
 import no.srib.app.client.fragment.ArticlesFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.PodcastFragment;
-import no.srib.app.client.service.AudioPlayerService;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -43,12 +44,8 @@ public class MainActivity extends ActionBarActivity {
 	private ViewPager viewPager;
 
 	private boolean serviceBound;
-	private AudioPlayerService audioPlayerService;
+	private AudioPlayer audioPlayer;
 	private ServiceConnection serviceConnection;
-
-	public AudioPlayerService getAudioPlayerService() {
-		return audioPlayerService;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
 		viewPager.setAdapter(sectionsPagerAdapter);
 
 		serviceBound = false;
-		audioPlayerService = null;
+		audioPlayer = null;
 		serviceConnection = new AudioPlayerServiceConnection();
 
 		doBindService();
@@ -147,13 +144,13 @@ public class MainActivity extends ActionBarActivity {
 			// interact with the service. Because we have bound to a explicit
 			// service that we know is running in our own process, we can
 			// cast its IBinder to a concrete class and directly access it.
-			audioPlayerService = ((AudioPlayerService.AudioPlayerBinder) service)
+			audioPlayer = ((AudioPlayerService.AudioPlayerBinder) service)
 					.getService();
 
 			String tag = getFragmentTag(viewPager.getId(), LIVERADIO_FRAGMENT);
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
 					.findFragmentByTag(tag);
-			liveRadioFragment.setAudioPlayer(audioPlayerService);
+			liveRadioFragment.setAudioPlayer(audioPlayer);
 		}
 
 		@Override
@@ -162,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
 			// unexpectedly disconnected -- that is, its process crashed.
 			// Because it is running in our same process, we should never
 			// see this happen.
-			audioPlayerService = null;
+			audioPlayer = null;
 		}
 	}
 
