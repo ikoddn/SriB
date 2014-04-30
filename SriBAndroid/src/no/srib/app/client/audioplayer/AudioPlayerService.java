@@ -1,7 +1,5 @@
 package no.srib.app.client.audioplayer;
 
-import java.io.IOException;
-
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -30,29 +28,10 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 		stateHandler = new StateHandler();
 		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-		try {
-			mediaPlayer.setDataSource("http://radio.srib.no:8888/srib.mp3");
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
 		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
 		mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
-
-		stateHandler.setState(State.STOPPED);
 	}
 
 	@Override
@@ -74,6 +53,18 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return binder;
+	}
+
+	@Override
+	public void setDataSource(String dataSource) throws AudioPlayerException {
+		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+		try {
+			mediaPlayer.setDataSource(dataSource);
+			stateHandler.setState(State.STOPPED);
+		} catch (Exception e) {
+			throw new AudioPlayerException(e);
+		}
 	}
 
 	@Override

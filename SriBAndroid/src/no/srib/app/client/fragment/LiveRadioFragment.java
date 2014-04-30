@@ -77,6 +77,9 @@ public class LiveRadioFragment extends Fragment {
 			case STOPPED:
 				label.setText("stopped");
 				break;
+			case UNINITIALIZED:
+				label.setText("uninitialized");
+				break;
 			default:
 				break;
 			}
