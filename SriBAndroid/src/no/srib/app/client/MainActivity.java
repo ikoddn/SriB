@@ -22,6 +22,10 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
+	private final static int LIVERADIO_FRAGMENT = 0;
+	private final static int PODCAST_FRAGMENT = 1;
+	private final static int ARTICLES_FRAGMENT = 2;
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -115,12 +119,14 @@ public class MainActivity extends ActionBarActivity {
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
 			switch (position) {
-			case 0:
+			case LIVERADIO_FRAGMENT:
 				return new LiveRadioFragment();
-			case 1:
+			case PODCAST_FRAGMENT:
 				return new PodcastFragment();
-			default:
+			case ARTICLES_FRAGMENT:
 				return new ArticlesFragment();
+			default:
+				return null;
 			}
 		}
 
@@ -143,6 +149,11 @@ public class MainActivity extends ActionBarActivity {
 
 			audioPlayerService = ((AudioPlayerService.AudioPlayerBinder) service)
 					.getService();
+
+			String tag = getFragmentTag(mViewPager.getId(), LIVERADIO_FRAGMENT);
+			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
+					.findFragmentByTag(tag);
+			liveRadioFragment.setAudioPlayer(audioPlayerService);
 		}
 
 		@Override
@@ -154,5 +165,9 @@ public class MainActivity extends ActionBarActivity {
 
 			audioPlayerService = null;
 		}
+	}
+
+	private static String getFragmentTag(int viewPagerId, int index) {
+		return "android:switcher:" + viewPagerId + ":" + index;
 	}
 }

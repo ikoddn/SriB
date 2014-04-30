@@ -1,7 +1,6 @@
 package no.srib.app.client.fragment;
 
 import no.srib.R;
-import no.srib.app.client.MainActivity;
 import no.srib.app.client.service.AudioPlayerService;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,12 @@ import android.widget.TextView;
 
 public class LiveRadioFragment extends Fragment {
 
+	private AudioPlayerService audioPlayer;
 	private TextView label;
+
+	public void setAudioPlayer(AudioPlayerService audioPlayer) {
+		this.audioPlayer = audioPlayer;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,9 +43,6 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View button) {
-			AudioPlayerService audioPlayer = ((MainActivity) getActivity())
-					.getAudioPlayerService();
-
 			if (audioPlayer.getState() == AudioPlayerService.State.STARTED) {
 				audioPlayer.stop();
 				label.setText("stop");
@@ -56,9 +57,6 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			AudioPlayerService audioPlayer = ((MainActivity) getActivity())
-					.getAudioPlayerService();
-
 			audioPlayer.pause();
 
 			if (audioPlayer.getState() == AudioPlayerService.State.PAUSED) {
@@ -66,5 +64,4 @@ public class LiveRadioFragment extends Fragment {
 			}
 		}
 	}
-
 }
