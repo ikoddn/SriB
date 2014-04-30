@@ -25,6 +25,7 @@ public class AudioPlayerService extends Service {
 	private final IBinder binder;
 
 	private State state;
+	private StateListener stateListener;
 	private MediaPlayer mediaPlayer;
 
 	public AudioPlayerService() {
@@ -35,15 +36,27 @@ public class AudioPlayerService extends Service {
 		return state;
 	}
 
+	public void setState(State state) {
+		this.state = state;
+
+		if (stateListener != null) {
+			stateListener.onStateChanged(state);
+		}
+	}
+
+	public void setStateListener(StateListener stateListener) {
+		this.stateListener = stateListener;
+	}
+
 	public void start() {
 		switch (state) {
 		case STOPPED:
 			mediaPlayer.prepareAsync();
-			state = State.PREPARING;
+			setState(State.PREPARING);
 			break;
 		case PAUSED:
 			mediaPlayer.start();
-			state = State.STARTED;
+			setState(state = State.STARTED);
 			break;
 		default:
 			break;
@@ -54,7 +67,7 @@ public class AudioPlayerService extends Service {
 		switch (state) {
 		case STARTED:
 			mediaPlayer.pause();
-			state = State.PAUSED;
+			setState(State.PAUSED);
 			break;
 		default:
 			break;
@@ -66,7 +79,7 @@ public class AudioPlayerService extends Service {
 		case STARTED:
 		case PAUSED:
 			mediaPlayer.stop();
-			state = State.STOPPED;
+			setState(State.STOPPED);
 			break;
 		default:
 			break;
@@ -77,7 +90,7 @@ public class AudioPlayerService extends Service {
 	public void onCreate() {
 		super.onCreate();
 
-		state = State.STOPPED;
+		setState(State.STOPPED);
 		mediaPlayer = new MediaPlayer();
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -121,6 +134,10 @@ public class AudioPlayerService extends Service {
 		return binder;
 	}
 
+	public interface StateListener {
+		void onStateChanged(State state);
+	}
+
 	public class AudioPlayerBinder extends Binder {
 		public AudioPlayerService getService() {
 			return AudioPlayerService.this;
@@ -132,7 +149,7 @@ public class AudioPlayerService extends Service {
 		@Override
 		public void onPrepared(MediaPlayer mediaPlayer) {
 			mediaPlayer.start();
-			state = State.STARTED;
+			setState(State.STARTED);
 		}
 	}
 

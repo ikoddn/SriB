@@ -2,6 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.R;
 import no.srib.app.client.service.AudioPlayerService;
+import no.srib.app.client.service.AudioPlayerService.State;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ public class LiveRadioFragment extends Fragment {
 
 	public void setAudioPlayer(AudioPlayerService audioPlayer) {
 		this.audioPlayer = audioPlayer;
+		audioPlayer.setStateListener(new AudioPlayerStateListener());
 	}
 
 	@Override
@@ -45,10 +47,8 @@ public class LiveRadioFragment extends Fragment {
 		public void onClick(View button) {
 			if (audioPlayer.getState() == AudioPlayerService.State.STARTED) {
 				audioPlayer.stop();
-				label.setText("stop");
 			} else {
 				audioPlayer.start();
-				label.setText("start");
 			}
 		}
 	}
@@ -58,9 +58,29 @@ public class LiveRadioFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			audioPlayer.pause();
+		}
+	}
 
-			if (audioPlayer.getState() == AudioPlayerService.State.PAUSED) {
-				label.setText("pause");
+	private class AudioPlayerStateListener implements
+			AudioPlayerService.StateListener {
+
+		@Override
+		public void onStateChanged(State state) {
+			switch (state) {
+			case PAUSED:
+				label.setText("paused");
+				break;
+			case PREPARING:
+				label.setText("preparing");
+				break;
+			case STARTED:
+				label.setText("started");
+				break;
+			case STOPPED:
+				label.setText("stopped");
+				break;
+			default:
+				break;
 			}
 		}
 	}
