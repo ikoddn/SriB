@@ -40,8 +40,8 @@ public class StreamURLResource {
         }
 
         Calendar time = Calendar.getInstance();
+        long timeInMs = time.getTimeInMillis() + 30000;
         
-        
-        return new StreamSchedule(stream.getName(), stream.getUrl(), time);
+        return new StreamSchedule(stream.getName(), stream.getUrl(), timeInMs);
     }
 }

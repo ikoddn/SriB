@@ -1,19 +1,18 @@
 package no.srib.sribapp.resource.helper;
 
 import java.io.Serializable;
-import java.util.Calendar;
 
 public class StreamSchedule implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String name;
     private String url;
-    private Calendar time;
-    
+    private long time;
+
     public StreamSchedule() {
     }
-    
-    public StreamSchedule(final String name, final String url, final Calendar time) {
+
+    public StreamSchedule(final String name, final String url, final long time) {
         this.name = name;
         this.url = url;
         this.time = time;
@@ -35,11 +34,11 @@ public class StreamSchedule implements Serializable {
         this.url = url;
     }
 
-    public Calendar getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(Calendar time) {
+    public void setTime(long time) {
         this.time = time;
     }
 }
