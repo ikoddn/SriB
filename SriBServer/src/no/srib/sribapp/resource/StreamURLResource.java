@@ -40,7 +40,6 @@ public class StreamURLResource {
         }
 
         Calendar time = Calendar.getInstance();
-        time.setTimeInMillis(System.currentTimeMillis());
         
         
         return new StreamSchedule(stream.getName(), stream.getUrl(), time);
