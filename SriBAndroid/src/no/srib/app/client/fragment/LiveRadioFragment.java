@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.R;
+import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import android.os.Bundle;
@@ -43,6 +44,8 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_datasource);
 		dataSourceButton.setOnClickListener(new DataSourceButtonListener());
 
+		HttpAsyncTask httpAsyncTask = new HttpAsyncTask();
+		httpAsyncTask.execute("http://10.0.2.2:8080/SriBServer/rest/radiourl");
 		return rootView;
 	}
 
