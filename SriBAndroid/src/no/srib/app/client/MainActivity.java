@@ -10,6 +10,7 @@ import no.srib.R;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
+import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.audioplayer.AudioPlayerService;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.model.StreamSchedule;
@@ -54,7 +55,7 @@ public class MainActivity extends ActionBarActivity {
 		HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
 				new StreamScheduleResponseListener());
 		streamScheduleTask
-				.execute("http://10.0.2.2:8080/SriBServer/rest/radiourl");
+				.execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
 
 		setContentView(R.layout.activity_main);
 
@@ -158,10 +159,7 @@ public class MainActivity extends ActionBarActivity {
 				try {
 					StreamSchedule streamSchedule = mapper.readValue(response,
 							StreamSchedule.class);
-					Log.d("SriB", "Name: " + streamSchedule.getName());
-					Log.d("SriB", "URL: " + streamSchedule.getUrl());
-					Log.d("SriB", "Time: "
-							+ streamSchedule.getTime().getTimeInMillis());
+					audioPlayer.setDataSource(streamSchedule.getUrl());
 				} catch (JsonParseException e) {
 					// TODO Auto-generated catch block
 					Log.e("SriB", e.getMessage());
@@ -171,6 +169,10 @@ public class MainActivity extends ActionBarActivity {
 					Log.e("SriB", e.getMessage());
 					e.printStackTrace();
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					Log.e("SriB", e.getMessage());
+					e.printStackTrace();
+				} catch (AudioPlayerException e) {
 					// TODO Auto-generated catch block
 					Log.e("SriB", e.getMessage());
 					e.printStackTrace();
