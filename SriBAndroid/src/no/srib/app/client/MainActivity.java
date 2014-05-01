@@ -17,6 +17,7 @@ import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.model.StreamSchedule;
 
 import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private static final int MAX_TIMER_FAILS = 2;
 	private static final int TIMER_FAIL_TRESHOLD = 10000;
-	
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -55,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private AtomicInteger timerFails;
 	private Handler timerHandler;
-	private Runnable timerRunnable;
+	private Runnable streamScheduleUpdater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +64,9 @@ public class MainActivity extends ActionBarActivity {
 
 		timerFails = new AtomicInteger(0);
 		timerHandler = new Handler();
-		timerRunnable = new StreamScheduleUpdater();
+		streamScheduleUpdater = new StreamScheduleUpdater();
 
-		timerHandler.postDelayed(timerRunnable, 0);
+		timerHandler.postDelayed(streamScheduleUpdater, 0);
 
 		setContentView(R.layout.activity_main);
 
@@ -89,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 
-		timerHandler.removeCallbacks(timerRunnable);
+		timerHandler.removeCallbacks(streamScheduleUpdater);
 
 		doUnbindService();
 	}
@@ -142,11 +143,8 @@ public class MainActivity extends ActionBarActivity {
 			audioPlayer = ((AudioPlayerService.AudioPlayerBinder) service)
 					.getService();
 
-			String tag = getFragmentTag(viewPager.getId(),
-					SectionsPagerAdapter.LIVERADIO_FRAGMENT);
-			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
-					.findFragmentByTag(tag);
-			
+			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+
 			if (liveRadioFragment != null) {
 				liveRadioFragment.setAudioPlayer(audioPlayer);
 			}
@@ -175,20 +173,19 @@ public class MainActivity extends ActionBarActivity {
 					StreamSchedule streamSchedule = mapper.readValue(response,
 							StreamSchedule.class);
 					audioPlayer.setDataSource(streamSchedule.getUrl());
-					
-					String tag = getFragmentTag(viewPager.getId(),
-							SectionsPagerAdapter.LIVERADIO_FRAGMENT);
-					LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
-							.findFragmentByTag(tag);
-					
+
+					LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+
 					if (liveRadioFragment != null) {
-						liveRadioFragment.setStreamText(streamSchedule.getName());
+						liveRadioFragment.setStreamText(streamSchedule
+								.getName());
 					}
-					
-					long delay = streamSchedule.getTime() - System.currentTimeMillis();
-					
+
+					long delay = streamSchedule.getTime()
+							- System.currentTimeMillis();
+
 					Log.d("SriB", "delay: " + delay);
-					
+
 					if (delay < 0) {
 						delay = 0;
 					}
@@ -199,10 +196,10 @@ public class MainActivity extends ActionBarActivity {
 					} else {
 						timerFails.set(0);
 					}
-					
+
 					if (timerFails.get() < MAX_TIMER_FAILS) {
-						timerHandler.removeCallbacks(timerRunnable);
-						timerHandler.postDelayed(timerRunnable, delay);
+						timerHandler.removeCallbacks(streamScheduleUpdater);
+						timerHandler.postDelayed(streamScheduleUpdater, delay);
 					} else {
 						Log.d("SriB", "Time on client is set too far ahead");
 					}
@@ -236,11 +233,16 @@ public class MainActivity extends ActionBarActivity {
 			HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
 					new StreamScheduleResponseListener());
 			streamScheduleTask
-					//.execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
+			// .execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
 					.execute("http://10.10.10.40:8080/SriBServer/rest/radiourl");
 
 			Log.d("SriB", "Updating the stream schedule...");
 		}
+	}
+
+	private Fragment getFragment(int index) {
+		String tag = getFragmentTag(viewPager.getId(), index);
+		return getSupportFragmentManager().findFragmentByTag(tag);
 	}
 
 	private static String getFragmentTag(int viewPagerId, int index) {
