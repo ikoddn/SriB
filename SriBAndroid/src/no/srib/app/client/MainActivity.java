@@ -3,13 +3,9 @@ package no.srib.app.client;
 import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerService;
-import no.srib.app.client.fragment.ArticlesFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
-import no.srib.app.client.fragment.PodcastFragment;
 
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,12 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
-
-	private final static int LIVERADIO_FRAGMENT = 0;
-	private final static int PODCAST_FRAGMENT = 1;
-	private final static int ARTICLES_FRAGMENT = 2;
-
-	private final static int NUMBER_OF_FRAGMENTS = 3;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -111,37 +101,6 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
-	private class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			// getItem is called to instantiate the fragment for the given page.
-			switch (position) {
-			case LIVERADIO_FRAGMENT:
-				return new LiveRadioFragment();
-			case PODCAST_FRAGMENT:
-				return new PodcastFragment();
-			case ARTICLES_FRAGMENT:
-				return new ArticlesFragment();
-			default:
-				return null;
-			}
-		}
-
-		@Override
-		public int getCount() {
-			return NUMBER_OF_FRAGMENTS;
-		}
-	}
-
 	private class AudioPlayerServiceConnection implements ServiceConnection {
 
 		@Override
@@ -154,7 +113,8 @@ public class MainActivity extends ActionBarActivity {
 			audioPlayer = ((AudioPlayerService.AudioPlayerBinder) service)
 					.getService();
 
-			String tag = getFragmentTag(viewPager.getId(), LIVERADIO_FRAGMENT);
+			String tag = getFragmentTag(viewPager.getId(),
+					SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
 					.findFragmentByTag(tag);
 			liveRadioFragment.setAudioPlayer(audioPlayer);
