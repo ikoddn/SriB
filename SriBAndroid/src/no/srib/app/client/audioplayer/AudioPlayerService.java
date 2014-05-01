@@ -60,7 +60,10 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 	@Override
 	public void setDataSource(String dataSource) throws AudioPlayerException {
-		if (stateHandler.getState() != State.UNINITIALIZED) {
+		State state = stateHandler.getState();
+		boolean wasPlaying = state == State.STARTED;
+		
+		if (state != State.UNINITIALIZED) {
 			uninitializeMediaPlayer();
 		}
 
@@ -69,6 +72,10 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		try {
 			mediaPlayer.setDataSource(dataSource);
 			stateHandler.setState(State.STOPPED);
+			
+			if (wasPlaying) {
+				start();
+			}
 		} catch (Exception e) {
 			throw new AudioPlayerException(e);
 		}
@@ -159,7 +166,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		@Override
 		public boolean onError(MediaPlayer mp, int what, int extra) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Error: ");
+			sb.append("AudioPlayerService Error: ");
 
 			switch (what) {
 			case MediaPlayer.MEDIA_ERROR_UNKNOWN:
@@ -187,10 +194,9 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 				break;
 			}
 
-			Log.e("SriB::AudioPlayerService", sb.toString());
+			Log.e("SriB", sb.toString());
 
-			mediaPlayer.reset();
-			stateHandler.setState(State.STOPPED);
+			uninitializeMediaPlayer();
 
 			return false;
 		}

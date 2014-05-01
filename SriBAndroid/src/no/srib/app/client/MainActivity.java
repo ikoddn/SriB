@@ -1,6 +1,7 @@
 package no.srib.app.client;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -30,6 +32,9 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
+	private static final int MAX_TIMER_FAILS = 2;
+	private static final int TIMER_FAIL_TRESHOLD = 10000;
+	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -48,14 +53,19 @@ public class MainActivity extends ActionBarActivity {
 	private AudioPlayer audioPlayer;
 	private ServiceConnection serviceConnection;
 
+	private AtomicInteger timerFails;
+	private Handler timerHandler;
+	private Runnable timerRunnable;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
-				new StreamScheduleResponseListener());
-		streamScheduleTask
-				.execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
+		timerFails = new AtomicInteger(0);
+		timerHandler = new Handler();
+		timerRunnable = new StreamURLUpdater();
+
+		timerHandler.postDelayed(timerRunnable, 0);
 
 		setContentView(R.layout.activity_main);
 
@@ -78,6 +88,8 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		timerHandler.removeCallbacks(timerRunnable);
 
 		doUnbindService();
 	}
@@ -160,6 +172,28 @@ public class MainActivity extends ActionBarActivity {
 					StreamSchedule streamSchedule = mapper.readValue(response,
 							StreamSchedule.class);
 					audioPlayer.setDataSource(streamSchedule.getUrl());
+					
+					long delay = streamSchedule.getTime() - System.currentTimeMillis();
+					
+					Log.d("SriB", "delay: " + delay);
+					
+					if (delay < 0) {
+						delay = 0;
+					}
+
+					if (delay < TIMER_FAIL_TRESHOLD) {
+						timerFails.incrementAndGet();
+						Log.d("SriB", "timerFails: " + timerFails.get());
+					} else {
+						timerFails.set(0);
+					}
+					
+					if (timerFails.get() < MAX_TIMER_FAILS) {
+						timerHandler.removeCallbacks(timerRunnable);
+						timerHandler.postDelayed(timerRunnable, delay);
+					} else {
+						Log.d("SriB", "Time on client is set too far ahead");
+					}
 				} catch (JsonParseException e) {
 					// TODO Auto-generated catch block
 					Log.e("SriB", e.getMessage());
@@ -180,6 +214,20 @@ public class MainActivity extends ActionBarActivity {
 			} else {
 				Log.d("SriB", "result == null");
 			}
+		}
+	}
+
+	private class StreamURLUpdater implements Runnable {
+
+		@Override
+		public void run() {
+			HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
+					new StreamScheduleResponseListener());
+			streamScheduleTask
+					//.execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
+					.execute("http://10.10.10.40:8080/SriBServer/rest/radiourl");
+
+			Log.d("SriB", "StreamURLUpdater.run()");
 		}
 	}
 
