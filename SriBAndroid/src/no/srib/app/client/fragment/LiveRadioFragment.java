@@ -2,10 +2,8 @@ package no.srib.app.client.fragment;
 
 import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
-import no.srib.app.client.audioplayer.AudioPlayerException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,11 +14,16 @@ import android.widget.TextView;
 public class LiveRadioFragment extends Fragment {
 
 	private AudioPlayer audioPlayer;
-	private TextView label;
+	private TextView statusTextView;
+	private TextView streamTextView;
 
 	public void setAudioPlayer(AudioPlayer audioPlayer) {
 		this.audioPlayer = audioPlayer;
 		audioPlayer.setStateListener(new AudioPlayerStateListener());
+	}
+
+	public void setStreamText(CharSequence text) {
+		streamTextView.setText(text);
 	}
 
 	@Override
@@ -28,8 +31,13 @@ public class LiveRadioFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_liveradio,
 				container, false);
-		label = (TextView) rootView.findViewById(R.id.label_liveradio);
-		label.setText("Live radio fragment");
+		statusTextView = (TextView) rootView
+				.findViewById(R.id.textview_liveradio_status);
+		statusTextView.setText("Live radio fragment");
+
+		streamTextView = (TextView) rootView
+				.findViewById(R.id.textview_liveradio_stream);
+		streamTextView.setText("No internet connection");
 
 		Button playButton = (Button) rootView
 				.findViewById(R.id.button_liveradio_play);
@@ -38,10 +46,6 @@ public class LiveRadioFragment extends Fragment {
 		Button pauseButton = (Button) rootView
 				.findViewById(R.id.button_liveradio_pause);
 		pauseButton.setOnClickListener(new PauseButtonListener());
-
-		Button dataSourceButton = (Button) rootView
-				.findViewById(R.id.button_liveradio_datasource);
-		dataSourceButton.setOnClickListener(new DataSourceButtonListener());
 
 		return rootView;
 	}
@@ -66,38 +70,25 @@ public class LiveRadioFragment extends Fragment {
 		}
 	}
 
-	private class DataSourceButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			try {
-				audioPlayer.setDataSource("http://radio.srib.no:8888/srib.mp3");
-			} catch (AudioPlayerException e) {
-				// TODO Auto-generated catch block
-				Log.e("SriB", e.getMessage());
-			}
-		}
-	}
-
 	private class AudioPlayerStateListener implements AudioPlayer.StateListener {
 
 		@Override
 		public void onStateChanged(AudioPlayer.State state) {
 			switch (state) {
 			case PAUSED:
-				label.setText("paused");
+				statusTextView.setText("paused");
 				break;
 			case PREPARING:
-				label.setText("preparing");
+				statusTextView.setText("preparing");
 				break;
 			case STARTED:
-				label.setText("started");
+				statusTextView.setText("started");
 				break;
 			case STOPPED:
-				label.setText("stopped");
+				statusTextView.setText("stopped");
 				break;
 			case UNINITIALIZED:
-				label.setText("uninitialized");
+				statusTextView.setText("uninitialized");
 				break;
 			default:
 				break;

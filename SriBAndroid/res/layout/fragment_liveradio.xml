@@ -10,30 +10,28 @@
     tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/label_liveradio"
+        android:id="@+id/textview_liveradio_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textview_liveradio_stream"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textview_liveradio_status" />
 
     <Button
         android:id="@+id/button_liveradio_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/label_liveradio"
+        android:layout_below="@id/textview_liveradio_stream"
         android:text="@string/button_liveradio_play" />
 
     <Button
         android:id="@+id/button_liveradio_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/label_liveradio"
+        android:layout_below="@id/textview_liveradio_stream"
         android:layout_toRightOf="@id/button_liveradio_play"
         android:text="@string/button_liveradio_pause" />
-
-    <Button
-        android:id="@+id/button_liveradio_datasource"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_liveradio_play"
-        android:text="@string/button_liveradio_datasource" />
 
 </RelativeLayout>

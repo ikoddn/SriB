@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
 
 		timerFails = new AtomicInteger(0);
 		timerHandler = new Handler();
-		timerRunnable = new StreamURLUpdater();
+		timerRunnable = new StreamScheduleUpdater();
 
 		timerHandler.postDelayed(timerRunnable, 0);
 
@@ -146,7 +146,10 @@ public class MainActivity extends ActionBarActivity {
 					SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
 					.findFragmentByTag(tag);
-			liveRadioFragment.setAudioPlayer(audioPlayer);
+			
+			if (liveRadioFragment != null) {
+				liveRadioFragment.setAudioPlayer(audioPlayer);
+			}
 		}
 
 		@Override
@@ -172,6 +175,15 @@ public class MainActivity extends ActionBarActivity {
 					StreamSchedule streamSchedule = mapper.readValue(response,
 							StreamSchedule.class);
 					audioPlayer.setDataSource(streamSchedule.getUrl());
+					
+					String tag = getFragmentTag(viewPager.getId(),
+							SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+					LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getSupportFragmentManager()
+							.findFragmentByTag(tag);
+					
+					if (liveRadioFragment != null) {
+						liveRadioFragment.setStreamText(streamSchedule.getName());
+					}
 					
 					long delay = streamSchedule.getTime() - System.currentTimeMillis();
 					
@@ -217,7 +229,7 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	private class StreamURLUpdater implements Runnable {
+	private class StreamScheduleUpdater implements Runnable {
 
 		@Override
 		public void run() {
@@ -227,7 +239,7 @@ public class MainActivity extends ActionBarActivity {
 					//.execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
 					.execute("http://10.10.10.40:8080/SriBServer/rest/radiourl");
 
-			Log.d("SriB", "StreamURLUpdater.run()");
+			Log.d("SriB", "Updating the stream schedule...");
 		}
 	}
 
