@@ -1,9 +1,18 @@
 package no.srib.app.client;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import no.srib.R;
+import no.srib.app.client.asynctask.HttpAsyncTask;
+import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerService;
 import no.srib.app.client.fragment.LiveRadioFragment;
+import no.srib.app.client.model.StreamSchedule;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,6 +23,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -40,6 +50,12 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
+				new StreamScheduleResponseListener());
+		streamScheduleTask
+				.execute("http://10.0.2.2:8080/SriBServer/rest/radiourl");
+
 		setContentView(R.layout.activity_main);
 
 		// Create the adapter that will return a fragment for each of the three
@@ -127,6 +143,41 @@ public class MainActivity extends ActionBarActivity {
 			// Because it is running in our same process, we should never
 			// see this happen.
 			audioPlayer = null;
+		}
+	}
+
+	private class StreamScheduleResponseListener implements
+			HttpResponseListener {
+
+		@Override
+		public void onResponse(String response) {
+			if (response != null) {
+				Log.d("SriB", response);
+				ObjectMapper mapper = new ObjectMapper();
+
+				try {
+					StreamSchedule streamSchedule = mapper.readValue(response,
+							StreamSchedule.class);
+					Log.d("SriB", "Name: " + streamSchedule.getName());
+					Log.d("SriB", "URL: " + streamSchedule.getUrl());
+					Log.d("SriB", "Time: "
+							+ streamSchedule.getTime().getTimeInMillis());
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					Log.e("SriB", e.getMessage());
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					Log.e("SriB", e.getMessage());
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					Log.e("SriB", e.getMessage());
+					e.printStackTrace();
+				}
+			} else {
+				Log.d("SriB", "result == null");
+			}
 		}
 	}
 

@@ -1,17 +1,8 @@
 package no.srib.app.client.fragment;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.srib.R;
-import no.srib.app.client.asynctask.HttpAsyncTask;
-import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
-import no.srib.app.client.model.StreamSchedule;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -52,9 +43,6 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_datasource);
 		dataSourceButton.setOnClickListener(new DataSourceButtonListener());
 
-		HttpAsyncTask httpAsyncTask = new HttpAsyncTask(
-				new StreamScheduleResponseListener());
-		httpAsyncTask.execute("http://10.0.2.2:8080/SriBServer/rest/radiourl");
 		return rootView;
 	}
 
@@ -113,41 +101,6 @@ public class LiveRadioFragment extends Fragment {
 				break;
 			default:
 				break;
-			}
-		}
-	}
-
-	private class StreamScheduleResponseListener implements
-			HttpResponseListener {
-
-		@Override
-		public void onResponse(String response) {
-			if (response != null) {
-				Log.d("SriB", response);
-				ObjectMapper mapper = new ObjectMapper();
-
-				try {
-					StreamSchedule streamSchedule = mapper.readValue(response,
-							StreamSchedule.class);
-					Log.d("SriB", "Name: " + streamSchedule.getName());
-					Log.d("SriB", "URL: " + streamSchedule.getUrl());
-					Log.d("SriB", "Time: "
-							+ streamSchedule.getTime().getTimeInMillis());
-				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				}
-			} else {
-				Log.d("SriB", "result == null");
 			}
 		}
 	}
