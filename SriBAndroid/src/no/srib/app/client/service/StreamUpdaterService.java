@@ -50,6 +50,12 @@ public class StreamUpdaterService extends Service {
 		}
 	}
 
+	public void update() {
+		if (streamScheduleUpdater != null) {
+			timerHandler.postDelayed(streamScheduleUpdater, 0);
+		}
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();

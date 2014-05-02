@@ -126,11 +126,6 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	}
 
 	@Override
-	public boolean isPlaying() {
-		return stateHandler.getState() == State.STARTED;
-	}
-
-	@Override
 	public State getState() {
 		return stateHandler.getState();
 	}

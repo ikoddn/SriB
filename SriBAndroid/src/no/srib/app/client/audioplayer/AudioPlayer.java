@@ -50,14 +50,6 @@ public interface AudioPlayer {
 	void pause();
 
 	/**
-	 * Checks if the audio player is currently playing.
-	 * 
-	 * @return {@code true} if the audio player is playing, {@code false}
-	 *         otherwise.
-	 */
-	boolean isPlaying();
-
-	/**
 	 * The different states of the audio player.
 	 * 
 	 * @author Sveinung

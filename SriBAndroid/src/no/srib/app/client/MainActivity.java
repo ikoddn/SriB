@@ -259,10 +259,18 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public void onPlayClicked() {
-			if (audioPlayer.isPlaying()) {
-				audioPlayer.stop();
-			} else {
+			switch (audioPlayer.getState()) {
+			case PAUSED:
+			case PREPARING:
+			case STOPPED:
 				audioPlayer.start();
+				break;
+			case STARTED:
+				audioPlayer.stop();
+				break;
+			case UNINITIALIZED:
+				streamUpdater.update();
+				break;
 			}
 		}
 
