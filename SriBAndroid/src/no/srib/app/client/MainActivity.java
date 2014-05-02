@@ -19,7 +19,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -203,18 +202,24 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
+			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+
 			try {
-				audioPlayer.setDataSource(streamSchedule.getUrl());
+				String url = streamSchedule.getUrl();
 
-				LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+				if (url == null) {
+					throw new AudioPlayerException();
+				}
 
-				if (liveRadioFragment != null) {
-					liveRadioFragment.setStreamText(streamSchedule.getName());
+				audioPlayer.setDataSource(url);
+
+				if (fragment != null) {
+					fragment.setStreamText(streamSchedule.getName());
 				}
 			} catch (AudioPlayerException e) {
-				// TODO Auto-generated catch block
-				Log.e("SriB", e.getMessage());
-				e.printStackTrace();
+				if (fragment != null) {
+					fragment.setStreamText("Playback error");
+				}
 			}
 		}
 	}
