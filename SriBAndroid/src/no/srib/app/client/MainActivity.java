@@ -180,7 +180,7 @@ public class MainActivity extends ActionBarActivity {
 	private class StreamUpdateListener implements OnStreamUpdateListener {
 
 		@Override
-		public void onError(Error error) {
+		public void onStatus(Status error) {
 			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
 			if (fragment != null) {
@@ -190,6 +190,12 @@ public class MainActivity extends ActionBarActivity {
 					break;
 				case SERVER_UNREACHABLE:
 					fragment.setStreamText("Could not connect to server");
+					break;
+				case INVALID_RESPONSE:
+					fragment.setStreamText("Invalid response from server");
+					break;
+				case CONNECTING:
+					fragment.setStreamText("Connecting...");
 					break;
 				}
 			}

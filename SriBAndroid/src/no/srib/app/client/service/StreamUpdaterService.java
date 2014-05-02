@@ -3,14 +3,12 @@ package no.srib.app.client.service;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.StreamSchedule;
-import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Error;
+import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
 
 import android.app.Service;
 import android.content.Context;
@@ -27,7 +25,8 @@ public class StreamUpdaterService extends Service {
 	private static final int MAX_TIMER_FAILS = 2;
 	private static final int TIMER_FAIL_TRESHOLD = 10000;
 
-	private final IBinder binder;
+	private final IBinder BINDER;
+	private final ObjectMapper MAPPER;
 
 	private AtomicInteger timerFails;
 	private Handler timerHandler;
@@ -35,7 +34,8 @@ public class StreamUpdaterService extends Service {
 	private OnStreamUpdateListener streamUpdateListener;
 
 	public StreamUpdaterService() {
-		binder = new StreamUpdaterBinder();
+		BINDER = new StreamUpdaterBinder();
+		MAPPER = new ObjectMapper();
 	}
 
 	public void setStreamUpdateListener(
@@ -69,7 +69,7 @@ public class StreamUpdaterService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return binder;
+		return BINDER;
 	}
 
 	public class StreamUpdaterBinder extends Binder {
@@ -79,12 +79,14 @@ public class StreamUpdaterService extends Service {
 	}
 
 	public interface OnStreamUpdateListener {
-		enum Error {
+		enum Status {
 			NO_INTERNET,
-			SERVER_UNREACHABLE
+			SERVER_UNREACHABLE,
+			INVALID_RESPONSE,
+			CONNECTING
 		}
 
-		void onError(Error error);
+		void onStatus(Status status);
 
 		void onStreamUpdate(StreamSchedule streamSchedule);
 	}
@@ -103,7 +105,7 @@ public class StreamUpdaterService extends Service {
 					new StreamScheduleResponseListener());
 			streamScheduleTask.execute(updateURL);
 
-			Log.d("SriB", "Updating the stream schedule...");
+			streamUpdateListener.onStatus(Status.CONNECTING);
 		}
 	}
 
@@ -114,16 +116,15 @@ public class StreamUpdaterService extends Service {
 		public void onResponse(String response) {
 			if (response == null) {
 				if (!isNetworkAvailable()) {
-					streamUpdateListener.onError(Error.NO_INTERNET);
+					streamUpdateListener.onStatus(Status.NO_INTERNET);
 				} else {
-					streamUpdateListener.onError(Error.SERVER_UNREACHABLE);
+					streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
 				}
 			} else {
 				Log.d("SriB", response);
-				ObjectMapper mapper = new ObjectMapper();
 
 				try {
-					StreamSchedule streamSchedule = mapper.readValue(response,
+					StreamSchedule streamSchedule = MAPPER.readValue(response,
 							StreamSchedule.class);
 
 					if (streamUpdateListener != null) {
@@ -152,18 +153,8 @@ public class StreamUpdaterService extends Service {
 					} else {
 						Log.d("SriB", "Time on client is set too far ahead");
 					}
-				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
+					streamUpdateListener.onStatus(Status.INVALID_RESPONSE);
 				}
 			}
 		}
