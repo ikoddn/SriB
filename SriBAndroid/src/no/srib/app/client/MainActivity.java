@@ -1,15 +1,7 @@
 package no.srib.app.client;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.srib.R;
-import no.srib.app.client.asynctask.HttpAsyncTask;
-import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
+import no.srib.app.client.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.audioplayer.AudioPlayerService;
@@ -24,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -32,9 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
-
-	private static final int MAX_TIMER_FAILS = 2;
-	private static final int TIMER_FAIL_TRESHOLD = 10000;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -50,23 +38,17 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	private ViewPager viewPager;
 
-	private boolean serviceBound;
+	private boolean audioPlayerServiceBound;
 	private AudioPlayer audioPlayer;
-	private ServiceConnection serviceConnection;
+	private ServiceConnection audioPlayerServiceConnection;
 
-	private AtomicInteger timerFails;
-	private Handler timerHandler;
-	private Runnable streamScheduleUpdater;
+	private boolean streamUpdaterServiceBound;
+	private StreamUpdaterService streamUpdater;
+	private ServiceConnection streamUpdaterServiceConnection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		timerFails = new AtomicInteger(0);
-		timerHandler = new Handler();
-		streamScheduleUpdater = new StreamScheduleUpdater();
-
-		timerHandler.postDelayed(streamScheduleUpdater, 0);
 
 		setContentView(R.layout.activity_main);
 
@@ -79,20 +61,22 @@ public class MainActivity extends ActionBarActivity {
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
 
-		serviceBound = false;
+		audioPlayerServiceBound = false;
 		audioPlayer = null;
-		serviceConnection = new AudioPlayerServiceConnection();
+		audioPlayerServiceConnection = new AudioPlayerServiceConnection();
 
-		doBindService();
+		streamUpdaterServiceBound = false;
+		streamUpdater = null;
+		streamUpdaterServiceConnection = new StreamUpdaterServiceConnection();
+
+		bindServices();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 
-		timerHandler.removeCallbacks(streamScheduleUpdater);
-
-		doUnbindService();
+		//unbindServices();
 	}
 
 	@Override
@@ -114,20 +98,35 @@ public class MainActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void doBindService() {
+	public void bindServices() {
 		// Establish a connection with the service. We use an explicit
 		// class name because we want a specific service implementation that
 		// we know will be running in our own process (and thus won't be
 		// supporting component replacement by other applications).
-		bindService(new Intent(MainActivity.this, AudioPlayerService.class),
-				serviceConnection, Context.BIND_AUTO_CREATE);
-		serviceBound = true;
+		Context context = getApplicationContext();
+
+		context.bindService(new Intent(MainActivity.this,
+				AudioPlayerService.class), audioPlayerServiceConnection,
+				Context.BIND_AUTO_CREATE);
+		audioPlayerServiceBound = true;
+
+		context.bindService(new Intent(MainActivity.this,
+				StreamUpdaterService.class), streamUpdaterServiceConnection,
+				Context.BIND_AUTO_CREATE);
+		streamUpdaterServiceBound = true;
 	}
 
-	public void doUnbindService() {
-		if (serviceBound) {
-			unbindService(serviceConnection);
-			serviceBound = false;
+	public void unbindServices() {
+		Context context = getApplicationContext();
+
+		if (audioPlayerServiceBound) {
+			context.unbindService(audioPlayerServiceConnection);
+			audioPlayerServiceBound = false;
+		}
+
+		if (streamUpdaterServiceBound) {
+			context.unbindService(streamUpdaterServiceConnection);
+			streamUpdaterServiceBound = false;
 		}
 	}
 
@@ -160,83 +159,38 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	private class StreamScheduleResponseListener implements
-			HttpResponseListener {
+	private class StreamUpdaterServiceConnection implements ServiceConnection {
 
 		@Override
-		public void onResponse(String response) {
-			if (response != null) {
-				Log.d("SriB", response);
-				ObjectMapper mapper = new ObjectMapper();
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			streamUpdater = ((StreamUpdaterService.StreamUpdaterBinder) service)
+					.getService();
+			streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
+		}
 
-				try {
-					StreamSchedule streamSchedule = mapper.readValue(response,
-							StreamSchedule.class);
-					audioPlayer.setDataSource(streamSchedule.getUrl());
-
-					LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
-
-					if (liveRadioFragment != null) {
-						liveRadioFragment.setStreamText(streamSchedule
-								.getName());
-					}
-
-					long delay = streamSchedule.getTime()
-							- System.currentTimeMillis();
-
-					Log.d("SriB", "delay: " + delay);
-
-					if (delay < 0) {
-						delay = 0;
-					}
-
-					if (delay < TIMER_FAIL_TRESHOLD) {
-						timerFails.incrementAndGet();
-						Log.d("SriB", "timerFails: " + timerFails.get());
-					} else {
-						timerFails.set(0);
-					}
-
-					if (timerFails.get() < MAX_TIMER_FAILS) {
-						timerHandler.removeCallbacks(streamScheduleUpdater);
-						timerHandler.postDelayed(streamScheduleUpdater, delay);
-					} else {
-						Log.d("SriB", "Time on client is set too far ahead");
-					}
-				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				} catch (AudioPlayerException e) {
-					// TODO Auto-generated catch block
-					Log.e("SriB", e.getMessage());
-					e.printStackTrace();
-				}
-			} else {
-				Log.d("SriB", "result == null");
-			}
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			streamUpdater = null;
 		}
 	}
 
-	private class StreamScheduleUpdater implements Runnable {
+	private class StreamUpdateListener implements OnStreamUpdateListener {
 
 		@Override
-		public void run() {
-			HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
-					new StreamScheduleResponseListener());
-			streamScheduleTask
-			// .execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
-					.execute("http://10.10.10.40:8080/SriBServer/rest/radiourl");
+		public void onStreamUpdate(StreamSchedule streamSchedule) {
+			try {
+				audioPlayer.setDataSource(streamSchedule.getUrl());
 
-			Log.d("SriB", "Updating the stream schedule...");
+				LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+
+				if (liveRadioFragment != null) {
+					liveRadioFragment.setStreamText(streamSchedule.getName());
+				}
+			} catch (AudioPlayerException e) {
+				// TODO Auto-generated catch block
+				Log.e("SriB", e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 

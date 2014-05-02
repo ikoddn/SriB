@@ -34,6 +34,10 @@
         <service
             android:name="no.srib.app.client.audioplayer.AudioPlayerService"
             android:exported="false" />
+        
+        <service
+            android:name="no.srib.app.client.StreamUpdaterService"
+            android:exported="false" />
     </application>
 
 </manifest>
