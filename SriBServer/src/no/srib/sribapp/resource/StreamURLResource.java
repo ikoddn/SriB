@@ -1,6 +1,8 @@
 package no.srib.sribapp.resource;
 
+import java.sql.Time;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
@@ -26,22 +28,48 @@ public class StreamURLResource {
     private StreamurlDAO streamURLDAO;
     @EJB
     private StreamUrlScheduleDAO streamUrlScheduleDAO;
+    
+    
+    private final int MAIN_SOURCE = 0;
+    private final int SECOND_SOURCE = 1;
+    
 
     @GET
     public final StreamSchedule getCurrentStreamSchedule() throws DAOException {        
-        Streamurl stream = streamURLDAO.getById(index);
-       // Streamurlschedule st = streamUrlScheduleDAO.getNext();
-        //System.out.printf("%s %s",st.getFromtime(),st.getDay());
+        
+        List<Streamurl> streamList = streamURLDAO.getList();
+        Streamurl stream = null;
+        Streamurlschedule stuc = null; 
+        String name = null;
+        String url = null;
+        Calendar time = Calendar.getInstance();
+        //TODO HER MÅ DET LEGGAST INN LOGIKK FOR Å GI UT RETT VERDI TIL KLIENT
+        if(false) {
+           time.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        long timeInMs = time.getTimeInMillis() + 30000;
         System.out.println(streamUrlScheduleDAO.isMainSourceActive());
-        if(index == 1){
-            index = 11;
+        if(streamUrlScheduleDAO.isMainSourceActive()){
+            stream = streamList.get(MAIN_SOURCE);
+            
+            name = stream.getName();
+            url = stream.getUrl();
+       
+            return new StreamSchedule(name, url, timeInMs);
         }else{
-            index = 1;
+            stream = streamList.get(SECOND_SOURCE);
+            name = stream.getName();
+            url = stream.getUrl();
+         
+            
+            
+            return new StreamSchedule(name, url, timeInMs);
         }
 
-        Calendar time = Calendar.getInstance();
-        long timeInMs = time.getTimeInMillis() + 30000;
+
+       
+
         
-        return new StreamSchedule(stream.getName(), stream.getUrl(), timeInMs);
+
     }
 }

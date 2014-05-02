@@ -46,7 +46,7 @@ public class AddUrlSchedule extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	   HttpSession ses = request.getSession();
 	    
-	    if (ses != null) {
+	    if (ses != null && ses.getAttribute("loggedIn") != null) {
             if (ses.getAttribute("loggedIn").equals("true")) {
                 ses.setAttribute("errorNew", new Boolean(false));
                 

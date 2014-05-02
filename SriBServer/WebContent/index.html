@@ -3,16 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <title>SriB App Admin Page</title>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet"
+		href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+	
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script
+		src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+	 <link href="signing.css" rel="stylesheet">
 </head>
 <body>
-	<h1>SriB App Admin Page</h1>
-	
-	
-	<form method="post" action="Login">
-	<input type="text" name="username" placeholder="Brukernavn" autofocus="autofocus">
-	<input type="password" name="password" placeholder="Passord">
-	<input type="submit" name="submit" value="Logg inn">
-	
-	</form>
+	<div class="container">
+		
+
+
+		<form class="form-signin" method="post" action="Login">
+		<h2 class="form-signin-heading">Logg inn:</h2>
+			<input class="form-control" type="text" name="username" placeholder="Brukernavn"
+				autofocus="autofocus"> 
+			<input class="form-control" type="password" name="password" placeholder="Passord"> 
+			<input class="btn btn-lg btn-primary bt-block" type="submit" name="submit" value="Logg inn">
+
+		</form>
+
+	</div>
+
 </body>
 </html>

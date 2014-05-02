@@ -40,18 +40,12 @@ public class StreamurlscheduleDAOImpl extends
 
         return streamurlschedule;
     }
+    
+    
 
     @Override
-    public Streamurlschedule getNext() throws DAOException {
-       if(isMainSourceActive()){
-           
-           
-           
-           
-       }else{
-           
-           
-       }
+    public Streamurlschedule getNextShiftTime() throws DAOException {
+        
         return null;
     }
 
@@ -68,14 +62,13 @@ public class StreamurlscheduleDAOImpl extends
         query.setParameter("day", day);
         query.setParameter("time", time);
         try {
-           
-                return query.getResultList().isEmpty();
-          
+
+            return query.getResultList().isEmpty();
+
         } catch (Exception e) {
             throw new DAOException(e);
         }
 
-        
     }
 
 }

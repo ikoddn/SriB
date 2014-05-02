@@ -33,11 +33,5 @@ public interface ScheduleDAO extends AbstractModelDAO<Schedule> {
      */
     Schedule getScheduleForTime(final Calendar time) throws DAOException;
     
-    /**
-     * Delete the Schedule with the given id.
-     * @param - The id for schedule
-     * @throws DAOException
-     */
-    
-    void deleteSchedule(final int id) throws DAOException;
+  
 }

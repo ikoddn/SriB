@@ -1,5 +1,6 @@
 package no.srib.sribapp.dao.interfaces;
 
+import java.sql.Time;
 import java.util.List;
 
 import no.srib.sribapp.dao.exception.DAOException;
@@ -10,8 +11,12 @@ public interface StreamUrlScheduleDAO extends
     
     List<Streamurlschedule> getbyDay(int day) throws DAOException;
     
-    Streamurlschedule getNext() throws DAOException;
+    Streamurlschedule getNextShiftTime() throws DAOException;
+    
+  
     
     boolean isMainSourceActive() throws DAOException;
+    
+    
 
 }

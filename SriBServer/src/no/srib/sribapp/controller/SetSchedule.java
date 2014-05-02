@@ -17,11 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.jpa.DefinitionDAOImpl;
-import no.srib.sribapp.dao.jpa.ScheduleDAOImpl;
 import no.srib.sribapp.dao.interfaces.DefinitionDAO;
+import no.srib.sribapp.dao.interfaces.ProgramnameDAO;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
 import no.srib.sribapp.model.Definition;
+import no.srib.sribapp.model.Programname;
 import no.srib.sribapp.model.Schedule;
 
 /**
@@ -33,9 +33,11 @@ public class SetSchedule extends HttpServlet {
 
     @EJB
     private ScheduleDAO scheduleDAO;
+    //@EJB
+   // private DefinitionDAO dao;
     @EJB
-    private DefinitionDAO dao;
-    
+    private ProgramnameDAO pDAO;
+
     public SetSchedule() {
         super();
         // TODO Auto-generated constructor stub
@@ -48,19 +50,18 @@ public class SetSchedule extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         HttpSession ses = request.getSession(false);
-        if (ses != null) {
-            if (ses.getAttribute("loggedIn").equals("true")) {
+     
+            if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){
 
-                List<Definition> defList = null;
-                
+                List<Programname> progList = null;
+
                 try {
-                    defList = dao.getList();
+                    progList = pDAO.getList();
                 } catch (DAOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
-               
                 List<Schedule> scheduleList = null;
                 try {
                     scheduleList = scheduleDAO.getSortedSchedule();
@@ -75,65 +76,66 @@ public class SetSchedule extends HttpServlet {
                 List<Schedule> fridayList = new ArrayList<Schedule>();
                 List<Schedule> saturdayList = new ArrayList<Schedule>();
                 List<Schedule> sundayList = new ArrayList<Schedule>();
-                
-               
-                Map<Integer,Definition> definitionMap = new HashMap<Integer,Definition>();
-                for(Definition def : defList){
-                    definitionMap.put(def.getDefnr(), def);
+                String[] dayArray = { "Mandag", "Tirsdag", "Onsdag", "Torsdag",
+                        "Fredag", "Lørdag", "Søndag" };
+
+                Map<Integer, Programname> definitionMap = new HashMap<Integer, Programname>();
+                for (Programname prog : progList) {
+                    definitionMap.put(prog.getId(), prog);
                 }
-                
-                
-               for(Schedule schedule : scheduleList){
-                   switch (schedule.getDay()) {
-                case Calendar.MONDAY:
-                    mondayList.add(schedule);   
-                    break;
-                case Calendar.TUESDAY:
-                    tuesdayList.add(schedule);
-                    break;
-                case Calendar.WEDNESDAY:
-                    wednesdayList.add(schedule);
-                    break;
-                case Calendar.THURSDAY:
-                    thursdayList.add(schedule);
-                    break;
-                case Calendar.FRIDAY:
-                    fridayList.add(schedule);
-                    break;
-                case Calendar.SATURDAY:
-                    saturdayList.add(schedule);
-                    break;
-                case Calendar.SUNDAY:
-                    sundayList.add(schedule);
-                    break;
-                default:
-                    break;
+
+               
+                for (Schedule schedule : scheduleList) {
+                    switch (schedule.getDay()) {
+                    case Calendar.MONDAY:
+                        mondayList.add(schedule);
+                        break;
+                    case Calendar.TUESDAY:
+                        tuesdayList.add(schedule);
+                        break;
+                    case Calendar.WEDNESDAY:
+                        wednesdayList.add(schedule);
+                        break;
+                    case Calendar.THURSDAY:
+                        thursdayList.add(schedule);
+                        break;
+                    case Calendar.FRIDAY:
+                        fridayList.add(schedule);
+                        break;
+                    case Calendar.SATURDAY:
+                        saturdayList.add(schedule);
+                        break;
+                    case Calendar.SUNDAY:
+                        sundayList.add(schedule);
+                        break;
+                    default:
+                        break;
+                    }
                 }
-               }
+
                
-               for(Schedule a : scheduleList){
-                   System.out.println(a.getFromtime() + " " + a.getDay());
-                   
-               }
-               
-               request.setAttribute("mondayList", mondayList);
-               request.setAttribute("tuesdayList", tuesdayList);
-               request.setAttribute("wednesdayList", wednesdayList);
-               request.setAttribute("thursdayList", thursdayList);
-               request.setAttribute("fridayList", fridayList);
-               request.setAttribute("saturdayList", saturdayList);
-               request.setAttribute("sundayList", sundayList);
-               request.setAttribute("definitionMap", definitionMap);
-               
-                Definition def = new Definition();
+                List<List<Schedule>> list = new ArrayList<List<Schedule>>();
+                list.add(mondayList);
+                list.add(tuesdayList);
+                list.add(wednesdayList);
+                list.add(thursdayList);
+                list.add(fridayList);
+                list.add(saturdayList);
+                list.add(sundayList);
+
+                request.setAttribute("dbList", list);
+                request.setAttribute("days", dayArray);
+                request.setAttribute("definitionMap", definitionMap);
+
+                Programname def = new Programname();
 
                 def.setName("Velg program");
-                defList.add(0, def);
-                request.setAttribute("programlist", defList);
+                progList.add(0, def);
+                request.setAttribute("programlist", progList);
                 RequestDispatcher reqD = request
                         .getRequestDispatcher("/WEB-INF/schedule.jsp");
                 reqD.forward(request, response);
-            }
+            
         } else {
             response.sendRedirect("index.html");
         }
@@ -148,5 +150,4 @@ public class SetSchedule extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
 
     }
-
 }

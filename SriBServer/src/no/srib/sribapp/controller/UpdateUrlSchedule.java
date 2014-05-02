@@ -47,8 +47,8 @@ public class UpdateUrlSchedule extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         HttpSession ses = request.getSession();
 
-        if (ses.getAttribute("loggedIn") != null) {
-            if (ses.getAttribute("loggedIn").equals("true")) {
+        if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){
+          
                 int id = 0;
                 int day = 0;
                 Time fromTime = null;
@@ -104,7 +104,7 @@ public class UpdateUrlSchedule extends HttpServlet {
 
                 response.sendRedirect("/SriBServer/SetSource");
                 return;
-            }
+            
         } else {
             response.sendRedirect("index.html");
             return;

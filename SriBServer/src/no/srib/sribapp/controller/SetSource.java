@@ -40,9 +40,9 @@ public class SetSource extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    HttpSession ses = request.getSession(false);
-        if(ses.getAttribute("loggedIn") != null){
-            if(ses.getAttribute("loggedIn").equals("true")){
-                
+	    
+        if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){
+          
                 List<Streamurl> streamUrlList = null;
                 List<Streamurlschedule> streamScheduleList = null;
                 Streamurl url1 = null;
@@ -68,7 +68,9 @@ public class SetSource extends HttpServlet {
                 RequestDispatcher reqD = request.getRequestDispatcher("/WEB-INF/source.jsp");
                 reqD.forward(request, response);
             
-        }}
+        }
+          
+        
         else{
             response.sendRedirect("index.html");
         }

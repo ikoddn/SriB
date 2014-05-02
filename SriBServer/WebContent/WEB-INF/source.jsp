@@ -3,15 +3,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Kilde til app</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet"
+		href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+	
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script
+		src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+	 <link href="signing.css" rel="stylesheet">
 </head>
 <body>
-	<h1>Sett kilde</h1>
+<div class="container">
+	<a href="Login">Tilbake</a><h1>Sett kilde</h1>
 	<c:if test="${errorUrl == true}">
 		<span style="color: red">Ugyldig url</span>
 	</c:if>
 	<form action="UpdateUrl" method="post">
+	
 		<h4>Hovedkilde:</h4>
 		Navn:<input type="text" name="name" value='<c:out value="${url1.name}"/>' />
 		URL:<input type="url" value='<c:out value="${url1.url}"/>' name="url"
@@ -29,8 +44,7 @@
 	</form>
 
 
-	<h3>Skift til sekunderkilde i desse tidsromma:</h3>
-
+	<c:if test="${not empty schedule }"><h3>Skift til sekunderkilde i desse tidsromma:</h3>
 	<c:if test="${errorUpdate == true}">
 		<span style="color: red">Ugyldig input</span>
 	</c:if>
@@ -61,7 +75,12 @@
 				type="Submit" name="delete" value="Slett"> <br>
 		</form>
 	</c:forEach>
-
+	</c:if>
+	
+	<c:if test="${empty schedule }">
+	<h3>Ingen tidspunkt er lagt til</h3>
+	</c:if>
+	
 	<h3>Legg til nytt tidspunkt</h3>
 	<form action="AddUrlSchedule" method="post">
 		<c:if test="${errorNew == true}">
@@ -80,62 +99,15 @@
 
 
 
-
+</div>
 </body>
 </html>
 
 
-<!-- 
-
-
-<select>
-<option>Mandag</option>
-<option>Tirsdag</option>
-<option>Onsdag</option>
-<option>Torsdag</option>
-<option>Fredag</option>
-<option>Lørdag</option>
-<option>Søndag</option>
-</select>
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
-<script type="text/javascript">
-var dayArray = ["Mandag","Tirsdag","Onsdag","Torsdag","Fredag","LÃ¸rdag","SÃ¸ndag"];
-var count = 0;
-
-$( "input[name*='addMore']" ).click(function() {
-	
-	addTimeRow(count);
-	  
-	  $.each(dayArray, function(key, value) {   
-		     $("select[name*='"+count +"']").append($("<option></option>")
-	         .attr("value",key).text(value)); 
-	});
-	  
-	  
-	  count++;
-	});
-	
-
-
-function addTimeRow(count){
-	
-	$("#sourceForm").append("<br><Select name=" +count +" class='"+count+"'></Select>Fra:<input type='time' class='"+count+"' name='fromTime'> Til: <input type='time' class='"+count+"'>"
-			+ "<input type='button' class='"+count+"' id="+ count +" value='Slett' name='deleteButton'>  ");
-
-
-$("button").click(function(){
-	//alert(this.id);
-	removeRow(this.id);
-	
-});
-
-}
-
-
-function removeRow(id){
-
-}
-
-</script> -->
+<!-- <div class="form-group">
+    <label for="" class="control-label">Paycheck</label>
+    <div class="input-group input-group-lg">
+        <span class="input-group-addon">$</span> 
+        <input type="text" class="form-control" id="">
+    </div>
+</div> -->

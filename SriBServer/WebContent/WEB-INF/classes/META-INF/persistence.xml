@@ -15,6 +15,7 @@
 		<class>no.srib.sribapp.model.Backenduser</class>
 		<class>no.srib.sribapp.model.Schedule</class>
 		<class>no.srib.sribapp.model.Streamurlschedule</class>
+		<class>no.srib.sribapp.model.Programname</class>
 
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />
