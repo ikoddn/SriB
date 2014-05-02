@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -15,10 +14,12 @@ import android.util.Log;
 
 public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
+	private int statusCode;
 	private HttpClient httpClient;
 	private HttpResponseListener responseListener;
 
 	public HttpAsyncTask(HttpResponseListener responseListener) {
+		statusCode = 0;
 		httpClient = new DefaultHttpClient();
 		this.responseListener = responseListener;
 	}
@@ -30,24 +31,16 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 		HttpGet httpGet = new HttpGet(url[0]);
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			statusCode = httpResponse.getStatusLine().getStatusCode();
 
 			if (statusCode == HttpStatus.SC_OK) {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				httpResponse.getEntity().writeTo(out);
 				out.close();
 				responseString = out.toString();
-			} else {
-				Log.e("SriB", "HTTP Status code: " + statusCode);
 			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			Log.e("SriB", e.getMessage());
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Log.e("SriB", e.getMessage());
-			e.printStackTrace();
+			Log.e("SriB", "HttpAsyncTask: " + e.getMessage());
 		}
 
 		return responseString;
@@ -55,10 +48,10 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
 	@Override
 	protected void onPostExecute(String result) {
-		responseListener.onResponse(result);
+		responseListener.onResponse(result, statusCode);
 	}
 
 	public interface HttpResponseListener {
-		void onResponse(String response);
+		void onResponse(String response, int statusCode);
 	}
 }

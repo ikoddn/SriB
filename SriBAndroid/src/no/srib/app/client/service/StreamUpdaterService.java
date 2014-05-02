@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.StreamSchedule;
+import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Error;
 
 import android.app.Service;
 import android.content.Intent;
@@ -75,6 +76,12 @@ public class StreamUpdaterService extends Service {
 	}
 
 	public interface OnStreamUpdateListener {
+		enum Error {
+			NO_INTERNET
+		}
+
+		void onError(Error error);
+
 		void onStreamUpdate(StreamSchedule streamSchedule);
 	}
 
@@ -100,8 +107,16 @@ public class StreamUpdaterService extends Service {
 			HttpResponseListener {
 
 		@Override
-		public void onResponse(String response) {
-			if (response != null) {
+		public void onResponse(String response, int statusCode) {
+			if (response == null) {
+				Log.d("SriB", "HTTP Status Code: " + statusCode);
+
+				switch (statusCode) {
+				default:
+					streamUpdateListener.onError(Error.NO_INTERNET);
+					break;
+				}
+			} else {
 				Log.d("SriB", response);
 				ObjectMapper mapper = new ObjectMapper();
 
@@ -148,8 +163,6 @@ public class StreamUpdaterService extends Service {
 					Log.e("SriB", e.getMessage());
 					e.printStackTrace();
 				}
-			} else {
-				Log.d("SriB", "result == null");
 			}
 		}
 	}

@@ -47,7 +47,7 @@ public class LiveRadioFragment extends Fragment {
 					.getCharSequence(BUNDLE_STREAM));
 		} else {
 			statusTextView.setText("Live radio fragment");
-			streamTextView.setText("No internet connection");
+			streamTextView.setText("PLACEHOLDER TEXT");
 		}
 
 		Button playButton = (Button) rootView

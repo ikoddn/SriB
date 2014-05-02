@@ -180,6 +180,19 @@ public class MainActivity extends ActionBarActivity {
 	private class StreamUpdateListener implements OnStreamUpdateListener {
 
 		@Override
+		public void onError(Error error) {
+			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+
+			if (liveRadioFragment != null) {
+				switch (error) {
+				case NO_INTERNET:
+					liveRadioFragment.setStreamText("No internet connection");
+					break;
+				}
+			}
+		}
+
+		@Override
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
 			try {
 				audioPlayer.setDataSource(streamSchedule.getUrl());
