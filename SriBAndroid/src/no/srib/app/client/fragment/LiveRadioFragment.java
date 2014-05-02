@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 public class LiveRadioFragment extends Fragment {
 
+	private static final String BUNDLE_STATUS = "status";
+	private static final String BUNDLE_STREAM = "stream";
+
 	private AudioPlayer audioPlayer;
 	private TextView statusTextView;
 	private TextView streamTextView;
@@ -31,13 +34,21 @@ public class LiveRadioFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_liveradio,
 				container, false);
+
 		statusTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_status);
-		statusTextView.setText("Live radio fragment");
-
 		streamTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_stream);
-		streamTextView.setText("No internet connection");
+
+		if (savedInstanceState != null) {
+			statusTextView.setText(savedInstanceState
+					.getCharSequence(BUNDLE_STATUS));
+			streamTextView.setText(savedInstanceState
+					.getCharSequence(BUNDLE_STREAM));
+		} else {
+			statusTextView.setText("Live radio fragment");
+			streamTextView.setText("No internet connection");
+		}
 
 		Button playButton = (Button) rootView
 				.findViewById(R.id.button_liveradio_play);
@@ -48,6 +59,14 @@ public class LiveRadioFragment extends Fragment {
 		pauseButton.setOnClickListener(new PauseButtonListener());
 
 		return rootView;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putCharSequence(BUNDLE_STATUS, statusTextView.getText());
+		outState.putCharSequence(BUNDLE_STREAM, streamTextView.getText());
 	}
 
 	private class PlayButtonListener implements OnClickListener {
