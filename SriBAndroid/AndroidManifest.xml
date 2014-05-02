@@ -32,11 +32,11 @@
         </activity>
 
         <service
-            android:name="no.srib.app.client.audioplayer.AudioPlayerService"
+            android:name="no.srib.app.client.service.AudioPlayerService"
             android:exported="false" />
         
         <service
-            android:name="no.srib.app.client.StreamUpdaterService"
+            android:name="no.srib.app.client.service.StreamUpdaterService"
             android:exported="false" />
     </application>
 

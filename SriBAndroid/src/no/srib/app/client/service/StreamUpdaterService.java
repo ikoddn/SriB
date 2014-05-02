@@ -1,4 +1,4 @@
-package no.srib.app.client;
+package no.srib.app.client.service;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,16 +39,21 @@ public class StreamUpdaterService extends Service {
 		this.streamUpdateListener = streamUpdateListener;
 	}
 
+	public void updateFrom(String updateURL) {
+		if (streamScheduleUpdater == null) {
+			streamScheduleUpdater = new StreamScheduleUpdater(updateURL);
+			timerHandler.postDelayed(streamScheduleUpdater, 0);
+		}
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
 		timerFails = new AtomicInteger(0);
 		timerHandler = new Handler();
-
-		streamScheduleUpdater = new StreamScheduleUpdater();
-
-		timerHandler.postDelayed(streamScheduleUpdater, 0);
+		streamScheduleUpdater = null;
+		streamUpdateListener = null;
 	}
 
 	@Override
@@ -75,12 +80,17 @@ public class StreamUpdaterService extends Service {
 
 	private class StreamScheduleUpdater implements Runnable {
 
+		private String updateURL;
+
+		public StreamScheduleUpdater(String updateURL) {
+			this.updateURL = updateURL;
+		}
+
 		@Override
 		public void run() {
 			HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
 					new StreamScheduleResponseListener());
-			streamScheduleTask
-					.execute("http://80.203.58.154:8080/SriBServer/rest/radiourl");
+			streamScheduleTask.execute(updateURL);
 
 			Log.d("SriB", "Updating the stream schedule...");
 		}

@@ -1,5 +1,8 @@
-package no.srib.app.client.audioplayer;
+package no.srib.app.client.service;
 
+import no.srib.app.client.audioplayer.AudioPlayer;
+import no.srib.app.client.audioplayer.AudioPlayerException;
+import no.srib.app.client.audioplayer.StateHandler;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -62,7 +65,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	public void setDataSource(String dataSource) throws AudioPlayerException {
 		State state = stateHandler.getState();
 		boolean wasPlaying = state == State.STARTED;
-		
+
 		if (state != State.UNINITIALIZED) {
 			uninitializeMediaPlayer();
 		}
@@ -72,7 +75,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		try {
 			mediaPlayer.setDataSource(dataSource);
 			stateHandler.setState(State.STOPPED);
-			
+
 			if (wasPlaying) {
 				start();
 			}

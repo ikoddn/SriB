@@ -10,21 +10,21 @@ import no.srib.app.client.audioplayer.AudioPlayer.StateListener;
  * @author Sveinung
  * 
  */
-class StateHandler {
+public class StateHandler {
 
 	private State state;
 	private StateListener stateListener;
 
-	StateHandler() {
+	public StateHandler() {
 		state = State.UNINITIALIZED;
 		stateListener = null;
 	}
 
-	State getState() {
+	public State getState() {
 		return state;
 	}
 
-	void setState(State state) {
+	public void setState(State state) {
 		this.state = state;
 
 		if (stateListener != null) {
@@ -32,7 +32,7 @@ class StateHandler {
 		}
 	}
 
-	void setStateListener(StateListener stateListener) {
+	public void setStateListener(StateListener stateListener) {
 		this.stateListener = stateListener;
 	}
 }

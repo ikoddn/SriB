@@ -1,12 +1,13 @@
 package no.srib.app.client;
 
 import no.srib.R;
-import no.srib.app.client.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
-import no.srib.app.client.audioplayer.AudioPlayerService;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.model.StreamSchedule;
+import no.srib.app.client.service.AudioPlayerService;
+import no.srib.app.client.service.StreamUpdaterService;
+import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -76,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 
-		//unbindServices();
+		// unbindServices();
 	}
 
 	@Override
@@ -166,6 +167,8 @@ public class MainActivity extends ActionBarActivity {
 			streamUpdater = ((StreamUpdaterService.StreamUpdaterBinder) service)
 					.getService();
 			streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
+			streamUpdater
+					.updateFrom("http://80.203.58.154:8080/SriBServer/rest/radiourl");
 		}
 
 		@Override
