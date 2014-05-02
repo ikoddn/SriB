@@ -1,7 +1,6 @@
 package no.srib.app.client.fragment;
 
 import no.srib.R;
-import no.srib.app.client.audioplayer.AudioPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,13 +15,17 @@ public class LiveRadioFragment extends Fragment {
 	private static final String BUNDLE_STATUS = "status";
 	private static final String BUNDLE_STREAM = "stream";
 
-	private AudioPlayer audioPlayer;
+	private OnLiveRadioClickListener liveRadioClickListener;
 	private TextView statusTextView;
 	private TextView streamTextView;
 
-	public void setAudioPlayer(AudioPlayer audioPlayer) {
-		this.audioPlayer = audioPlayer;
-		audioPlayer.setStateListener(new AudioPlayerStateListener());
+	public void setOnLiveRadioClickListener(
+			OnLiveRadioClickListener liveRadioClickListener) {
+		this.liveRadioClickListener = liveRadioClickListener;
+	}
+
+	public void setStatusText(CharSequence text) {
+		statusTextView.setText(text);
 	}
 
 	public void setStreamText(CharSequence text) {
@@ -69,15 +72,17 @@ public class LiveRadioFragment extends Fragment {
 		outState.putCharSequence(BUNDLE_STREAM, streamTextView.getText());
 	}
 
+	public interface OnLiveRadioClickListener {
+		void onPlayClicked();
+
+		void onPauseClicked();
+	}
+
 	private class PlayButtonListener implements OnClickListener {
 
 		@Override
 		public void onClick(View button) {
-			if (audioPlayer.isPlaying()) {
-				audioPlayer.stop();
-			} else {
-				audioPlayer.start();
-			}
+			liveRadioClickListener.onPlayClicked();
 		}
 	}
 
@@ -85,33 +90,7 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			audioPlayer.pause();
-		}
-	}
-
-	private class AudioPlayerStateListener implements AudioPlayer.StateListener {
-
-		@Override
-		public void onStateChanged(AudioPlayer.State state) {
-			switch (state) {
-			case PAUSED:
-				statusTextView.setText("paused");
-				break;
-			case PREPARING:
-				statusTextView.setText("preparing");
-				break;
-			case STARTED:
-				statusTextView.setText("started");
-				break;
-			case STOPPED:
-				statusTextView.setText("stopped");
-				break;
-			case UNINITIALIZED:
-				statusTextView.setText("uninitialized");
-				break;
-			default:
-				break;
-			}
+			liveRadioClickListener.onPauseClicked();
 		}
 	}
 }

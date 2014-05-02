@@ -4,6 +4,7 @@ import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.LiveRadioFragment;
+import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.StreamUpdaterService;
@@ -142,10 +143,14 @@ public class MainActivity extends ActionBarActivity {
 			audioPlayer = ((AudioPlayerService.AudioPlayerBinder) service)
 					.getService();
 
+			audioPlayer.setStateListener(new AudioPlayerStateListener());
+
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
 			if (liveRadioFragment != null) {
-				liveRadioFragment.setAudioPlayer(audioPlayer);
+				// liveRadioFragment.setAudioPlayer(audioPlayer);
+				liveRadioFragment
+						.setOnLiveRadioClickListener(new LiveRadioClickListener());
 			}
 		}
 
@@ -221,6 +226,49 @@ public class MainActivity extends ActionBarActivity {
 					fragment.setStreamText("Playback error");
 				}
 			}
+		}
+	}
+
+	private class AudioPlayerStateListener implements AudioPlayer.StateListener {
+
+		@Override
+		public void onStateChanged(AudioPlayer.State state) {
+			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+
+			switch (state) {
+			case PAUSED:
+				fragment.setStatusText("paused");
+				break;
+			case PREPARING:
+				fragment.setStatusText("preparing");
+				break;
+			case STARTED:
+				fragment.setStatusText("started");
+				break;
+			case STOPPED:
+				fragment.setStatusText("stopped");
+				break;
+			case UNINITIALIZED:
+				fragment.setStatusText("uninitialized");
+				break;
+			}
+		}
+	}
+
+	private class LiveRadioClickListener implements OnLiveRadioClickListener {
+
+		@Override
+		public void onPlayClicked() {
+			if (audioPlayer.isPlaying()) {
+				audioPlayer.stop();
+			} else {
+				audioPlayer.start();
+			}
+		}
+
+		@Override
+		public void onPauseClicked() {
+			audioPlayer.pause();
 		}
 	}
 
