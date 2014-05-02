@@ -13,7 +13,10 @@ import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Error;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -77,7 +80,8 @@ public class StreamUpdaterService extends Service {
 
 	public interface OnStreamUpdateListener {
 		enum Error {
-			NO_INTERNET
+			NO_INTERNET,
+			SERVER_UNREACHABLE
 		}
 
 		void onError(Error error);
@@ -107,14 +111,12 @@ public class StreamUpdaterService extends Service {
 			HttpResponseListener {
 
 		@Override
-		public void onResponse(String response, int statusCode) {
+		public void onResponse(String response) {
 			if (response == null) {
-				Log.d("SriB", "HTTP Status Code: " + statusCode);
-
-				switch (statusCode) {
-				default:
+				if (!isNetworkAvailable()) {
 					streamUpdateListener.onError(Error.NO_INTERNET);
-					break;
+				} else {
+					streamUpdateListener.onError(Error.SERVER_UNREACHABLE);
 				}
 			} else {
 				Log.d("SriB", response);
@@ -165,5 +167,12 @@ public class StreamUpdaterService extends Service {
 				}
 			}
 		}
+	}
+
+	private boolean isNetworkAvailable() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager
+				.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 }

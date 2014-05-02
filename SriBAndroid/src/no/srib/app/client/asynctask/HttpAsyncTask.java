@@ -14,12 +14,10 @@ import android.util.Log;
 
 public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
-	private int statusCode;
 	private HttpClient httpClient;
 	private HttpResponseListener responseListener;
 
 	public HttpAsyncTask(HttpResponseListener responseListener) {
-		statusCode = 0;
 		httpClient = new DefaultHttpClient();
 		this.responseListener = responseListener;
 	}
@@ -31,13 +29,15 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 		HttpGet httpGet = new HttpGet(url[0]);
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);
-			statusCode = httpResponse.getStatusLine().getStatusCode();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
 
 			if (statusCode == HttpStatus.SC_OK) {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				httpResponse.getEntity().writeTo(out);
 				out.close();
 				responseString = out.toString();
+			} else {
+				Log.d("SriB", "HttpAsyncTask: HTTP status code " + statusCode);
 			}
 		} catch (IOException e) {
 			Log.e("SriB", "HttpAsyncTask: " + e.getMessage());
@@ -48,10 +48,10 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
 	@Override
 	protected void onPostExecute(String result) {
-		responseListener.onResponse(result, statusCode);
+		responseListener.onResponse(result);
 	}
 
 	public interface HttpResponseListener {
-		void onResponse(String response, int statusCode);
+		void onResponse(String response);
 	}
 }

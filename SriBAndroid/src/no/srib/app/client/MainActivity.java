@@ -181,12 +181,15 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public void onError(Error error) {
-			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
-			if (liveRadioFragment != null) {
+			if (fragment != null) {
 				switch (error) {
 				case NO_INTERNET:
-					liveRadioFragment.setStreamText("No internet connection");
+					fragment.setStreamText("No internet connection");
+					break;
+				case SERVER_UNREACHABLE:
+					fragment.setStreamText("Could not connect to server");
 					break;
 				}
 			}
