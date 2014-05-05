@@ -170,14 +170,17 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	private class StreamUpdaterServiceConnection implements ServiceConnection {
-
+				
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
+			
+			
 			streamUpdater = ((StreamUpdaterService.StreamUpdaterBinder) service)
 					.getService();
+			String radioUrl = getResources().getString(R.string.currentUrl);
 			streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
 			streamUpdater
-					.updateFrom("http://80.203.58.154:8080/SriBServer/rest/radiourl");
+					.updateFrom(radioUrl);
 		}
 
 		@Override
