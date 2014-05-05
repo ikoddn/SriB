@@ -37,6 +37,7 @@
         <service
             android:name="no.srib.app.client.service.StreamUpdaterService"
             android:exported="false" />
+
     </application>
 
 </manifest>

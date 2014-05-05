@@ -117,6 +117,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	@Override
 	public void stop() {
 		switch (stateHandler.getState()) {
+		case COMPLETED:
 		case STARTED:
 		case PAUSED:
 			mediaPlayer.stop();
@@ -156,17 +157,17 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 		@Override
 		public void onCompletion(MediaPlayer arg0) {
-			if (streaming && stateHandler.getState() != State.UNINITIALIZED) {
+			State beforeState = stateHandler.getState();
+			stateHandler.setState(State.COMPLETED);
+			
+			if (streaming && beforeState != State.UNINITIALIZED) {
 				try {
 					setDataSource(dataSource);
-					start();
 				} catch (AudioPlayerException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-
-			stateHandler.setState(State.COMPLETED);
 		}
 	}
 

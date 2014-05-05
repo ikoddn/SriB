@@ -9,13 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.StreamSchedule;
+import no.srib.app.client.receiver.ConnectivityChangeReceiver;
+import no.srib.app.client.receiver.ConnectivityChangeReceiver.OnConnectionChangedListener;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -34,10 +35,38 @@ public class StreamUpdaterService extends Service {
 	private Handler timerHandler;
 	private Runnable streamScheduleUpdater;
 	private OnStreamUpdateListener streamUpdateListener;
+	private ConnectivityChangeReceiver connectionChangeReceiver;
 
 	public StreamUpdaterService() {
 		BINDER = new StreamUpdaterBinder();
 		MAPPER = new ObjectMapper();
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+
+		updating = new AtomicBoolean(false);
+		timerFails = new AtomicInteger(0);
+		timerHandler = new Handler();
+		streamScheduleUpdater = null;
+		streamUpdateListener = null;
+		connectionChangeReceiver = new ConnectivityChangeReceiver();
+		connectionChangeReceiver
+				.setConnectionChangedListener(new ConnectionChangedListener());
+
+		IntentFilter filter = new IntentFilter(
+				ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(connectionChangeReceiver, filter);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		stopUpdating();
+
+		unregisterReceiver(connectionChangeReceiver);
 	}
 
 	public void setStreamUpdateListener(
@@ -64,21 +93,7 @@ public class StreamUpdaterService extends Service {
 		}
 	}
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-
-		updating = new AtomicBoolean(false);
-		timerFails = new AtomicInteger(0);
-		timerHandler = new Handler();
-		streamScheduleUpdater = null;
-		streamUpdateListener = null;
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-
+	public void stopUpdating() {
 		timerHandler.removeCallbacks(streamScheduleUpdater);
 		updating.set(false);
 	}
@@ -133,10 +148,11 @@ public class StreamUpdaterService extends Service {
 			updating.set(false);
 
 			if (response == null) {
-				if (!isNetworkAvailable()) {
-					streamUpdateListener.onStatus(Status.NO_INTERNET);
-				} else {
+				if (connectionChangeReceiver
+						.networkAvailable(getApplicationContext())) {
 					streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
+				} else {
+					streamUpdateListener.onStatus(Status.NO_INTERNET);
 				}
 			} else {
 				Log.d("SriB", response);
@@ -174,10 +190,21 @@ public class StreamUpdaterService extends Service {
 		}
 	}
 
-	private boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	private class ConnectionChangedListener implements
+			OnConnectionChangedListener {
+
+		@Override
+		public void onNetworkAvailable() {
+			update();
+		}
+
+		@Override
+		public void onNetworkUnavailable() {
+			stopUpdating();
+			
+			if (streamUpdateListener != null) {
+				streamUpdateListener.onStatus(Status.NO_INTERNET);
+			}
+		}
 	}
 }

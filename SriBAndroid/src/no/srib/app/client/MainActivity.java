@@ -2,7 +2,6 @@ package no.srib.app.client;
 
 import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
-import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
@@ -153,7 +152,6 @@ public class MainActivity extends ActionBarActivity {
 			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
 			if (liveRadioFragment != null) {
-				// liveRadioFragment.setAudioPlayer(audioPlayer);
 				liveRadioFragment
 						.setOnLiveRadioClickListener(new LiveRadioClickListener());
 			}
@@ -170,17 +168,15 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	private class StreamUpdaterServiceConnection implements ServiceConnection {
-				
+
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			
-			
+
 			streamUpdater = ((StreamUpdaterService.StreamUpdaterBinder) service)
 					.getService();
 			String radioUrl = getResources().getString(R.string.currentUrl);
 			streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
-			streamUpdater
-					.updateFrom(radioUrl);
+			streamUpdater.updateFrom(radioUrl);
 		}
 
 		@Override
@@ -224,15 +220,10 @@ public class MainActivity extends ActionBarActivity {
 					throw new AudioPlayerException();
 				}
 
-				State beforeState = audioPlayer.getState();
-				autoPlayAfterConnect = autoPlayAfterConnect
-						|| beforeState == State.STARTED;
-
 				audioPlayer.setDataSource(url);
 
 				if (autoPlayAfterConnect) {
 					audioPlayer.start();
-					autoPlayAfterConnect = false;
 				}
 
 				if (fragment != null) {
@@ -283,9 +274,11 @@ public class MainActivity extends ActionBarActivity {
 			case PAUSED:
 			case PREPARING:
 			case STOPPED:
+				autoPlayAfterConnect = true;
 				audioPlayer.start();
 				break;
 			case STARTED:
+				autoPlayAfterConnect = false;
 				audioPlayer.stop();
 				break;
 			case UNINITIALIZED:
@@ -301,6 +294,7 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public void onPauseClicked() {
+			autoPlayAfterConnect = false;
 			audioPlayer.pause();
 		}
 	}
