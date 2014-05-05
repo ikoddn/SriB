@@ -22,4 +22,5 @@ public interface PodcastDAO extends AbstractModelDAO<Podcast> {
      * @throws DAOException
      */
     List<Podcast> getPodcasts(final int programID) throws DAOException;
+    
 }

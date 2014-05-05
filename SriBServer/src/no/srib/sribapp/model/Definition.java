@@ -1,6 +1,7 @@
 package no.srib.sribapp.model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="definition")
 @NamedQuery(name="Definition.findAll", query="SELECT d FROM Definition d")
+@XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class Definition extends AbstractModel  {
 	private static final long serialVersionUID = 1L;
 	private int defnr;

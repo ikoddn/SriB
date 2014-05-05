@@ -21,7 +21,7 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
     public List<Podcast> getPodcasts(final int programID) throws DAOException {
         List<Podcast> result = null;
 
-        String queryString = "SELECT P FROM PODCAST P WHERE P.PROGRAM=:id";
+        String queryString = "SELECT P FROM Podcast P WHERE P.program=:id";
         TypedQuery<Podcast> query = em.createQuery(queryString, Podcast.class);
         query.setParameter("id", programID);
 
