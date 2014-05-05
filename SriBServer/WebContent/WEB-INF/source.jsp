@@ -21,29 +21,67 @@
 </head>
 <body>
 <div class="container">
+	
 	<a href="Login">Tilbake</a><h1>Sett kilde</h1>
 	<c:if test="${errorUrl == true}">
 		<span style="color: red">Ugyldig url</span>
 	</c:if>
-	<form action="UpdateUrl" method="post">
-	
-		<h4>Hovedkilde:</h4>
-		Navn:<input type="text" name="name" value='<c:out value="${url1.name}"/>' />
-		URL:<input type="url" value='<c:out value="${url1.url}"/>' name="url"
-			size="60">
-			<input type="hidden" name="id" value="${url1.id}" />
-			<input type="submit" value="Lagre" />
-	</form>
-	<form action="UpdateUrl" method="post">
-		<h4>Sekunderkilde:</h4>
-		Navn:<input type="text" name="name" value='<c:out value="${url2.name}"/>' />
-		URL:<input type="url" value='<c:out value="${url2.url}"/>' name="url"
+	</div>
+	<div class="container">
+	<div class="row">
+	<div class="col-md-3">
+	<h3>Hovedkilde:</h3>
+	<form class="form form-horizontal" role="form" action="UpdateUrl" method="post">
+		
+		
+		
+       	 
+          <div class="form-group">
+		<label>Navn:</label>
+		<input class="form-control" type="text" name="name" value='<c:out value="${url1.name}"/>' />
+		
+		</div>
+		
+         <div class="form-group">
+        
+		<label>URL:</label>
+		<input class="form-control" type="url" value='<c:out value="${url1.url}"/>' name="url"
 			size="60"> 
-			<input type="hidden" name="id" value="${url2.id}" />
-			<input type="submit" value="Lagre" />
+			
+			</div>
+
+			<input type="hidden" name="id" value="${url1.id}" />
+			<input type="submit" class="btn btn-default" value="Lagre" />
 	</form>
-
-
+	</div>
+	<div class="col-md-1"></div>
+	<div class="col-md-4">
+	<h3>Sekunderkilde:</h3>
+	<form class="form form-horizontal" role="form" action="UpdateUrl" method="post">
+		
+		<div class="form-group">
+	
+		<label>Navn:</label>
+		<input type="text" class="form-control" name="name" value='<c:out value="${url2.name}"/>' />
+		
+		</div>
+			<div class="form-group">
+           
+		<label>URL:</label>
+		<input type="url" class="form-control" value='<c:out value="${url2.url}"/>' name="url" size="60"> 
+		</div>
+	
+		
+			<input type="hidden" name="id" value="${url2.id}" />
+			<input type="submit" class="btn btn-default" value="Lagre" />
+	</form>
+	</div>
+	</div>
+	</div>
+	
+	
+	 
+	<div class="container">
 	<c:if test="${not empty schedule }"><h3>Skift til sekunderkilde i desse tidsromma:</h3>
 	<c:if test="${errorUpdate == true}">
 		<span style="color: red">Ugyldig input</span>
@@ -97,17 +135,9 @@
 	</form>
 
 
-
-
 </div>
+
+
 </body>
 </html>
 
-
-<!-- <div class="form-group">
-    <label for="" class="control-label">Paycheck</label>
-    <div class="input-group input-group-lg">
-        <span class="input-group-addon">$</span> 
-        <input type="text" class="form-control" id="">
-    </div>
-</div> -->
