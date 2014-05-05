@@ -189,11 +189,11 @@ public class MainActivity extends ActionBarActivity {
 	private class StreamUpdateListener implements OnStreamUpdateListener {
 
 		@Override
-		public void onStatus(Status error) {
+		public void onStatus(Status status) {
 			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
 			if (fragment != null) {
-				switch (error) {
+				switch (status) {
 				case NO_INTERNET:
 					fragment.setStreamText("No internet connection");
 					break;
@@ -288,7 +288,7 @@ public class MainActivity extends ActionBarActivity {
 			case UNINITIALIZED:
 			case COMPLETED:
 				autoPlayAfterConnect = true;
-				
+
 				if (!streamUpdater.isUpdating()) {
 					streamUpdater.update();
 				}

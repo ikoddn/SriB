@@ -18,6 +18,8 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 	private final IBinder binder;
 
+	private boolean streaming;
+	private String dataSource;
 	private StateHandler stateHandler;
 	private MediaPlayer mediaPlayer;
 
@@ -29,6 +31,8 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	public void onCreate() {
 		super.onCreate();
 
+		streaming = false;
+		dataSource = null;
 		stateHandler = new StateHandler();
 		mediaPlayer = new MediaPlayer();
 
@@ -63,6 +67,8 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 	@Override
 	public void setDataSource(String dataSource) throws AudioPlayerException {
+		this.dataSource = dataSource;
+
 		State state = stateHandler.getState();
 
 		if (state != State.UNINITIALIZED) {
@@ -70,6 +76,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		}
 
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		streaming = true;
 
 		try {
 			mediaPlayer.setDataSource(dataSource);
@@ -149,7 +156,16 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 		@Override
 		public void onCompletion(MediaPlayer arg0) {
-			//stopSelf();
+			if (streaming && stateHandler.getState() != State.UNINITIALIZED) {
+				try {
+					setDataSource(dataSource);
+					start();
+				} catch (AudioPlayerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 			stateHandler.setState(State.COMPLETED);
 		}
 	}
