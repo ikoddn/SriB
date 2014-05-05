@@ -1,6 +1,7 @@
 package no.srib.app.client.service;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,7 @@ public class StreamUpdaterService extends Service {
 	private final IBinder BINDER;
 	private final ObjectMapper MAPPER;
 
+	private AtomicBoolean updating;
 	private AtomicInteger timerFails;
 	private Handler timerHandler;
 	private Runnable streamScheduleUpdater;
@@ -47,12 +49,18 @@ public class StreamUpdaterService extends Service {
 		if (streamScheduleUpdater == null) {
 			streamScheduleUpdater = new StreamScheduleUpdater(updateURL);
 			timerHandler.postDelayed(streamScheduleUpdater, 0);
+			updating.set(true);
 		}
+	}
+
+	public boolean isUpdating() {
+		return updating.get();
 	}
 
 	public void update() {
 		if (streamScheduleUpdater != null) {
 			timerHandler.postDelayed(streamScheduleUpdater, 0);
+			updating.set(true);
 		}
 	}
 
@@ -60,6 +68,7 @@ public class StreamUpdaterService extends Service {
 	public void onCreate() {
 		super.onCreate();
 
+		updating = new AtomicBoolean(false);
 		timerFails = new AtomicInteger(0);
 		timerHandler = new Handler();
 		streamScheduleUpdater = null;
@@ -71,6 +80,7 @@ public class StreamUpdaterService extends Service {
 		super.onDestroy();
 
 		timerHandler.removeCallbacks(streamScheduleUpdater);
+		updating.set(false);
 	}
 
 	@Override
@@ -120,6 +130,8 @@ public class StreamUpdaterService extends Service {
 
 		@Override
 		public void onResponse(String response) {
+			updating.set(false);
+
 			if (response == null) {
 				if (!isNetworkAvailable()) {
 					streamUpdateListener.onStatus(Status.NO_INTERNET);

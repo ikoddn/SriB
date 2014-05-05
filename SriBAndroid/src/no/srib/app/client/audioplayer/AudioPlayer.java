@@ -60,7 +60,8 @@ public interface AudioPlayer {
 		STOPPED,
 		PREPARING,
 		STARTED,
-		PAUSED
+		PAUSED,
+		COMPLETED
 	}
 
 	/**

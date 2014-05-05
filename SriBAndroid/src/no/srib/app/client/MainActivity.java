@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager viewPager;
-	
+
 	private boolean autoPlayAfterConnect;
 
 	private boolean audioPlayerServiceBound;
@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
 		viewPager.setAdapter(sectionsPagerAdapter);
 
 		autoPlayAfterConnect = false;
-		
+
 		audioPlayerServiceBound = false;
 		audioPlayer = null;
 		audioPlayerServiceConnection = new AudioPlayerServiceConnection();
@@ -220,12 +220,13 @@ public class MainActivity extends ActionBarActivity {
 				if (url == null) {
 					throw new AudioPlayerException();
 				}
-				
+
 				State beforeState = audioPlayer.getState();
-				autoPlayAfterConnect = autoPlayAfterConnect || beforeState == State.STARTED;
+				autoPlayAfterConnect = autoPlayAfterConnect
+						|| beforeState == State.STARTED;
 
 				audioPlayer.setDataSource(url);
-				
+
 				if (autoPlayAfterConnect) {
 					audioPlayer.start();
 					autoPlayAfterConnect = false;
@@ -264,6 +265,9 @@ public class MainActivity extends ActionBarActivity {
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
 				break;
+			case COMPLETED:
+				fragment.setStatusText("completed");
+				break;
 			}
 		}
 	}
@@ -282,8 +286,12 @@ public class MainActivity extends ActionBarActivity {
 				audioPlayer.stop();
 				break;
 			case UNINITIALIZED:
+			case COMPLETED:
 				autoPlayAfterConnect = true;
-				streamUpdater.update();
+				
+				if (!streamUpdater.isUpdating()) {
+					streamUpdater.update();
+				}
 				break;
 			}
 		}

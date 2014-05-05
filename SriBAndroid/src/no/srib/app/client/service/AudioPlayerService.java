@@ -149,8 +149,8 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 
 		@Override
 		public void onCompletion(MediaPlayer arg0) {
-			stopSelf();
-			stateHandler.setState(State.UNINITIALIZED);
+			//stopSelf();
+			stateHandler.setState(State.COMPLETED);
 		}
 	}
 
