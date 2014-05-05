@@ -2,6 +2,7 @@ package no.srib.app.client;
 
 import no.srib.R;
 import no.srib.app.client.audioplayer.AudioPlayer;
+import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
@@ -38,6 +39,8 @@ public class MainActivity extends ActionBarActivity {
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager viewPager;
+	
+	private boolean autoPlayAfterConnect;
 
 	private boolean audioPlayerServiceBound;
 	private AudioPlayer audioPlayer;
@@ -62,6 +65,8 @@ public class MainActivity extends ActionBarActivity {
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
 
+		autoPlayAfterConnect = false;
+		
 		audioPlayerServiceBound = false;
 		audioPlayer = null;
 		audioPlayerServiceConnection = new AudioPlayerServiceConnection();
@@ -215,8 +220,16 @@ public class MainActivity extends ActionBarActivity {
 				if (url == null) {
 					throw new AudioPlayerException();
 				}
+				
+				State beforeState = audioPlayer.getState();
+				autoPlayAfterConnect = autoPlayAfterConnect || beforeState == State.STARTED;
 
 				audioPlayer.setDataSource(url);
+				
+				if (autoPlayAfterConnect) {
+					audioPlayer.start();
+					autoPlayAfterConnect = false;
+				}
 
 				if (fragment != null) {
 					fragment.setStreamText(streamSchedule.getName());
@@ -269,6 +282,7 @@ public class MainActivity extends ActionBarActivity {
 				audioPlayer.stop();
 				break;
 			case UNINITIALIZED:
+				autoPlayAfterConnect = true;
 				streamUpdater.update();
 				break;
 			}

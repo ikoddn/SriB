@@ -64,7 +64,6 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	@Override
 	public void setDataSource(String dataSource) throws AudioPlayerException {
 		State state = stateHandler.getState();
-		boolean wasPlaying = state == State.STARTED;
 
 		if (state != State.UNINITIALIZED) {
 			uninitializeMediaPlayer();
@@ -75,10 +74,6 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		try {
 			mediaPlayer.setDataSource(dataSource);
 			stateHandler.setState(State.STOPPED);
-
-			if (wasPlaying) {
-				start();
-			}
 		} catch (Exception e) {
 			throw new AudioPlayerException(e);
 		}

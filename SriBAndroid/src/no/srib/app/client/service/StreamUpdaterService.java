@@ -142,10 +142,6 @@ public class StreamUpdaterService extends Service {
 
 					Log.d("SriB", "delay: " + delay);
 
-					if (delay < 0) {
-						delay = 0;
-					}
-
 					if (delay < TIMER_FAIL_TRESHOLD) {
 						timerFails.incrementAndGet();
 						Log.d("SriB", "timerFails: " + timerFails.get());
