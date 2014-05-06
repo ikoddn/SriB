@@ -107,7 +107,11 @@ public class ArticlesFragment extends Fragment {
 
 		@Override
 		public long getItemId(int position) {
-			return position;
+			if (list != null) {
+				return list.get(position).getId();
+			} else {
+				return 0;
+			}
 		}
 
 		@Override
