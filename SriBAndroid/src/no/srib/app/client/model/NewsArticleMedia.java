@@ -37,4 +37,10 @@ public class NewsArticleMedia implements Serializable {
 	public void setSizes(List<NewsArticleImage> sizes) {
 		this.sizes = sizes;
 	}
+
+	@Override
+	public String toString() {
+		return "NewsArticleMedia [id=" + id + ", altText=" + altText
+				+ ", sizes=" + sizes + "]";
+	}
 }

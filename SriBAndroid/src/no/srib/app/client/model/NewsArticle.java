@@ -73,4 +73,12 @@ public class NewsArticle implements Serializable {
 	public void setContentDisplay(String contentDisplay) {
 		this.contentDisplay = contentDisplay;
 	}
+
+	@Override
+	public String toString() {
+		return "NewsArticle [id=" + id + ", date=" + date + ", title=" + title
+				+ ", permalink=" + permalink + ", excerptDisplay="
+				+ excerptDisplay + ", contentDisplay=" + contentDisplay
+				+ ", media=" + media + "]";
+	}
 }

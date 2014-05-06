@@ -45,4 +45,10 @@ public class NewsArticleImage implements Serializable {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+	@Override
+	public String toString() {
+		return "NewsArticleImage [height=" + height + ", width=" + width
+				+ ", name=" + name + ", url=" + url + "]";
+	}
 }

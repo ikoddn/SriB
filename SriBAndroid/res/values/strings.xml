@@ -11,4 +11,7 @@
     <string name="button_liveradio_pause">Pause</string>
     <string name="button_liveradio_datasource">Set datasource</string>
 
+    <!-- Articles fragment -->
+    <string name="imageview_article_desc">Image</string>
+    
 </resources>
