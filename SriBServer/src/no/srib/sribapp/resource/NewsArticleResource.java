@@ -17,7 +17,7 @@ import no.srib.sribapp.dao.interfaces.NewsArticleDAO;
 import no.srib.sribapp.model.NewsArticle;
 
 @Path("news")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 @ManagedBean
 public class NewsArticleResource {
 

@@ -22,9 +22,8 @@ import no.srib.sribapp.model.Definition;
 import no.srib.sribapp.model.Podcast;
 import no.srib.sribapp.resource.helper.PodcastBean;
 
-
 @Path("podcast")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 @ManagedBean
 public class PodcastResource {
 
@@ -39,31 +38,30 @@ public class PodcastResource {
      * @return A list with all recent podcasts.
      */
     @GET
-    
     public final List<PodcastBean> getAllPodcast() {
         List<Podcast> list = null;
         List<PodcastBean> podcastList = new ArrayList<PodcastBean>();
-        Map<Integer,String> programName = new HashMap<Integer,String>();
+        Map<Integer, String> programName = new HashMap<Integer, String>();
         List<Definition> defList = null;
-           
-        
+
         try {
             list = podcastDAO.getList();
             defList = defDAO.getList();
-            
+
         } catch (DAOException e) {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if (defList == null || list == null  || list.isEmpty() || defList.isEmpty()) {
+        if (defList == null || list == null || list.isEmpty()
+                || defList.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
-        
-        for(Definition def : defList){
+
+        for (Definition def : defList) {
             programName.put(def.getDefnr(), def.getName());
         }
-        
-        for(Podcast pod : list){
+
+        for (Podcast pod : list) {
             PodcastBean podBean = new PodcastBean();
             podBean.setCreatedate(pod.getCreatedate());
             podBean.setCreatetime(pod.getCreatetime());
@@ -74,25 +72,24 @@ public class PodcastResource {
             podBean.setRemark(pod.getRemark());
             podBean.setTitle(pod.getTitle());
             podBean.setProgramId(pod.getProgram());
-           podcastList.add(podBean);
+            podcastList.add(podBean);
         }
 
         return podcastList;
     }
-    
-    
-    //Get by programId
+
+    // Get by programId
     @GET
     @Path("/{id}")
-    public final List<PodcastBean> getPodcastByProgramId(@PathParam("id")int id) {
+    public final List<PodcastBean> getPodcastByProgramId(@PathParam("id") int id) {
         List<Podcast> list = null;
         List<PodcastBean> podList = new ArrayList<PodcastBean>();
-        Map<Integer,String> programName = new HashMap<Integer,String>();
-        List<Definition> defList = null;
-        
+        Map<Integer, String> programName = new HashMap<Integer, String>();
+        // List<Definition> defList = null;
+
         try {
             list = podcastDAO.getPodcasts(id);
-            defList = defDAO.getList();
+            // defList = defDAO.getList();
         } catch (DAOException e) {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
@@ -100,8 +97,8 @@ public class PodcastResource {
         if (list == null || list.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
-        
-        for(Podcast pod : list){
+
+        for (Podcast pod : list) {
             PodcastBean podBean = new PodcastBean();
             podBean.setCreatedate(pod.getCreatedate());
             podBean.setCreatetime(pod.getCreatetime());
@@ -112,17 +109,15 @@ public class PodcastResource {
             podBean.setRemark(pod.getRemark());
             podBean.setTitle(pod.getTitle());
             podBean.setProgramId(pod.getProgram());
-           podList.add(podBean);
-            
-            
+            podList.add(podBean);
+
         }
-        
+
         return podList;
-        
-    
+
     }
-    
-    //Get all names
+
+    // Get all names
     @GET
     @Path("/names")
     public final List<Definition> getAllPodcastNames() {
@@ -137,8 +132,8 @@ public class PodcastResource {
         if (list == null || list.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
-        
+
         return list;
     }
-    
+
 }

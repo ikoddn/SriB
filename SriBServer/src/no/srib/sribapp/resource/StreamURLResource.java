@@ -19,7 +19,7 @@ import no.srib.sribapp.model.Streamurlschedule;
 import no.srib.sribapp.resource.helper.StreamSchedule;
 
 @Path("radiourl")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 @ManagedBean
 public class StreamURLResource {
 
