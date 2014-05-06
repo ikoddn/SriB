@@ -19,7 +19,6 @@ public class StreamurlscheduleDAOImpl extends
 
     public StreamurlscheduleDAOImpl() {
         super(Streamurlschedule.class);
-
     }
 
     @Override
@@ -40,18 +39,31 @@ public class StreamurlscheduleDAOImpl extends
 
         return streamurlschedule;
     }
-    
-    
 
     @Override
-    public Streamurlschedule getNextShiftTime() throws DAOException {
-        
-        return null;
+    public List<Streamurlschedule> getUpcomingSchedule(
+            final Calendar currentTime) throws DAOException {
+
+        List<Streamurlschedule> result = null;
+
+        String queryString = "SELECT S FROM Streamurlschedule S ORDER BY CASE WHEN (S.day=:day) THEN (CASE WHEN (S.totime>:time) THEN 0 ELSE 3 END) WHEN (S.day<:day) THEN 2 ELSE 1 END, S.day, S.fromtime";
+        TypedQuery<Streamurlschedule> query = em.createQuery(queryString,
+                Streamurlschedule.class);
+        query.setParameter("day", currentTime.get(Calendar.DAY_OF_WEEK));
+        query.setParameter("time",
+                new java.sql.Time(currentTime.getTimeInMillis()));
+
+        try {
+            result = query.getResultList();
+        } catch (Exception e) {
+            throw new DAOException(e);
+        }
+
+        return result;
     }
 
     @Override
     public boolean isMainSourceActive() throws DAOException {
-        Streamurlschedule str = null;
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DAY_OF_WEEK);
         String nowString = new SimpleDateFormat("HH:mm:ss").format(new Date());
@@ -61,14 +73,11 @@ public class StreamurlscheduleDAOImpl extends
                 Streamurlschedule.class);
         query.setParameter("day", day);
         query.setParameter("time", time);
+
         try {
-
             return query.getResultList().isEmpty();
-
         } catch (Exception e) {
             throw new DAOException(e);
         }
-
     }
-
 }

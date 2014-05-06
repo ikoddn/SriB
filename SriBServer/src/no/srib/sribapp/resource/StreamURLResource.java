@@ -22,54 +22,52 @@ import no.srib.sribapp.resource.helper.StreamSchedule;
 @Produces(MediaType.APPLICATION_JSON)
 @ManagedBean
 public class StreamURLResource {
-    private static int index = 1;
 
     @EJB
     private StreamurlDAO streamURLDAO;
     @EJB
     private StreamUrlScheduleDAO streamUrlScheduleDAO;
-    
-    
+
     private final int MAIN_SOURCE = 0;
     private final int SECOND_SOURCE = 1;
-    
 
     @GET
-    public final StreamSchedule getCurrentStreamSchedule() throws DAOException {        
-        
+    public final StreamSchedule getCurrentStreamSchedule() throws DAOException {
         List<Streamurl> streamList = streamURLDAO.getList();
-        Streamurl stream = null;
-        Streamurlschedule stuc = null; 
-        String name = null;
-        String url = null;
+        Calendar now = Calendar.getInstance();
+
+        List<Streamurlschedule> upcomingSchedule = streamUrlScheduleDAO
+                .getUpcomingSchedule(now);
+        Streamurlschedule nextSchedule = upcomingSchedule.get(0);
+
+        Time hourAndMinutes;
+        if (nextSchedule.getFromtime().after(now.getTime())) {
+            hourAndMinutes = nextSchedule.getFromtime();
+        } else {
+            hourAndMinutes = nextSchedule.getTotime();
+        }
+
         Calendar time = Calendar.getInstance();
-        //TODO HER MÅ DET LEGGAST INN LOGIKK FOR Å GI UT RETT VERDI TIL KLIENT
-        if(false) {
-           time.add(Calendar.DAY_OF_YEAR, 1);
+        time.setTimeInMillis(hourAndMinutes.getTime());
+
+        time.set(Calendar.YEAR, now.get(Calendar.YEAR));
+        time.set(Calendar.DAY_OF_YEAR, now.get(Calendar.DAY_OF_YEAR));
+
+        if (now.get(Calendar.HOUR_OF_DAY) > time.get(Calendar.HOUR_OF_DAY)) {
+            time.add(Calendar.DAY_OF_MONTH, 1);
         }
-        long timeInMs = time.getTimeInMillis() + 30000;
-        System.out.println(streamUrlScheduleDAO.isMainSourceActive());
-        if(streamUrlScheduleDAO.isMainSourceActive()){
+
+        Streamurl stream;
+        if (streamUrlScheduleDAO.isMainSourceActive()) {
             stream = streamList.get(MAIN_SOURCE);
-            
-            name = stream.getName();
-            url = stream.getUrl();
-       
-            return new StreamSchedule(name, url, timeInMs);
-        }else{
+        } else {
             stream = streamList.get(SECOND_SOURCE);
-            name = stream.getName();
-            url = stream.getUrl();
-         
-            
-            
-            return new StreamSchedule(name, url, timeInMs);
         }
 
+        String name = stream.getName();
+        String url = stream.getUrl();
+        long timeInMs = time.getTimeInMillis();
 
-       
-
-        
-
+        return new StreamSchedule(name, url, timeInMs);
     }
 }
