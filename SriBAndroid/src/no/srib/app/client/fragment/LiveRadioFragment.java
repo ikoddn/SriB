@@ -25,11 +25,15 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public void setStatusText(CharSequence text) {
-		statusTextView.setText(text);
+		if (statusTextView != null) {
+			statusTextView.setText(text);
+		}
 	}
 
 	public void setStreamText(CharSequence text) {
-		streamTextView.setText(text);
+		if (streamTextView != null) {
+			streamTextView.setText(text);
+		}
 	}
 
 	@Override
@@ -68,8 +72,13 @@ public class LiveRadioFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		outState.putCharSequence(BUNDLE_STATUS, statusTextView.getText());
-		outState.putCharSequence(BUNDLE_STREAM, streamTextView.getText());
+		if (statusTextView != null) {
+			outState.putCharSequence(BUNDLE_STATUS, statusTextView.getText());
+		}
+
+		if (streamTextView != null) {
+			outState.putCharSequence(BUNDLE_STREAM, streamTextView.getText());
+		}
 	}
 
 	public interface OnLiveRadioClickListener {

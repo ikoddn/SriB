@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import no.srib.R;
 import no.srib.app.client.asynctask.HttpAsyncTask;
@@ -127,8 +128,10 @@ public class ArticlesFragment extends Fragment {
 
 			NewsArticle newsArticle = list.get(position);
 
-			image.setImageDrawable(convertView.getResources().getDrawable(
-					R.drawable.frank));
+			String url = newsArticle.getMedia().get(0).getSizes().get(1).getUrl();
+			UrlImageViewHelper.setUrlDrawable(image, url);
+			
+			
 			title.setText(newsArticle.getTitle());
 			excerpt.setText(newsArticle.getExcerptDisplay());
 

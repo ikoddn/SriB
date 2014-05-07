@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- 
     <string name="currentUrl">http://80.203.58.154:8080/SriBServer/rest/radiourl</string>
     <string name="currentProgram">http://80.203.58.154:8080/SriBServer/rest/schedule/now</string>
     <string name="getAllPodcast">http://80.203.58.154:8080/SriBServer/rest/podcast</string>
     <string name="url_articles">http://80.203.58.154:8080/SriBServer/rest/news</string>
-
+	-->
+	
+	<string name="currentUrl">http://158.37.6.78:8080/SriBServer/rest/radiourl</string>
+    <string name="currentProgram">http://158.37.6.78:8080/SriBServer/rest/schedule/now</string>
+    <string name="getAllPodcast">http://158.37.6.78:8080/SriBServer/rest/podcast</string>
+    <string name="url_articles">http://158.37.6.78:8080/SriBServer/rest/news</string>
+    
 </resources>

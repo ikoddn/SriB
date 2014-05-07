@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="horizontal" 
+    android:weightSum="3" >
 
     <ImageView
         android:id="@+id/imageview_article"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:contentDescription="@id/imageview_article" />
 
-    <TextView
-        android:id="@+id/textview_article_title"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/imageview_article"
-        android:textAllCaps="true" />
+        android:layout_weight="2" >
 
-    <TextView
-        android:id="@+id/textview_article_excerpt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textview_article_title"
-        android:layout_toRightOf="@id/imageview_article" />
+        <TextView
+            android:id="@+id/textview_article_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textview_article_excerpt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_article_title" />
+    </RelativeLayout>
+
+</LinearLayout>
