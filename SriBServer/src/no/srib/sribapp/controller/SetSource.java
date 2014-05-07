@@ -55,9 +55,14 @@ public class SetSource extends HttpServlet {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-               if(streamUrlList != null && !streamUrlList.isEmpty()){
+               if(streamUrlList != null && streamUrlList.size() > 1){
                    url1 = streamUrlList.get(0);
                    url2 = streamUrlList.get(1);
+               }
+               else if(streamUrlList.size() == 1){
+                   url1 = streamUrlList.get(0);
+                   url2 = new Streamurl();
+                   url2.setId(0);
                }
                else{
                    url1 = new Streamurl();
