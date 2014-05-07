@@ -12,7 +12,7 @@ import no.srib.sribapp.model.AbstractModel;
 abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
         AbstractModelDAO<T> {
 
-    @PersistenceContext(unitName = "heroku_test")
+    @PersistenceContext(unitName = "srib")
     protected EntityManager em;
 
     private final Class<T> TYPECLASS;

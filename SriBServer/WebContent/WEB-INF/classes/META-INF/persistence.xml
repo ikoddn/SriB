@@ -5,9 +5,9 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 	version="2.1">
 
-	<persistence-unit name="heroku_test" transaction-type="JTA">
+	<persistence-unit name="srib" transaction-type="JTA">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<jta-data-source>MyDatabaseResource</jta-data-source>
+		<jta-data-source>SriB-Resource</jta-data-source>
 		<class>no.srib.sribapp.model.Podcast</class>
 		<class>no.srib.sribapp.model.Programinfo</class>
 		<class>no.srib.sribapp.model.Definition</class>

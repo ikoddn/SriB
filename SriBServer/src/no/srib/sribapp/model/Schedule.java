@@ -11,7 +11,7 @@ import java.sql.Time;
  * 
  */
 @Entity
-@Table(name="schedule")
+@Table(name="app_schedule")
 @NamedQuery(name="Schedule.findAll", query="SELECT s FROM Schedule s")
 @XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class Schedule extends AbstractModel  {

@@ -8,7 +8,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="backenduser")
+@Table(name="app_backenduser")
 @NamedQuery(name="Backenduser.findAll", query="SELECT b FROM Backenduser b")
 public class Backenduser extends AbstractModel  {
 	private static final long serialVersionUID = 1L;

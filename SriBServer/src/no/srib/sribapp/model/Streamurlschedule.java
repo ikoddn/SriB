@@ -8,7 +8,7 @@ import java.sql.Time;
  * 
  */
 @Entity
-@Table(name = "streamurlschedule")
+@Table(name = "app_streamurlschedule")
 @NamedQuery(name = "Streamurlschedule.findAll", query = "SELECT s FROM Streamurlschedule s")
 public class Streamurlschedule extends AbstractModel {
     private static final long serialVersionUID = 1L;

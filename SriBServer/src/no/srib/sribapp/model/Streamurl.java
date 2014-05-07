@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @Entity
-@Table(name="streamurl")
+@Table(name="app_streamurl")
 @NamedQuery(name="Streamurl.findAll", query="SELECT s FROM Streamurl s")
 @XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class Streamurl extends AbstractModel  {
