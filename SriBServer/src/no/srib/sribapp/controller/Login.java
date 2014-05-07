@@ -42,12 +42,12 @@ public class Login extends HttpServlet {
          * null) { ses.setAttribute("loggedIn", "false"); }
          * response.sendRedirect("index.html"); }
          */
-        if (ses != null) {
-            if (ses.getAttribute("loggedIn").equals("true")) {
+        if (ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")) {
+            
                 RequestDispatcher reqD = request
                         .getRequestDispatcher("/WEB-INF/admin.html");
                 reqD.forward(request, response);
-            }
+            
         } else {
             response.sendRedirect("index.html");
 
