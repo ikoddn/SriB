@@ -80,7 +80,7 @@ public class PodcastResource {
 
     // Get by programId
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public final List<PodcastBean> getPodcastByProgramId(@PathParam("id") int id) {
         List<Podcast> list = null;
         List<PodcastBean> podList = new ArrayList<PodcastBean>();
@@ -119,7 +119,7 @@ public class PodcastResource {
 
     // Get all names
     @GET
-    @Path("/names")
+    @Path("names")
     public final List<Definition> getAllPodcastNames() {
         List<Definition> list = null;
 
