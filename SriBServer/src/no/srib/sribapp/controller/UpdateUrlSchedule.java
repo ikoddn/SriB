@@ -45,6 +45,7 @@ public class UpdateUrlSchedule extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession();
 
         if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){

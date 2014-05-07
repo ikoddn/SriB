@@ -37,11 +37,7 @@ public class Login extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         HttpSession ses = request.getSession(false);
-        /*
-         * if (request.getParameter("loggOut").equals("true")) { if (ses !=
-         * null) { ses.setAttribute("loggedIn", "false"); }
-         * response.sendRedirect("index.html"); }
-         */
+      
         if (ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")) {
             
                 RequestDispatcher reqD = request
@@ -59,8 +55,9 @@ public class Login extends HttpServlet {
      *      response)
      */
     protected void doPost(HttpServletRequest request,
+            
             HttpServletResponse response) throws ServletException, IOException {
-      
+        request.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         

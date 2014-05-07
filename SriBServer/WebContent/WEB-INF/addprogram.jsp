@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta http-equiv="Content-Type" content="text/html;charset=UTF-s8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -22,7 +23,7 @@
 <span style="color:red">Ugyldig input</span>
 </c:if>
 
-<form  class="form form-horizontal" role="form" action="AddProgram" method="post">
+<form  class="form form-horizontal" role="form" action="AddProgram" method="post" >
 <div class="form-group">
 <div class="col-md-3	">
 <input class="form-control" type="text" name="name" placeholder="Navn på program"/>

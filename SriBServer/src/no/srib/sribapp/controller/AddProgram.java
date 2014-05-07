@@ -66,6 +66,7 @@ public class AddProgram extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession();
         ses.setAttribute("error", new Boolean(false));
         if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){
@@ -74,7 +75,7 @@ public class AddProgram extends HttpServlet {
 
         if (name != null && name.length() > 0) {
 
-            System.out.println("fd" + name.length());
+            System.out.println(name + " " + name.length());
         } else {
             ses.setAttribute("error", new Boolean(true));
             response.sendRedirect("/SriBServer/AddProgram");
