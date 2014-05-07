@@ -59,6 +59,12 @@ public class SetSource extends HttpServlet {
                    url1 = streamUrlList.get(0);
                    url2 = streamUrlList.get(1);
                }
+               else{
+                   url1 = new Streamurl();
+                   url2 = new Streamurl();
+                   url1.setId(0);
+                   url2.setId(1);
+               }
                
                request.setAttribute("days", dayArray);
                request.setAttribute("url1", url1);

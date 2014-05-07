@@ -79,7 +79,8 @@ public class Login extends HttpServlet {
             back = dao.getByUserName(username);
         } catch (DAOException e) {
         
-            e.printStackTrace();
+            response.sendRedirect("index.html");
+            return;
         }
 
         if (ses == null) {
