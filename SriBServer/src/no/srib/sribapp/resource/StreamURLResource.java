@@ -9,7 +9,9 @@ import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.StreamUrlScheduleDAO;
@@ -30,38 +32,66 @@ public class StreamURLResource {
 
     private final int MAIN_SOURCE = 0;
     private final int SECOND_SOURCE = 1;
+    private final int FALLBACK_INTERVAL_MINUTES = 10;
 
     @GET
-    public final StreamSchedule getCurrentStreamSchedule() throws DAOException {
-        List<Streamurl> streamList = streamURLDAO.getList();
-        Calendar now = Calendar.getInstance();
+    public final StreamSchedule getCurrentStreamSchedule() {
+        List<Streamurl> streamList = null;
+        List<Streamurlschedule> upcomingSchedule = null;
 
-        List<Streamurlschedule> upcomingSchedule = streamUrlScheduleDAO
-                .getUpcomingSchedule(now);
-        Streamurlschedule nextSchedule = upcomingSchedule.get(0);
-
-        Time hourAndMinutes;
-        if (nextSchedule.getFromtime().after(now.getTime())) {
-            hourAndMinutes = nextSchedule.getFromtime();
-        } else {
-            hourAndMinutes = nextSchedule.getTotime();
+        try {
+            streamList = streamURLDAO.getList();
+        } catch (DAOException e) {
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        Calendar time = Calendar.getInstance();
-        time.setTimeInMillis(hourAndMinutes.getTime());
-
-        time.set(Calendar.YEAR, now.get(Calendar.YEAR));
-        time.set(Calendar.DAY_OF_YEAR, now.get(Calendar.DAY_OF_YEAR));
-
-        if (now.get(Calendar.HOUR_OF_DAY) > time.get(Calendar.HOUR_OF_DAY)) {
-            time.add(Calendar.DAY_OF_MONTH, 1);
+        if (streamList == null || streamList.isEmpty()) {
+            throw new WebApplicationException(Status.NO_CONTENT);
+        }
+        
+        boolean mainSourceActive;
+        try {
+            mainSourceActive = streamUrlScheduleDAO.isMainSourceActive();
+        } catch (DAOException e) {
+            mainSourceActive = true;
         }
 
         Streamurl stream;
-        if (streamUrlScheduleDAO.isMainSourceActive()) {
+        if (mainSourceActive || streamList.size() == 1) {
             stream = streamList.get(MAIN_SOURCE);
         } else {
             stream = streamList.get(SECOND_SOURCE);
+        }
+
+        final Calendar now = Calendar.getInstance();
+        Calendar time = Calendar.getInstance();
+
+        try {
+            upcomingSchedule = streamUrlScheduleDAO.getUpcomingSchedule(now);
+        } catch (DAOException e) {
+            upcomingSchedule = null;
+        }
+
+        if (upcomingSchedule != null && !upcomingSchedule.isEmpty()) {
+            Streamurlschedule nextSchedule = upcomingSchedule.get(0);
+
+            Time hourAndMinutes;
+            if (nextSchedule.getFromtime().after(now.getTime())) {
+                hourAndMinutes = nextSchedule.getFromtime();
+            } else {
+                hourAndMinutes = nextSchedule.getTotime();
+            }
+
+            time.setTimeInMillis(hourAndMinutes.getTime());
+
+            time.set(Calendar.YEAR, now.get(Calendar.YEAR));
+            time.set(Calendar.DAY_OF_YEAR, now.get(Calendar.DAY_OF_YEAR));
+
+            if (now.get(Calendar.HOUR_OF_DAY) > time.get(Calendar.HOUR_OF_DAY)) {
+                time.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        } else {
+            time.add(Calendar.MINUTE, FALLBACK_INTERVAL_MINUTES);
         }
 
         String name = stream.getName();
