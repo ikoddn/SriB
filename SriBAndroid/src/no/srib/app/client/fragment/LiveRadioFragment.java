@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.R;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,8 +13,9 @@ import android.widget.TextView;
 
 public class LiveRadioFragment extends Fragment {
 
-	private static final String BUNDLE_STATUS = "status";
-	private static final String BUNDLE_STREAM = "stream";
+	private static final String PREFS_NAME = "prefsLiveRadio";
+	private static final String KEY_STATUS = "status";
+	private static final String KEY_STREAM = "stream";
 
 	private OnLiveRadioClickListener liveRadioClickListener;
 	private TextView statusTextView;
@@ -47,15 +49,8 @@ public class LiveRadioFragment extends Fragment {
 		streamTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_stream);
 
-		if (savedInstanceState != null) {
-			statusTextView.setText(savedInstanceState
-					.getCharSequence(BUNDLE_STATUS));
-			streamTextView.setText(savedInstanceState
-					.getCharSequence(BUNDLE_STREAM));
-		} else {
-			statusTextView.setText("Live radio fragment");
-			streamTextView.setText("PLACEHOLDER TEXT");
-		}
+		statusTextView.setText("Live radio fragment");
+		streamTextView.setText("PLACEHOLDER TEXT");
 
 		Button playButton = (Button) rootView
 				.findViewById(R.id.button_liveradio_play);
@@ -69,16 +64,36 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 
-		if (statusTextView != null) {
-			outState.putCharSequence(BUNDLE_STATUS, statusTextView.getText());
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				PREFS_NAME, 0);
+
+		String status = prefs.getString(KEY_STATUS, null);
+		String stream = prefs.getString(KEY_STREAM, null);
+
+		if (status != null) {
+			setStatusText(status);
 		}
 
-		if (streamTextView != null) {
-			outState.putCharSequence(BUNDLE_STREAM, streamTextView.getText());
+		if (stream != null) {
+			setStreamText(stream);
 		}
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				PREFS_NAME, 0);
+		SharedPreferences.Editor editor = prefs.edit();
+
+		editor.putString(KEY_STATUS, statusTextView.getText().toString());
+		editor.putString(KEY_STREAM, streamTextView.getText().toString());
+
+		editor.commit();
 	}
 
 	public interface OnLiveRadioClickListener {
