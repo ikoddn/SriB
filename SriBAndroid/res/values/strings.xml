@@ -2,10 +2,8 @@
 <resources>
 
     <string name="app_name">Studentradioen i Bergen</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
-    
+
     <!-- Live radio fragment -->
     <string name="button_liveradio_play">Play/Stop</string>
     <string name="button_liveradio_pause">Pause</string>
@@ -13,5 +11,5 @@
 
     <!-- Articles fragment -->
     <string name="imageview_article_desc">Image</string>
-    
+
 </resources>
