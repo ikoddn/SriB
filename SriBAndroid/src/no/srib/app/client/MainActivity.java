@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.srib.R;
 import no.srib.app.client.adapter.ArticleListAdapter;
+import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;

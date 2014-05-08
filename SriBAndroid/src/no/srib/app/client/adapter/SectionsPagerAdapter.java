@@ -1,4 +1,4 @@
-package no.srib.app.client;
+package no.srib.app.client.adapter;
 
 import no.srib.app.client.fragment.ArticlesFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
