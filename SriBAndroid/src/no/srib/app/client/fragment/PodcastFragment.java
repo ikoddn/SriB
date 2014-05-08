@@ -1,33 +1,21 @@
 package no.srib.app.client.fragment;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
-
 import no.srib.app.client.R;
-
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,12 +28,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class PodcastFragment extends Fragment {
 
-	private PodcastMetadataDownloader podcastMetadataDownloader;
 	private Spinner spinner = null;
 	private GridView podcastGridView = null;
 	private GridArrayAdapter gridViewAdapter = null;
@@ -55,8 +41,6 @@ public class PodcastFragment extends Fragment {
 	HttpAsyncTask podcastTask;
 
 
-	
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -86,9 +70,6 @@ public class PodcastFragment extends Fragment {
 		
 		
 	}
-	
-	
-	
 	
 	
 	public interface PodcastMetadataDownloader{
@@ -129,12 +110,7 @@ public class PodcastFragment extends Fragment {
 			spinner.setAdapter(adapter);
 			spinner.setOnItemSelectedListener(new ListViewItemClickListener());			
 			
-		
-			
-			
 		}
-		
-		
 		
 	}
 	
@@ -197,9 +173,6 @@ public class PodcastFragment extends Fragment {
 			
 		}
 		
-		
-		
-		
 	}
 	
 	private class GridViewItemClickListener implements OnItemClickListener{
@@ -212,8 +185,6 @@ public class PodcastFragment extends Fragment {
 			Log.i("debug","id er" + id);
 		}
 
-		
-		
 	}
 	
 	private class GridArrayAdapter extends BaseAdapter{
@@ -271,7 +242,6 @@ public class PodcastFragment extends Fragment {
 			
 			return convertView;
 		}
-		
 		
 	}
 	
