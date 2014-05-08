@@ -2,7 +2,7 @@ package no.srib.app.client.adapter;
 
 import java.util.List;
 
-import no.srib.R;
+import no.srib.app.client.R;
 import no.srib.app.client.model.NewsArticle;
 import android.view.LayoutInflater;
 import android.view.View;

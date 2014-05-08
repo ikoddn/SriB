@@ -7,7 +7,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.srib.R;
+
+import no.srib.app.client.R;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.Podcast;

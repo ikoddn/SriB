@@ -1,6 +1,6 @@
 package no.srib.app.client.fragment;
 
-import no.srib.R;
+import no.srib.app.client.R;
 import no.srib.app.client.adapter.ArticleListAdapter;
 import android.app.Activity;
 import android.os.Bundle;
