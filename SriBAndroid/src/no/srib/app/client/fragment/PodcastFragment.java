@@ -51,7 +51,6 @@ public class PodcastFragment extends Fragment {
 				.findViewById(R.id.label_program_name);
 		textView1.setText("Program navn:");
 		MAPPER = new ObjectMapper();
-		
 		spinner = (Spinner) rootView.findViewById(R.id.spinner1);
 		podcastGridView = (GridView) rootView.findViewById(R.id.gridView_podcastList);
 		
@@ -71,11 +70,6 @@ public class PodcastFragment extends Fragment {
 		
 	}
 	
-	
-	public interface PodcastMetadataDownloader{
-		
-		void update();
-	}
 	
 	
 	
@@ -119,7 +113,7 @@ public class PodcastFragment extends Fragment {
 		@Override
 		public void onResponse(String response) {
 			List<Podcast> podcastList = null;
-			Log.i("Debug","Podcast JSON downloaded " + response);
+			
 			if(response != null){
 				try {
 					podcastList  = MAPPER.readValue(response, new TypeReference<List<Podcast>>() {
@@ -139,6 +133,7 @@ public class PodcastFragment extends Fragment {
 				
 			}
 			
+			
 			if(podcastList != null){
 				
 				gridViewAdapter = new GridArrayAdapter(podcastList, getActivity());
@@ -149,8 +144,6 @@ public class PodcastFragment extends Fragment {
 			}
 			
 		}
-		
-		
 		
 	}
 	
