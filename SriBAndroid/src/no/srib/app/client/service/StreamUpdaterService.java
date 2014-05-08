@@ -156,7 +156,7 @@ public class StreamUpdaterService extends Service {
 				}
 			} else {
 				Log.d("SriB", response);
-
+					
 				try {
 					StreamSchedule streamSchedule = MAPPER.readValue(response,
 							StreamSchedule.class);

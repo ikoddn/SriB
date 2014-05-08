@@ -1,14 +1,18 @@
 package no.srib.app.client;
 
 import no.srib.R;
+import no.srib.app.client.asynctask.HttpAsyncTask;
+import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
+import no.srib.app.client.fragment.PodcastFragment.PodcastMetadataDownloader;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
+import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -63,6 +67,7 @@ public class MainActivity extends ActionBarActivity {
 		// Set up the ViewPager with the sections adapter.
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
+		viewPager.setCurrentItem(1);
 
 		autoPlayAfterConnect = false;
 
@@ -298,6 +303,28 @@ public class MainActivity extends ActionBarActivity {
 			audioPlayer.pause();
 		}
 	}
+	
+	
+	private class UpdatePodcastView implements PodcastMetadataDownloader{
+
+		private String updateURL;
+		
+		public UpdatePodcastView(String updateURL){
+			this.updateURL = updateURL;
+		}
+		
+		
+		
+		@Override
+		public void update() {
+	
+			
+			//podcastTask.execute(updateURL);
+		}
+		
+	}
+	
+
 
 	private Fragment getFragment(int index) {
 		String tag = getFragmentTag(viewPager.getId(), index);

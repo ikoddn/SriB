@@ -9,9 +9,31 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
 
+ 
     <TextView
-        android:id="@+id/label_podcast"
+        android:id="@+id/label_program_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+   	 />
+    
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/label_program_name"
+        android:layout_below="@+id/label_program_name"
+        android:labelFor="@+id/label_program_name"
+         />
+
+    <GridView
+        android:id="@+id/gridView_podcastList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/spinner1"
+        android:horizontalSpacing="10dp"
+        android:numColumns="4"
+        android:verticalSpacing="10dp" >
+
+    </GridView>
 
 </RelativeLayout>

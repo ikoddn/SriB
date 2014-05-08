@@ -13,9 +13,11 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-	public final static int LIVERADIO_FRAGMENT = 0;
-	public final static int PODCAST_FRAGMENT = 1;
-	public final static int ARTICLES_FRAGMENT = 2;
+	
+
+	public final static int ARTICLES_FRAGMENT = 0;
+	public final static int LIVERADIO_FRAGMENT = 1;
+	public final static int PODCAST_FRAGMENT = 2;
 
 	public final static int NUMBER_OF_FRAGMENTS = 3;
 	
