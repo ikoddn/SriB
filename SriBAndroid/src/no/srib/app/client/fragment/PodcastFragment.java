@@ -1,6 +1,9 @@
 package no.srib.app.client.fragment;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -8,7 +11,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
+
 import no.srib.app.client.R;
+
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.Podcast;
@@ -16,6 +23,8 @@ import no.srib.app.client.model.ProgramName;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.telephony.TelephonyManager;
@@ -28,6 +37,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -113,20 +123,14 @@ public class PodcastFragment extends Fragment {
 				e.printStackTrace();
 			}
 			}
-			if(list != null){
+			
 			
 			adapter = new StableArrayAdapter(getActivity(),list);
-			
-		
-		
-			//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		
 			spinner.setAdapter(adapter);
-			spinner.setSelection(0, false);
 			spinner.setOnItemSelectedListener(new ListViewItemClickListener());			
 			
 		
-			}
+			
 			
 		}
 		
@@ -261,6 +265,9 @@ public class PodcastFragment extends Fragment {
 			int date = podcast.getCreatedate();
 			programNameDate.setText(String.valueOf(date));
 			
+			ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
+			String url = podcast.getImageUrl();
+			UrlImageViewHelper.setUrlDrawable(image, url);
 			
 			return convertView;
 		}
@@ -319,7 +326,7 @@ public class PodcastFragment extends Fragment {
 	
 	
 	
-	
+
 	
 	
 	

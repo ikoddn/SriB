@@ -11,6 +11,7 @@ public class Podcast {
 	    private int programId;
 	    private String remark;
 	    private String title;
+	    private String imageUrl;
 	
 	
 	public Podcast() {
@@ -20,7 +21,7 @@ public class Podcast {
 
 	public Podcast(int refnr, int createdate, int createtime, int duration,
 			String filename, String program, int programId, String remark,
-			String title) {
+			String title, String imageUrl) {
 		super();
 		this.refnr = refnr;
 		this.createdate = createdate;
@@ -31,6 +32,17 @@ public class Podcast {
 		this.programId = programId;
 		this.remark = remark;
 		this.title = title;
+		this.imageUrl = imageUrl;
+	}
+
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 
