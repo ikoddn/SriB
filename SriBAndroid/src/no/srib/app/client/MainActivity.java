@@ -1,18 +1,28 @@
 package no.srib.app.client;
 
+import java.io.IOException;
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import no.srib.R;
+import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
+import no.srib.app.client.fragment.ArticlesFragment;
+import no.srib.app.client.fragment.ArticlesFragment.OnArticlesFragmentReadyListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
-import no.srib.app.client.fragment.PodcastFragment.PodcastMetadataDownloader;
+import no.srib.app.client.model.NewsArticle;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
-import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -24,10 +34,15 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+		OnArticlesFragmentReadyListener {
+
+	private final ObjectMapper MAPPER;
+	private ArticleListAdapter articleListAdapter;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -52,6 +67,11 @@ public class MainActivity extends ActionBarActivity {
 	private boolean streamUpdaterServiceBound;
 	private StreamUpdaterService streamUpdater;
 	private ServiceConnection streamUpdaterServiceConnection;
+
+	public MainActivity() {
+		MAPPER = new ObjectMapper();
+		articleListAdapter = null;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +100,14 @@ public class MainActivity extends ActionBarActivity {
 		streamUpdaterServiceConnection = new StreamUpdaterServiceConnection();
 
 		bindServices();
+
+		articleListAdapter = new ArticleListAdapter(
+				LayoutInflater.from(MainActivity.this));
+
+		HttpAsyncTask httpAsyncTask = new HttpAsyncTask(
+				new ArticleHttpResponseListener());
+		String url = getResources().getString(R.string.url_articles);
+		httpAsyncTask.execute(url);
 	}
 
 	@Override
@@ -303,28 +331,37 @@ public class MainActivity extends ActionBarActivity {
 			audioPlayer.pause();
 		}
 	}
-	
-	
-	private class UpdatePodcastView implements PodcastMetadataDownloader{
 
-		private String updateURL;
-		
-		public UpdatePodcastView(String updateURL){
-			this.updateURL = updateURL;
-		}
-		
-		
-		
+	private class ArticleHttpResponseListener implements HttpResponseListener {
+
 		@Override
-		public void update() {
-	
-			
-			//podcastTask.execute(updateURL);
+		public void onResponse(String response) {
+			if (response != null) {
+				try {
+					List<NewsArticle> list = MAPPER.readValue(response,
+							new TypeReference<List<NewsArticle>>() {
+							});
+					articleListAdapter.setList(list);
+					articleListAdapter.notifyDataSetChanged();
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
-		
 	}
-	
 
+	@Override
+	public void onArticlesFragmentReady() {
+		ArticlesFragment fragment = (ArticlesFragment) getFragment(SectionsPagerAdapter.ARTICLES_FRAGMENT);
+		fragment.setArticleListAdapter(articleListAdapter);
+	}
 
 	private Fragment getFragment(int index) {
 		String tag = getFragmentTag(viewPager.getId(), index);
