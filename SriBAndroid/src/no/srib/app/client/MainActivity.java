@@ -14,8 +14,8 @@ import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
-import no.srib.app.client.fragment.ArticlesFragment;
-import no.srib.app.client.fragment.ArticlesFragment.OnArticlesFragmentReadyListener;
+import no.srib.app.client.fragment.ArticleListFragment;
+import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.model.NewsArticle;
@@ -359,7 +359,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void onArticlesFragmentReady() {
-		ArticlesFragment fragment = (ArticlesFragment) getFragment(SectionsPagerAdapter.ARTICLES_FRAGMENT);
+		ArticleListFragment fragment = (ArticleListFragment) getFragment(SectionsPagerAdapter.ARTICLELIST_FRAGMENT);
 		fragment.setArticleListAdapter(articleListAdapter);
 	}
 

@@ -10,14 +10,14 @@
     tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/label_articles"
+        android:id="@+id/label_articlelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     
     <ListView
-        android:id="@+id/listview_articles"
+        android:id="@+id/listview_articlelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/label_articles" />
+        android:layout_below="@id/label_articlelist" />
 
 </RelativeLayout>

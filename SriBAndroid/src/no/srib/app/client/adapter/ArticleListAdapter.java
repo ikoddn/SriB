@@ -44,14 +44,14 @@ public class ArticleListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = inflater.inflate(R.layout.listitem_article, null);
+		convertView = inflater.inflate(R.layout.listitem_articlelist, null);
 
 		ImageView image = (ImageView) convertView
-				.findViewById(R.id.imageview_article);
+				.findViewById(R.id.imageview_articleitem);
 		TextView title = (TextView) convertView
-				.findViewById(R.id.textview_article_title);
+				.findViewById(R.id.textview_articleitem_title);
 		TextView excerpt = (TextView) convertView
-				.findViewById(R.id.textview_article_excerpt);
+				.findViewById(R.id.textview_articleitem_excerpt);
 
 		NewsArticle newsArticle = list.get(position);
 

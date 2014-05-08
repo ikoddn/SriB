@@ -11,13 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ArticlesFragment extends Fragment {
+public class ArticleListFragment extends Fragment {
 
 	private ListView listView;
 	private TextView label;
 	private OnArticlesFragmentReadyListener readyListener;
 
-	public ArticlesFragment() {
+	public ArticleListFragment() {
 		listView = null;
 		label = null;
 		readyListener = null;
@@ -32,13 +32,13 @@ public class ArticlesFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_articles, container,
+		View rootView = inflater.inflate(R.layout.fragment_articlelist, container,
 				false);
 
-		label = (TextView) rootView.findViewById(R.id.label_articles);
+		label = (TextView) rootView.findViewById(R.id.label_articlelist);
 		label.setText("Articles fragment");
 
-		listView = (ListView) rootView.findViewById(R.id.listview_articles);
+		listView = (ListView) rootView.findViewById(R.id.listview_articlelist);
 
 		if (readyListener != null) {
 			readyListener.onArticlesFragmentReady();

@@ -1,6 +1,6 @@
 package no.srib.app.client.adapter;
 
-import no.srib.app.client.fragment.ArticlesFragment;
+import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import android.support.v4.app.Fragment;
@@ -8,19 +8,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 /**
- * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
- * one of the sections/tabs/pages.
+ * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one
+ * of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-	
-
-	public final static int ARTICLES_FRAGMENT = 0;
+	public final static int ARTICLELIST_FRAGMENT = 0;
 	public final static int LIVERADIO_FRAGMENT = 1;
 	public final static int PODCAST_FRAGMENT = 2;
 
-	public final static int NUMBER_OF_FRAGMENTS = 3;
-	
+	public final static int NUMBER_OF_MAIN_FRAGMENTS = 3;
+
 	public SectionsPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
@@ -33,8 +31,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 			return new LiveRadioFragment();
 		case PODCAST_FRAGMENT:
 			return new PodcastFragment();
-		case ARTICLES_FRAGMENT:
-			return new ArticlesFragment();
+		case ARTICLELIST_FRAGMENT:
+			return new ArticleListFragment();
 		default:
 			return null;
 		}
@@ -42,6 +40,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		return NUMBER_OF_FRAGMENTS;
+		return NUMBER_OF_MAIN_FRAGMENTS;
 	}
 }
