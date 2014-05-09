@@ -14,8 +14,11 @@ import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,8 +157,6 @@ public class PodcastFragment extends Fragment {
 				long arg3) {
 			HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
 			String url = getResources().getString(R.string.getAllPodcast);
-			
-			Log.i("deb",arg0.getItemIdAtPosition(arg2) + " ");
 			podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));
 			
 		}
@@ -190,7 +191,7 @@ public class PodcastFragment extends Fragment {
 		public GridArrayAdapter(List<Podcast> list, Context context){
 			this.podcastList = list;
 			this.context = context;
-			inflater = LayoutInflater.from(this.context);
+			inflater = LayoutInflater.from(context);
 		}
 		
 		@Override
@@ -213,24 +214,30 @@ public class PodcastFragment extends Fragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			Log.i("debug","denne blir kjørt");
 			
-			for(Podcast a : podcastList){
-				Log.i("debug","podcast " + a.getProgram() + "  " + a.getRefnr() + " " + a.getCreatedate());
-			}
 			
 			convertView = inflater.inflate(R.layout.podcast_grid_item, null);
 			Podcast podcast = podcastList.get(position);
 			TextView programNameTextView = (TextView) convertView.findViewById(R.id.label_gridViewItem_programname);
 			String programName = podcast.getProgram();
-			programNameTextView.setText(programName);
+			if(programName != null){
+				Spanned safeText = Html.fromHtml(programName);
+				programNameTextView.setText(safeText);
+			}else{
+				programNameTextView.setText(programName);
+			}
+			Log.i("debug", programName + " " + podcast.getProgramId() );
+			
 			
 			TextView programNameDate = (TextView) convertView.findViewById(R.id.label_gridViewItem_date);
 			int date = podcast.getCreatedate();
+			Typeface myTypeface = Typeface.createFromAsset(convertView.getContext().getAssets(), "fonts/ROBOTS.ttf");
+			programNameDate.setTypeface(myTypeface);
 			programNameDate.setText(String.valueOf(date));
 			
 			ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
 			String url = podcast.getImageUrl();
+			UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.imgres);
 			UrlImageViewHelper.setUrlDrawable(image, url);
 			
 			return convertView;
@@ -255,18 +262,27 @@ public class PodcastFragment extends Fragment {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
+			if(programList == null){
+				return 0;
+			}
+			
 			return programList.size();
 		}
 
 		@Override
 		public ProgramName getItem(int position) {
-		
+			if(programList == null){
+				return null;
+			}
+			
 			return programList.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+			if(programList == null){
+				return 0;
+			}
 			return programList.get(position).getDefnr();
 		}
 
@@ -276,8 +292,14 @@ public class PodcastFragment extends Fragment {
 			convertView = inflater.inflate(R.layout.podcastlist, null);
 			
 			TextView text = (TextView) convertView.findViewById(R.id.label_spinnerItem_name);
-			text.setText(programList.get(position).getName());
-			
+			ProgramName prog = programList.get(position);
+			String name = prog.getName();
+			if(name != null){
+				Spanned safeName = Html.fromHtml(name);
+				text.setText(safeName);
+			}else{
+				text.setText(name);
+			}
 			
 			return convertView;
 		}

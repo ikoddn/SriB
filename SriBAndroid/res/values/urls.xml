@@ -3,11 +3,11 @@
 
  
 	
-	<string name="currentUrl">http://158.37.230.161:8080/SriBServer/rest/radiourl</string>
-    <string name="currentProgram">http://158.37.230.161:8080/SriBServer/rest/schedule/now</string>
-    <string name="getAllPodcast">http://158.37.230.161:8080/SriBServer/rest/podcast</string>
-     <string name="getAllProgramNames">http://158.37.230.161:8080/SriBServer/rest/podcast/names</string>
-    <string name="url_articles">http://158.37.230.161:8080/SriBServer/rest/news</string>
+	<string name="currentUrl">http://158.37.6.78:8080/SriBServer/rest/radiourl</string>
+    <string name="currentProgram">http://158.37.6.78:8080/SriBServer/rest/schedule/now</string>
+    <string name="getAllPodcast">http://158.37.6.78:8080/SriBServer/rest/podcast</string>
+     <string name="getAllProgramNames">http://158.37.6.78:8080/SriBServer/rest/podcast/names</string>
+    <string name="url_articles">http://158.37.6.78:8080/SriBServer/rest/news</string>
 
     
 </resources>
