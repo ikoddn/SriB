@@ -15,6 +15,7 @@ import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
+import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
@@ -359,8 +360,24 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void onArticlesFragmentReady() {
-		ArticleListFragment fragment = (ArticleListFragment) getFragment(SectionsPagerAdapter.ARTICLELIST_FRAGMENT);
-		fragment.setArticleListAdapter(articleListAdapter);
+		ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(SectionsPagerAdapter.ARTICLESECTION_FRAGMENT);
+		ArticleListFragment listFragment = (ArticleListFragment) fragment.getChildFragmentManager().getFragments().get(0);
+		listFragment.setArticleListAdapter(articleListAdapter);
+	}
+
+	@Override
+	public void onBackPressed() {
+		boolean close = true;
+		int id = SectionsPagerAdapter.ARTICLESECTION_FRAGMENT;
+
+		if (viewPager.getCurrentItem() == id) {
+			ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(id);
+			close = !fragment.backPressed();
+		}
+
+		if (close) {
+			super.onBackPressed();
+		}
 	}
 
 	private Fragment getFragment(int index) {

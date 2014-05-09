@@ -1,6 +1,6 @@
 package no.srib.app.client.adapter;
 
-import no.srib.app.client.fragment.ArticleListFragment;
+import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import android.support.v4.app.Fragment;
@@ -13,7 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-	public final static int ARTICLELIST_FRAGMENT = 0;
+	public final static int ARTICLESECTION_FRAGMENT = 0;
 	public final static int LIVERADIO_FRAGMENT = 1;
 	public final static int PODCAST_FRAGMENT = 2;
 
@@ -31,8 +31,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 			return new LiveRadioFragment();
 		case PODCAST_FRAGMENT:
 			return new PodcastFragment();
-		case ARTICLELIST_FRAGMENT:
-			return new ArticleListFragment();
+		case ARTICLESECTION_FRAGMENT:
+			return new ArticleSectionFragment();
 		default:
 			return null;
 		}
