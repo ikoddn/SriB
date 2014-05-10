@@ -61,6 +61,8 @@ public class ArticleListAdapter extends BaseAdapter {
 		title.setText(newsArticle.getTitle());
 		excerpt.setText(newsArticle.getExcerptDisplay());
 
+		convertView.setTag(R.id.key_article_url, newsArticle.getPermalink());
+
 		return convertView;
 	}
 }

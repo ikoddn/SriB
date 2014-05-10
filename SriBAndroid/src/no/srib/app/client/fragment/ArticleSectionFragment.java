@@ -55,11 +55,13 @@ public class ArticleSectionFragment extends Fragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 
+			String url = (String) view.getTag(R.id.key_article_url);
+
 			FragmentManager manager = getChildFragmentManager();
 
 			FragmentTransaction transaction = manager.beginTransaction();
 			transaction.replace(R.id.framelayout_articlesection,
-					new ArticleFragment());
+					ArticleFragment.newInstance(url));
 			transaction.addToBackStack(null);
 			transaction.commit();
 		}

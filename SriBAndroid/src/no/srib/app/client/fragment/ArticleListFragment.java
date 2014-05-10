@@ -20,9 +20,10 @@ public class ArticleListFragment extends Fragment {
 	private OnItemClickListener articleClickedListener;
 
 	public static ArticleListFragment newInstance(
-			OnItemClickListener onArticleClickedListener) {
+			OnItemClickListener articleClickedListener) {
+
 		ArticleListFragment fragment = new ArticleListFragment();
-		fragment.setArticleClickedListener(onArticleClickedListener);
+		fragment.setArticleClickedListener(articleClickedListener);
 		return fragment;
 	}
 
