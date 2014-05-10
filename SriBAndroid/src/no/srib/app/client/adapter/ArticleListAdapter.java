@@ -4,6 +4,7 @@ import java.util.List;
 
 import no.srib.app.client.R;
 import no.srib.app.client.model.NewsArticle;
+import no.srib.app.client.util.URLUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,8 @@ public class ArticleListAdapter extends BaseAdapter {
 		NewsArticle newsArticle = list.get(position);
 
 		String url = newsArticle.getMedia().get(0).getSizes().get(1).getUrl();
+		url = URLUtil.urlEncodeFilename(url);
+
 		UrlImageViewHelper.setUrlDrawable(image, url);
 
 		title.setText(newsArticle.getTitle());

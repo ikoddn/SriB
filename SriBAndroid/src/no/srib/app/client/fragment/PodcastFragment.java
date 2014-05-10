@@ -19,7 +19,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +63,7 @@ public class PodcastFragment extends Fragment {
 		String programTaskUrl = getResources().getString(R.string.getAllProgramNames);
 		String podcastTaskUrl = getResources().getString(R.string.getAllPodcast);
 		
-		Log.i("Debug",programTaskUrl + " " + podcastTaskUrl);
+		//Log.i("Debug",programTaskUrl + " " + podcastTaskUrl);
 		
 		podcastTask.execute(podcastTaskUrl);
 		programTask.execute(programTaskUrl);
@@ -176,7 +176,7 @@ public class PodcastFragment extends Fragment {
 				long arg3) {
 			
 			long id = arg0.getItemIdAtPosition(arg2);
-			Log.i("debug","id er" + id);
+			//Log.i("debug","id er" + id);
 		}
 
 	}
@@ -226,7 +226,7 @@ public class PodcastFragment extends Fragment {
 			}else{
 				programNameTextView.setText(programName);
 			}
-			Log.i("debug", programName + " " + podcast.getProgramId() );
+			//Log.i("debug", programName + " " + podcast.getProgramId() );
 			
 			
 			TextView programNameDate = (TextView) convertView.findViewById(R.id.label_gridViewItem_date);
