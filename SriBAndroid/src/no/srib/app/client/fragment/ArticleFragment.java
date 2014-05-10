@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 public class ArticleFragment extends Fragment {
@@ -21,6 +23,18 @@ public class ArticleFragment extends Fragment {
 				.findViewById(R.id.textview_article);
 		textView.setText("ArticleFragment");
 
+		WebView webView = (WebView) rootView.findViewById(R.id.webview_article);
+		webView.setWebViewClient(new ArticleWebViewClient());
+		webView.loadUrl("http://www.google.com");
+
 		return rootView;
+	}
+
+	private class ArticleWebViewClient extends WebViewClient {
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			view.loadUrl(url);
+			return true;
+		}
 	}
 }
