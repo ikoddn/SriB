@@ -2,45 +2,53 @@ package no.srib.app.client;
 
 import java.io.IOException;
 import java.util.List;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.srib.app.client.adapter.ArticleListAdapter;
+import no.srib.app.client.adapter.GridArrayAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
+import no.srib.app.client.adapter.StableArrayAdapter;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
-import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyListener;
+import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
+import no.srib.app.client.fragment.PodcastFragment;
+import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
 import no.srib.app.client.model.NewsArticle;
+import no.srib.app.client.model.Podcast;
+import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
-
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MainActivity extends ActionBarActivity implements
-		OnArticlesFragmentReadyListener {
+		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener {
 
 	private final ObjectMapper MAPPER;
 	private ArticleListAdapter articleListAdapter;
@@ -68,6 +76,12 @@ public class MainActivity extends ActionBarActivity implements
 	private boolean streamUpdaterServiceBound;
 	private StreamUpdaterService streamUpdater;
 	private ServiceConnection streamUpdaterServiceConnection;
+	
+	private HttpAsyncTask programTask;
+	private HttpAsyncTask podcastTask;
+	
+	private GridArrayAdapter gridViewAdapter = null;
+	private StableArrayAdapter spinnerListAdapter = null;
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
@@ -109,6 +123,21 @@ public class MainActivity extends ActionBarActivity implements
 				new ArticleHttpResponseListener());
 		String url = getResources().getString(R.string.url_articles);
 		httpAsyncTask.execute(url);
+		
+		
+		//Podcast Part
+		gridViewAdapter = new GridArrayAdapter(MainActivity.this);
+		spinnerListAdapter = new StableArrayAdapter(MainActivity.this);
+		
+		programTask = new HttpAsyncTask(new GetProgramNames());
+		podcastTask  = new HttpAsyncTask(new GetAllPodcast());
+		
+		String programTaskUrl = getResources().getString(R.string.getAllProgramNames);
+		String podcastTaskUrl = getResources().getString(R.string.getAllPodcast);
+		
+		podcastTask.execute(podcastTaskUrl);
+		programTask.execute(programTaskUrl);
+		
 	}
 
 	@Override
@@ -332,6 +361,98 @@ public class MainActivity extends ActionBarActivity implements
 			audioPlayer.pause();
 		}
 	}
+	
+	private class ListViewItemClickListener implements OnItemSelectedListener{
+
+		@Override
+		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+				long arg3) {
+			Log.i("DEBUG","DOWNLOADING NEW LIST");
+			HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
+			String url = getResources().getString(R.string.getAllPodcast);
+			podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));
+			
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> arg0) {
+			
+		}
+		
+	}
+	
+	private class GridViewItemClickListener implements OnItemClickListener{
+
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+				long arg3) {
+			
+			long id = arg0.getItemIdAtPosition(arg2);
+			Log.i("debug","id er" + id);
+		}
+
+	}
+	
+	public class GetProgramNames implements HttpResponseListener{
+
+		@Override
+		public void onResponse(String response) {
+			
+			
+			
+			List<ProgramName> list = null;
+			
+			if(response != null){
+			try {
+				list = MAPPER.readValue(response, new TypeReference<List<ProgramName>>() {
+				});
+				spinnerListAdapter.setList(list);
+				spinnerListAdapter.notifyDataSetChanged();
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+			
+		}
+		
+	}
+	
+	public class GetAllPodcast implements HttpResponseListener{
+
+		@Override
+		public void onResponse(String response) {
+			List<Podcast> podcastList = null;
+			
+			if(response != null){
+				try {
+					podcastList  = MAPPER.readValue(response, new TypeReference<List<Podcast>>() {
+					});
+					gridViewAdapter.setList(podcastList);
+					gridViewAdapter.notifyDataSetChanged();
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+			
+		}
+		
+	}
 
 	private class ArticleHttpResponseListener implements HttpResponseListener {
 
@@ -363,6 +484,18 @@ public class MainActivity extends ActionBarActivity implements
 		ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(SectionsPagerAdapter.ARTICLESECTION_FRAGMENT);
 		ArticleListFragment listFragment = (ArticleListFragment) fragment.getChildFragmentManager().getFragments().get(0);
 		listFragment.setArticleListAdapter(articleListAdapter);
+	}
+	
+	
+	@Override
+	public void onPodcastFragmentReady() {
+		PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
+		fragment.setGridArrayAdapter(gridViewAdapter);
+		fragment.setPodCastClickedListener(new GridViewItemClickListener());
+		fragment.setSpinnerListAdapter(spinnerListAdapter);
+		fragment.setSpinnerListSelectedListener(new ListViewItemClickListener());
+
+		
 	}
 
 	@Override

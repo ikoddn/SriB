@@ -32,7 +32,9 @@
         android:layout_below="@+id/spinner1"
         android:horizontalSpacing="10dp"
         android:numColumns="2"
-        android:verticalSpacing="10dp" >
+        android:verticalSpacing="10dp" 
+        android:stretchMode="columnWidth"
+        >
 
     </GridView>
 
