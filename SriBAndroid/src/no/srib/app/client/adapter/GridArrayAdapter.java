@@ -53,6 +53,8 @@ public class GridArrayAdapter extends BaseAdapter{
 		
 		return podcastList.get(position).getRefnr();
 	}
+	
+	
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -79,8 +81,8 @@ public class GridArrayAdapter extends BaseAdapter{
 		
 		ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
 		String url = podcast.getImageUrl();
-		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.imgres);
-		UrlImageViewHelper.setUrlDrawable(image, url);
+		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
+		//UrlImageViewHelper.setUrlDrawable(image, url);
 		
 		//ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.imageButton1);
 		//Drawable draw = convertView.getResources().getDrawable(R.drawable.down);

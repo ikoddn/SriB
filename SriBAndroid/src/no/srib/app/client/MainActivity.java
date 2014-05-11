@@ -76,10 +76,10 @@ public class MainActivity extends ActionBarActivity implements
 	private boolean streamUpdaterServiceBound;
 	private StreamUpdaterService streamUpdater;
 	private ServiceConnection streamUpdaterServiceConnection;
-	
+
 	private HttpAsyncTask programTask;
 	private HttpAsyncTask podcastTask;
-	
+
 	private GridArrayAdapter gridViewAdapter = null;
 	private StableArrayAdapter spinnerListAdapter = null;
 
@@ -123,21 +123,22 @@ public class MainActivity extends ActionBarActivity implements
 				new ArticleHttpResponseListener());
 		String url = getResources().getString(R.string.url_articles);
 		httpAsyncTask.execute(url);
-		
-		
-		//Podcast Part
+
+		// Podcast Part
 		gridViewAdapter = new GridArrayAdapter(MainActivity.this);
 		spinnerListAdapter = new StableArrayAdapter(MainActivity.this);
-		
+
 		programTask = new HttpAsyncTask(new GetProgramNames());
-		podcastTask  = new HttpAsyncTask(new GetAllPodcast());
-		
-		String programTaskUrl = getResources().getString(R.string.getAllProgramNames);
-		String podcastTaskUrl = getResources().getString(R.string.getAllPodcast);
-		
+		podcastTask = new HttpAsyncTask(new GetAllPodcast());
+
+		String programTaskUrl = getResources().getString(
+				R.string.getAllProgramNames);
+		String podcastTaskUrl = getResources()
+				.getString(R.string.getAllPodcast);
+
 		podcastTask.execute(podcastTaskUrl);
 		programTask.execute(programTaskUrl);
-		
+
 	}
 
 	@Override
@@ -361,79 +362,90 @@ public class MainActivity extends ActionBarActivity implements
 			audioPlayer.pause();
 		}
 	}
-	
-	private class ListViewItemClickListener implements OnItemSelectedListener{
+
+	private class ListViewItemClickListener implements OnItemSelectedListener {
 
 		@Override
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			Log.i("DEBUG","DOWNLOADING NEW LIST");
-			HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
-			String url = getResources().getString(R.string.getAllPodcast);
-			podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));
-			
+
+			if (arg2 == 0) {
+
+				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
+				String url = getResources().getString(R.string.getAllPodcast);
+				podcast.execute(url);
+				
+			} else {
+				Log.i("DEBUG", "DOWNLOADING NEW LIST");
+				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
+				String url = getResources().getString(R.string.getAllPodcast);
+				podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));
+			}
+
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
-			
+
 		}
-		
+
 	}
-	
-	private class GridViewItemClickListener implements OnItemClickListener{
+
+	private class GridViewItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			
+
 			long id = arg0.getItemIdAtPosition(arg2);
-			Log.i("debug","id er" + id);
+			Log.i("debug", "id er" + id);
 		}
 
 	}
-	
-	public class GetProgramNames implements HttpResponseListener{
+
+	public class GetProgramNames implements HttpResponseListener {
 
 		@Override
 		public void onResponse(String response) {
-			
-			
-			
+
 			List<ProgramName> list = null;
-			
-			if(response != null){
-			try {
-				list = MAPPER.readValue(response, new TypeReference<List<ProgramName>>() {
-				});
-				spinnerListAdapter.setList(list);
-				spinnerListAdapter.notifyDataSetChanged();
-			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+			if (response != null) {
+				try {
+					list = MAPPER.readValue(response,
+							new TypeReference<List<ProgramName>>() {
+							});
+					
+					list.add(0,new ProgramName(0, "Velg program"));
+					spinnerListAdapter.setList(list);
+					spinnerListAdapter.notifyDataSetChanged();
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			}
-			
+
 		}
-		
+
 	}
-	
-	public class GetAllPodcast implements HttpResponseListener{
+
+	public class GetAllPodcast implements HttpResponseListener {
 
 		@Override
 		public void onResponse(String response) {
 			List<Podcast> podcastList = null;
-			
-			if(response != null){
+
+			if (response != null) {
 				try {
-					podcastList  = MAPPER.readValue(response, new TypeReference<List<Podcast>>() {
-					});
+					podcastList = MAPPER.readValue(response,
+							new TypeReference<List<Podcast>>() {
+							});
 					gridViewAdapter.setList(podcastList);
 					gridViewAdapter.notifyDataSetChanged();
 				} catch (JsonParseException e) {
@@ -446,12 +458,11 @@ public class MainActivity extends ActionBarActivity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				
+
 			}
-			
+
 		}
-		
+
 	}
 
 	private class ArticleHttpResponseListener implements HttpResponseListener {
@@ -482,11 +493,11 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void onArticlesFragmentReady() {
 		ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(SectionsPagerAdapter.ARTICLESECTION_FRAGMENT);
-		ArticleListFragment listFragment = (ArticleListFragment) fragment.getChildFragmentManager().getFragments().get(0);
+		ArticleListFragment listFragment = (ArticleListFragment) fragment
+				.getChildFragmentManager().getFragments().get(0);
 		listFragment.setArticleListAdapter(articleListAdapter);
 	}
-	
-	
+
 	@Override
 	public void onPodcastFragmentReady() {
 		PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
@@ -495,7 +506,6 @@ public class MainActivity extends ActionBarActivity implements
 		fragment.setSpinnerListAdapter(spinnerListAdapter);
 		fragment.setSpinnerListSelectedListener(new ListViewItemClickListener());
 
-		
 	}
 
 	@Override
