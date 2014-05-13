@@ -1,7 +1,6 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.3.17)  17 MAR 2014 18:12
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.3.17)  13 MAY 2014 17:22
 entering extended mode
- \write18 enabled.
- file:line:error style messages enabled.
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **doc.tex
 (./doc.tex
@@ -351,23 +350,40 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 \mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
-) (./doc.aux)
+)
+(/usr/local/texlive/2013/texmf-dist/tex/latex/apacite/apacite.sty
+Package: apacite 2012/02/25 v6.01 APA citation
+\c@BibCnt=\count108
+\bibleftmargin=\skip46
+\bibindent=\skip47
+\bibparsep=\skip48
+\bibitemsep=\skip49
+\biblabelsep=\skip50
+)
+\bibdata{doc.bib}
+No file doc.bbl.
+(./doc.aux)
 \openout1 = `doc.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-\c@lstlisting=\count108
-
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+\c@lstlisting=\count109
+\c@maskedRefs=\count110
+ (/usr/local/texlive/2013/texmf-dist/tex/latex/apacite/norsk.apc
+File: norsk.apc 2012/02/25 v6.01 apacite language file
+LaTeX Info: Redefining \BPBI on input line 131.
+LaTeX Info: Redefining \BHBI on input line 132.
+)
 [1
 
 {/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
@@ -377,25 +393,24 @@ LaTeX Font Info:    ... okay on input line 16.
 
  [2] [3] (./doc.aux) ) 
 Here is how much of TeX's memory you used:
- 3126 strings out of 493315
- 38596 string characters out of 6137904
- 97558 words of memory out of 5000000
- 6574 multiletter control sequences out of 15000+600000
- 13593 words of font info for 37 fonts, out of 8000000 for 9000
+ 3537 strings out of 493315
+ 43820 string characters out of 6137904
+ 110452 words of memory out of 5000000
+ 6978 multiletter control sequences out of 15000+600000
+ 12817 words of font info for 36 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 27i,4n,32p,209b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 27i,6n,32p,219b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/cm-su
 per/cm-super-t1.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-s
 uper/sfbx1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-sup
-er/sfbx1200.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super
-/sfbx1440.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/s
-frm1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sfr
-m1200.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sfrm1
-728.pfb>
-Output written on doc.pdf (3 pages, 81112 bytes).
+er/sfbx1440.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super
+/sfrm1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/s
+frm1200.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sfr
+m1728.pfb>
+Output written on doc.pdf (3 pages, 95043 bytes).
 PDF statistics:
- 39 PDF objects out of 1000 (max. 8388607)
- 27 compressed objects within 1 object stream
+ 35 PDF objects out of 1000 (max. 8388607)
+ 24 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
