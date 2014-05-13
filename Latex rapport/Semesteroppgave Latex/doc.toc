@@ -1,0 +1,4 @@
+\select@language {norsk}
+\contentsline {section}{\numberline {1}Overskrift}{3}
+\contentsline {subsection}{\numberline {1.1}Underoverskrift}{3}
+\contentsline {subsubsection}{\numberline {1.1.1}Underunderoverskrift}{3}
