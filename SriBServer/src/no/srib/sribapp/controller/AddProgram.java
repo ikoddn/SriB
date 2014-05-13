@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import no.srib.sribapp.dao.exception.DAOException;
+import no.srib.sribapp.dao.exception.DuplicateEntryException;
 import no.srib.sribapp.dao.interfaces.ProgramnameDAO;
 import no.srib.sribapp.model.Programname;
 
@@ -39,22 +40,23 @@ public class AddProgram extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         HttpSession ses = request.getSession();
 
-        if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){
-        
-        List<Programname> pList = null;
+        if (ses != null && ses.getAttribute("loggedIn") != null
+                && ses.getAttribute("loggedIn").equals("true")) {
 
-        try {
-            pList = pDAO.getList();
-        } catch (DAOException e) {
+            List<Programname> pList = null;
 
-            e.printStackTrace();
-        }
+            try {
+                pList = pDAO.getSortedList();
+            } catch (DAOException e) {
 
-        request.setAttribute("programList", pList);
+                e.printStackTrace();
+            }
 
-        request.getRequestDispatcher("WEB-INF/addprogram.jsp").forward(request,
-                response);
-        }else{
+            request.setAttribute("programList", pList);
+
+            request.getRequestDispatcher("WEB-INF/addprogram.jsp").forward(
+                    request, response);
+        } else {
             response.sendRedirect("index.html");
             return;
         }
@@ -69,66 +71,75 @@ public class AddProgram extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession();
         ses.setAttribute("error", new Boolean(false));
-        if(ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")){
-        
-        String name = request.getParameter("name");
+        ses.setAttribute("errorDuplicate", new Boolean(false));
+        if (ses != null && ses.getAttribute("loggedIn") != null
+                && ses.getAttribute("loggedIn").equals("true")) {
 
-        if (name != null && name.length() > 0) {
+            String name = request.getParameter("name");
 
-            System.out.println(name + " " + name.length());
-        } else {
-            ses.setAttribute("error", new Boolean(true));
-            response.sendRedirect("/SriBServer/AddProgram");
-            return;
-        }
-        Programname pName = new Programname();
-        pName.setName(name);
-        if (request.getParameter("add") != null) {
-           
-            try {
-                pDAO.addElement(pName);
-            } 
-            
-            catch (DAOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            if (name != null && name.length() > 0) {
+
+               
+            } else {
+                ses.setAttribute("error", new Boolean(true));
+                response.sendRedirect("/SriBServer/AddProgram");
+                return;
             }
-            
-        } else {
-            String idString = request.getParameter("id");
-            int id = 0;
-            if (idString != null) {
-                id = Integer.parseInt(idString);
-            }
-           
-            pName.setId(id);
-           
-
-            if (request.getParameter("edit") != null) {
+            Programname pName = new Programname();
+            pName.setName(name);
+            if (request.getParameter("add") != null) {
 
                 try {
-                    pDAO.updateElement(pName);
-                } catch (DAOException e) {
-                   
-                    e.printStackTrace();
+                    pDAO.addProgramName(pName);
+                } catch (DuplicateEntryException e) {
+                    ses.setAttribute("errorDuplicate", new Boolean(true));
+                    response.sendRedirect("AddProgram");
+                    return;
                 }
 
-            } else if (request.getParameter("delete") != null) {
-                    
-                try {
-                    pDAO.removeElement(pName);
-                } catch (DAOException e) {
+                catch (DAOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+
+                }
+            } else {
+                String idString = request.getParameter("id");
+                int id = 0;
+                if (idString != null) {
+                    id = Integer.parseInt(idString);
+                }
+
+                pName.setId(id);
+
+                if (request.getParameter("edit") != null) {
+
+                    try {
+                        pDAO.addProgramName(pName);
+                    } catch (DAOException e) {
+
+                        e.printStackTrace();
+                    } catch (DuplicateEntryException e) {
+                        ses.setAttribute("errorDuplicate", new Boolean(true));
+                        response.sendRedirect("AddProgram");
+                        return;
+                    }
+
+                } else if (request.getParameter("delete") != null) {
+
+                    try {
+                        pDAO.removeElement(pName);
+                    } catch (DAOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
                 }
 
             }
 
-        }
-
-        response.sendRedirect("AddProgram");
-        return;
-        }else{
+            response.sendRedirect("AddProgram");
+            return;
+        } else {
             response.sendRedirect("index.html");
         }
     }

@@ -75,7 +75,7 @@
 								<c:if test="${program.program == def.id}">
 									<option value="${def.id}" selected="selected">${def.name}</option>
 								</c:if>
-								<c:if test="${program.program != def.name }">
+								<c:if test="${program.program != def.id }">
 									<option value="${def.id}">${def.name}</option>
 								</c:if>
 							</c:forEach>

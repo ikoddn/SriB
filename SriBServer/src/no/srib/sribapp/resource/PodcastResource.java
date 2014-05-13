@@ -18,8 +18,10 @@ import javax.ws.rs.core.Response.Status;
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.DefinitionDAO;
 import no.srib.sribapp.dao.interfaces.PodcastDAO;
+import no.srib.sribapp.dao.interfaces.PrograminfoDAO;
 import no.srib.sribapp.model.Definition;
 import no.srib.sribapp.model.Podcast;
+import no.srib.sribapp.model.Programinfo;
 import no.srib.sribapp.resource.helper.PodcastBean;
 
 @Path("podcast")
@@ -31,6 +33,8 @@ public class PodcastResource {
     private PodcastDAO podcastDAO;
     @EJB
     private DefinitionDAO defDAO;
+    @EJB
+    private PrograminfoDAO programInfoDAO;
 
     /**
      * 
@@ -43,22 +47,29 @@ public class PodcastResource {
         List<PodcastBean> podcastList = new ArrayList<PodcastBean>();
         Map<Integer, String> programName = new HashMap<Integer, String>();
         List<Definition> defList = null;
-
+        List<Programinfo> programInfoList = null;
+        Map<Integer,String> programPictureUrl = new HashMap<Integer, String>();
+        
         try {
             list = podcastDAO.getList();
             defList = defDAO.getList();
+            programInfoList = programInfoDAO.getList();
 
         } catch (DAOException e) {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if (defList == null || list == null || list.isEmpty()
-                || defList.isEmpty()) {
+        if (defList == null || list == null || programInfoList == null || list.isEmpty()
+                || defList.isEmpty() || programInfoList.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
 
         for (Definition def : defList) {
             programName.put(def.getDefnr(), def.getName());
+        }
+        
+        for(Programinfo pi : programInfoList){
+            programPictureUrl.put(pi.getProgram(), pi.getImglink());
         }
 
         for (Podcast pod : list) {
@@ -72,9 +83,11 @@ public class PodcastResource {
             podBean.setRemark(pod.getRemark());
             podBean.setTitle(pod.getTitle());
             podBean.setProgramId(pod.getProgram());
+            podBean.setImageUrl(programPictureUrl.get(pod.getProgram()));
             podcastList.add(podBean);
         }
-
+        podcastList = podcastList.subList(0, 16);
+        
         return podcastList;
     }
 
@@ -85,19 +98,29 @@ public class PodcastResource {
         List<Podcast> list = null;
         List<PodcastBean> podList = new ArrayList<PodcastBean>();
         Map<Integer, String> programName = new HashMap<Integer, String>();
-        // List<Definition> defList = null;
+    
+        List<Programinfo> programInfoList = null;
+        Map<Integer,String> programPictureUrl = new HashMap<Integer, String>();
 
         try {
             list = podcastDAO.getPodcasts(id);
-            // defList = defDAO.getList();
+           
+            programInfoList = programInfoDAO.getList();
         } catch (DAOException e) {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if (list == null || list.isEmpty()) {
+        if ( list == null || programInfoList == null || list.isEmpty()
+              || programInfoList.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
 
+        
+        for(Programinfo pi : programInfoList){
+            programPictureUrl.put(pi.getProgram(), pi.getImglink());
+            programName.put(pi.getProgram(), pi.getTitle());
+        }
+        
         for (Podcast pod : list) {
             PodcastBean podBean = new PodcastBean();
             podBean.setCreatedate(pod.getCreatedate());
@@ -109,10 +132,13 @@ public class PodcastResource {
             podBean.setRemark(pod.getRemark());
             podBean.setTitle(pod.getTitle());
             podBean.setProgramId(pod.getProgram());
+            podBean.setImageUrl(programPictureUrl.get(pod.getProgram()));
             podList.add(podBean);
 
         }
 
+       
+        
         return podList;
 
     }
@@ -121,19 +147,31 @@ public class PodcastResource {
     @GET
     @Path("names")
     public final List<Definition> getAllPodcastNames() {
-        List<Definition> list = null;
+        List<Definition> defList = new ArrayList<Definition>();
+        List<Programinfo> programInfoList = null;
 
         try {
-            list = defDAO.getList();
+            programInfoList = programInfoDAO.getProgramInfosWithPodcast();
+            
         } catch (DAOException e) {
+            
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if (list == null || list.isEmpty()) {
+        if ( programInfoList == null || programInfoList.isEmpty()) {
+            System.out.println("NO CONTENT");
             throw new WebApplicationException(Status.NO_CONTENT);
         }
+        System.out.println("Størrelse: " +  programInfoList.size());
+        for(Programinfo prog : programInfoList){
+            Definition def = new Definition();
+            def.setDefnr(prog.getProgram());
+            def.setName(prog.getTitle());
+            defList.add(def);
+            
+        }
 
-        return list;
+        return defList;
     }
 
 }

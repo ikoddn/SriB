@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @Entity
-@Table(name="definition")
+@Table(name="DEFINITION")
 @NamedQuery(name="Definition.findAll", query="SELECT d FROM Definition d")
 @XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class Definition extends AbstractModel  {

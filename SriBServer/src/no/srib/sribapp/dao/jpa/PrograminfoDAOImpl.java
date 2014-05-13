@@ -1,5 +1,7 @@
 package no.srib.sribapp.dao.jpa;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 
@@ -31,5 +33,25 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
         }
 
         return result;
+    }
+
+    @Override
+    public List<Programinfo> getProgramInfosWithPodcast() throws DAOException {
+        List<Programinfo> list = null;
+        String queryString = "SELECT DISTINCT A FROM Podcast P, Programinfo A WHERE A.program=P.program ORDER BY A.title ";
+        TypedQuery<Programinfo> query = em.createQuery(queryString,
+                Programinfo.class);
+
+        try {
+            list = query.getResultList();
+            if (list.isEmpty()) {
+                list = null;
+            }
+
+        } catch (Exception e) {
+            throw new DAOException(e);
+        }
+
+        return list;
     }
 }

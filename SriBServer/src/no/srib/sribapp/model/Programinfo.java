@@ -8,8 +8,8 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="programinfo")
-@NamedQuery(name="Programinfo.findAll", query="SELECT p FROM Programinfo p")
+@Table(name="PROGRAMINFO")
+@NamedQuery(name="Programinfo.findAll", query="SELECT p FROM Programinfo p ORDER BY p.title")
 public class Programinfo extends AbstractModel  {
 	private static final long serialVersionUID = 1L;
 	private int program;

@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @Entity
-@Table(name = "podcast")
-@NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p")
+@Table(name = "PODCAST")
+@NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p WHERE p.softdel=0 ORDER BY p.createdate DESC,p.createtime DESC")
 @XmlType(name = "") // Remove "@type" from the marshalled JSON
 public class Podcast extends AbstractModel {
     private static final long serialVersionUID = 1L;
@@ -23,7 +23,9 @@ public class Podcast extends AbstractModel {
     private String remark;
     private int samplerate;
     private String title;
-
+    private int softdel;
+   
+   
     public Podcast() {
     }
 
@@ -118,5 +120,14 @@ public class Podcast extends AbstractModel {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    public int getSoftdel() {
+        return softdel;
+    }
+
+    public void setSoftdel(int softdel) {
+        this.softdel = softdel;
+    }
+
 
 }

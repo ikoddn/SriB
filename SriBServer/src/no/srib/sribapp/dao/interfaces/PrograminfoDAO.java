@@ -1,5 +1,7 @@
 package no.srib.sribapp.dao.interfaces;
 
+import java.util.List;
+
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.model.Programinfo;
 
@@ -20,4 +22,12 @@ public interface PrograminfoDAO extends AbstractModelDAO<Programinfo> {
      * @throws DAOException
      */
     Programinfo getById(final int id) throws DAOException;
+    
+    /**
+     * Returns a List with {@link Programinfo} with minimum one podcast in database. 
+     * @return Only programs with a podcast
+     * @throws DAOException
+     */
+    
+    List<Programinfo> getProgramInfosWithPodcast() throws DAOException;
 }

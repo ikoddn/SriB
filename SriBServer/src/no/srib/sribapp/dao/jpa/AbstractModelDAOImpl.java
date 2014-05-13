@@ -41,9 +41,12 @@ abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
     public void addElement(T el) throws DAOException {
         try {
             em.persist(el);
-        } catch (Exception e) {
-            throw new DAOException(e);
         }
+        
+        
+        catch (Exception e) {
+            throw new DAOException(e);
+        } 
        
         
     }

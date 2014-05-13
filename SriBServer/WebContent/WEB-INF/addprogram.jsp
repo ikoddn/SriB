@@ -22,6 +22,9 @@
 <c:if test="${error == true}">
 <span style="color:red">Ugyldig input</span>
 </c:if>
+<c:if test="${errorDuplicate == true}">
+<span style="color:red">Navn eksistere allerede.</span>
+</c:if>
 
 <form  class="form form-horizontal" role="form" action="AddProgram" method="post" >
 <div class="form-group">

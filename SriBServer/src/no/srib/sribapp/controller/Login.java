@@ -36,7 +36,7 @@ public class Login extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        HttpSession ses = request.getSession(false);
+        HttpSession ses = request.getSession(true);
       
         if (ses != null && ses.getAttribute("loggedIn") != null && ses.getAttribute("loggedIn").equals("true")) {
             

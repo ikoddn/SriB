@@ -56,7 +56,7 @@ public class SetSchedule extends HttpServlet {
                 List<Programname> progList = null;
 
                 try {
-                    progList = pDAO.getList();
+                    progList = pDAO.getSortedList();
                 } catch (DAOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -123,14 +123,15 @@ public class SetSchedule extends HttpServlet {
                 list.add(saturdayList);
                 list.add(sundayList);
 
+                //Default program when program is not set.
+                Programname def = new Programname();
+                def.setName("Velg program");
+                progList.add(0, def);
+       
+                
                 request.setAttribute("dbList", list);
                 request.setAttribute("days", dayArray);
                 request.setAttribute("definitionMap", definitionMap);
-
-                Programname def = new Programname();
-
-                def.setName("Velg program");
-                progList.add(0, def);
                 request.setAttribute("programlist", progList);
                 RequestDispatcher reqD = request
                         .getRequestDispatcher("/WEB-INF/schedule.jsp");
