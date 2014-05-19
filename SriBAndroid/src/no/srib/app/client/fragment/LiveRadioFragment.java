@@ -69,11 +69,11 @@ public class LiveRadioFragment extends Fragment {
 		
 		playButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_play);
-		playButton.setOnClickListener(new PlayButtonListener());
+		playButton.setOnClickListener(new PlayPauseButtonListener());
 
 		ImageButton pauseButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_pause);
-		pauseButton.setOnClickListener(new PauseButtonListener());
+		pauseButton.setOnClickListener(new StopButtonListener());
 
 		return rootView;
 	}
@@ -112,26 +112,26 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public interface OnLiveRadioClickListener {
-		void onPlayClicked();
+		void onPlayPauseClicked();
 
-		void onPauseClicked();
+		void onStopClicked();
 	}
 	
 
-	private class PlayButtonListener implements OnClickListener {
+	private class PlayPauseButtonListener implements OnClickListener {
 
 		@Override
 		public void onClick(View button) {
 			
-			liveRadioClickListener.onPlayClicked();
+			liveRadioClickListener.onPlayPauseClicked();
 		}
 	}
 
-	private class PauseButtonListener implements OnClickListener {
+	private class StopButtonListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			liveRadioClickListener.onPauseClicked();
+			liveRadioClickListener.onStopClicked();
 		}
 	}
 

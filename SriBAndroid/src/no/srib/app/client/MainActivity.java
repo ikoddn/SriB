@@ -349,7 +349,7 @@ public class MainActivity extends ActionBarActivity implements
 	private class LiveRadioClickListener implements OnLiveRadioClickListener {
 
 		@Override
-		public void onPlayClicked() {
+		public void onPlayPauseClicked() {
 			switch (audioPlayer.getState()) {
 			case PAUSED:
 			case PREPARING:
@@ -359,7 +359,7 @@ public class MainActivity extends ActionBarActivity implements
 				break;
 			case STARTED:
 				autoPlayAfterConnect = false;
-				audioPlayer.stop();
+				audioPlayer.pause();
 				break;
 			case UNINITIALIZED:
 			case COMPLETED:
@@ -373,9 +373,9 @@ public class MainActivity extends ActionBarActivity implements
 		}
 
 		@Override
-		public void onPauseClicked() {
+		public void onStopClicked() {
 			autoPlayAfterConnect = false;
-			audioPlayer.pause();
+			audioPlayer.stop();
 		}
 	}
 
