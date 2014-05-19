@@ -2,5 +2,6 @@
 <resources>
 
     <item name="key_article_url" type="id"/>
+    <item name="podcast_url" type="id"/>
 
 </resources>

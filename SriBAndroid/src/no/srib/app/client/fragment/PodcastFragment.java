@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 public class PodcastFragment extends Fragment {
 
+
 	private Spinner spinner = null;
 	private GridView podcastGridView = null;
 	private OnPodcastFragmentReadyListener readyListener = null; 
@@ -26,6 +27,11 @@ public class PodcastFragment extends Fragment {
 	public PodcastFragment(){
 		
 		
+	}
+	
+	public GridView getGridView(){
+		
+		return podcastGridView;
 	}
 	
 	public void setPodCastClickedListener(
@@ -66,7 +72,7 @@ public class PodcastFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_podcast, container,
 				false);
-		
+		setRetainInstance(true);
 		TextView textView1 = (TextView) rootView
 				.findViewById(R.id.label_program_name);
 		textView1.setText("Program navn:");

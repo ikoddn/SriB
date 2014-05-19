@@ -2,6 +2,7 @@ package no.srib.app.client;
 
 import java.io.IOException;
 import java.util.List;
+
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.GridArrayAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
@@ -20,6 +21,7 @@ import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListene
 import no.srib.app.client.model.NewsArticle;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
+import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.StreamUpdaterService;
@@ -42,6 +44,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.GridView;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -91,7 +95,7 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		getSupportActionBar().hide();
 		setContentView(R.layout.activity_main);
 
 		// Create the adapter that will return a fragment for each of the three
@@ -138,6 +142,13 @@ public class MainActivity extends ActionBarActivity implements
 
 		podcastTask.execute(podcastTaskUrl);
 		programTask.execute(programTaskUrl);
+		
+		//ProgramName
+		HttpAsyncTask programName = new HttpAsyncTask(new GetCurrentProgramName());
+		
+		String programNameURL = getResources().getString(R.string.currentProgram);
+		
+		programName.execute(programNameURL);
 
 	}
 
@@ -310,21 +321,26 @@ public class MainActivity extends ActionBarActivity implements
 			switch (state) {
 			case PAUSED:
 				fragment.setStatusText("paused");
+				fragment.setPlayIcon();
 				break;
 			case PREPARING:
 				fragment.setStatusText("preparing");
+				fragment.setPauseIcon();
 				break;
 			case STARTED:
 				fragment.setStatusText("started");
+				fragment.setPauseIcon();
 				break;
 			case STOPPED:
 				fragment.setStatusText("stopped");
+				fragment.setPlayIcon();
 				break;
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
 				break;
 			case COMPLETED:
 				fragment.setStatusText("completed");
+				fragment.setPlayIcon();
 				break;
 			}
 		}
@@ -369,6 +385,9 @@ public class MainActivity extends ActionBarActivity implements
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 
+			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
+			
+			
 			if (arg2 == 0) {
 
 				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
@@ -380,8 +399,10 @@ public class MainActivity extends ActionBarActivity implements
 				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
 				String url = getResources().getString(R.string.getAllPodcast);
 				podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));
+			
 			}
-
+			GridView grid = fragment.getGridView();
+			grid.smoothScrollToPosition(0);
 		}
 
 		@Override
@@ -394,11 +415,24 @@ public class MainActivity extends ActionBarActivity implements
 	private class GridViewItemClickListener implements OnItemClickListener {
 
 		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
+		public void onItemClick(AdapterView<?> adapter, View view, int position,
+				long id) {
 
-			long id = arg0.getItemIdAtPosition(arg2);
-			Log.i("debug", "id er" + id);
+			String url = (String) view.getTag(R.id.podcast_url);
+			String correctUrl = url.substring(3, url.length());
+			String nasUrl = getResources().getString(R.string.podcast_nas_URL);
+			String URL = nasUrl + correctUrl;
+			try {
+				audioPlayer.setDataSource(URL);
+			} catch (AudioPlayerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			
+			audioPlayer.start();
+			
+			
 		}
 
 	}
@@ -434,8 +468,40 @@ public class MainActivity extends ActionBarActivity implements
 		}
 
 	}
+	
+	private class GetCurrentProgramName implements HttpResponseListener{
 
-	public class GetAllPodcast implements HttpResponseListener {
+		@Override
+		public void onResponse(String response) {
+			Schedule schedule = null;
+			
+			if(response != null){
+				try{
+					schedule = MAPPER.readValue(response, Schedule.class);
+					LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+					fragment.setProgramNameText(schedule.getProgram());
+				}catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			
+		}
+		
+		
+		
+	}
+	
+	
+
+	private class GetAllPodcast implements HttpResponseListener {
 
 		@Override
 		public void onResponse(String response) {

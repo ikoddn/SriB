@@ -6,5 +6,6 @@
     <string name="getAllPodcast">http://158.37.6.78:8080/SriBServer/rest/podcast</string>
     <string name="getAllProgramNames">http://158.37.6.78:8080/SriBServer/rest/podcast/names</string>
     <string name="url_articles">http://158.37.6.78:8080/SriBServer/rest/news</string>
+    <string name="podcast_nas_URL">http://158.37.6.78:8080/SriBServer/podcasts/</string>
 
 </resources>

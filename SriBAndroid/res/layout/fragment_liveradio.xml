@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/layout"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -13,25 +14,48 @@
         android:id="@+id/textview_liveradio_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <TextView
+
+    <TextView
         android:id="@+id/textview_liveradio_stream"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textview_liveradio_status" />
 
-    <Button
-        android:id="@+id/button_liveradio_play"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_liveradio_stream"
-        android:text="@string/button_liveradio_play" />
+        android:layout_centerInParent="true" >
 
-    <Button
+        <ImageButton
+            android:id="@+id/button_liveradio_play"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="50dp"
+            android:background="@null"
+            android:contentDescription="Play Button"
+            android:scaleType="fitXY"
+            android:src="@drawable/play" />
+
+    </LinearLayout>
+
+    <ImageButton
         android:id="@+id/button_liveradio_pause"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:background="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/stopp" />
+
+    <TextView
+        android:id="@+id/programName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_liveradio_stream"
-        android:layout_toRightOf="@id/button_liveradio_play"
-        android:text="@string/button_liveradio_pause" />
+        android:layout_above="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="46dp"
+        />
 
 </RelativeLayout>

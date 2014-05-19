@@ -1,15 +1,16 @@
 package no.srib.app.client.adapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
+import no.srib.app.client.util.TimeUtil;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,29 +65,24 @@ public class GridArrayAdapter extends BaseAdapter{
 		Podcast podcast = podcastList.get(position);
 		TextView programNameTextView = (TextView) convertView.findViewById(R.id.label_gridViewItem_programname);
 		String programName = podcast.getProgram();
+		
 		if(programName != null){
 			Spanned safeText = Html.fromHtml(programName);
 			programNameTextView.setText(safeText);
 		}else{
 			programNameTextView.setText(programName);
 		}
-		Log.i("GetArrayAdapter _ getView", programName + " " + podcast.getProgramId() );
-		
-		
 		TextView programNameDate = (TextView) convertView.findViewById(R.id.label_gridViewItem_date);
 		int date = podcast.getCreatedate();
-		Typeface myTypeface = Typeface.createFromAsset(convertView.getContext().getAssets(), "fonts/ROBOTS.ttf");
-		programNameDate.setTypeface(myTypeface);
-		programNameDate.setText(String.valueOf(date));
+		Calendar cal = TimeUtil.parseIntDate(date);
+		String format = "dd-MM-yyyy";
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		programNameDate.setText(sdf.format(cal.getTime()));
 		
 		ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
 		String url = podcast.getImageUrl();
 		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
-		//UrlImageViewHelper.setUrlDrawable(image, url);
-		
-		//ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.imageButton1);
-		//Drawable draw = convertView.getResources().getDrawable(R.drawable.down);
-		//imageButton.setImageDrawable(draw);
+		convertView.setTag(R.id.podcast_url, podcast.getFilename());
 		
 		
 		return convertView;
