@@ -1,6 +1,12 @@
 package no.srib.sribapp.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -9,8 +15,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @Table(name = "PODCAST")
-@NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p WHERE p.softdel=0 ORDER BY p.createdate DESC,p.createtime DESC")
-@XmlType(name = "") // Remove "@type" from the marshalled JSON
+@NamedQueries({
+        @NamedQuery(name = "melk", query = "SELECT P FROM Podcast P WHERE P.program=:id AND P.softdel=0 ORDER BY P.createdate DESC", hints = {
+                @javax.persistence.QueryHint(name = "eclipselink.query-results-cache", value = "true"),
+                @javax.persistence.QueryHint(name = "eclipselink.query-results-cache.size", value = "500") }),
+        @NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p WHERE p.softdel=0 ORDER BY p.createdate DESC,p.createtime DESC") })
+@XmlType(name = "")
+// Remove "@type" from the marshalled JSON
 public class Podcast extends AbstractModel {
     private static final long serialVersionUID = 1L;
     private int refnr;
@@ -24,8 +35,7 @@ public class Podcast extends AbstractModel {
     private int samplerate;
     private String title;
     private int softdel;
-   
-   
+
     public Podcast() {
     }
 
@@ -120,7 +130,7 @@ public class Podcast extends AbstractModel {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     public int getSoftdel() {
         return softdel;
     }
@@ -128,6 +138,5 @@ public class Podcast extends AbstractModel {
     public void setSoftdel(int softdel) {
         this.softdel = softdel;
     }
-
 
 }

@@ -47,7 +47,7 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
         String timeString = dateFormat.format(time.getTime());
         Time timeNow = Time.valueOf(timeString);
         
-        String queryString = "SELECT S FROM Schedule S WHERE S.day=:day AND S.fromtime<=:timeNow AND S.totime>:timeNow";
+        String queryString = "SELECT S FROM Schedule S WHERE S.day=:day AND S.fromtime<=:timeNow AND S.totime>=:timeNow";
         TypedQuery<Schedule> query = em
                 .createQuery(queryString, Schedule.class);
         query.setParameter("day", day);

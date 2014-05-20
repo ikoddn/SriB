@@ -56,6 +56,7 @@ public class PodcastResource {
             programInfoList = programInfoDAO.getList();
 
         } catch (DAOException e) {
+            e.printStackTrace();
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 

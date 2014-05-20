@@ -21,12 +21,13 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
     public List<Podcast> getPodcasts(final int programID) throws DAOException {
         List<Podcast> result = null;
 
-        String queryString = "SELECT P FROM Podcast P WHERE P.program=:id AND P.softdel=0 ORDER BY P.createdate DESC ";
-        TypedQuery<Podcast> query = em.createQuery(queryString, Podcast.class);
-        query.setParameter("id", programID);
-
+      //  String queryString = "SELECT P FROM Podcast P WHERE P.program=:id AND P.softdel=0 ORDER BY P.createdate DESC";
+        //TypedQuery<Podcast> query = em.createQuery(queryString, Podcast.class);
+        TypedQuery<Podcast> q = em.createNamedQuery("melk", Podcast.class);
+        q.setParameter("id", programID);
+        //query.setHint("eclipselink.read-only", "true");
         try {
-            result = query.getResultList();
+            result = q.getResultList();
         } catch (Exception e) {
             throw new DAOException(e);
         }
