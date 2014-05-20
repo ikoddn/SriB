@@ -36,6 +36,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -485,6 +486,15 @@ public class MainActivity extends ActionBarActivity implements
 				try{
 					schedule = MAPPER.readValue(response, Schedule.class);
 					LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+					
+					if (fragment == null) {
+						Log.d("SriB", "fragment == null");
+					}
+					
+					if (schedule == null) {
+						Log.d("SriB", "schedule == null");
+					}
+					
 					fragment.setProgramNameText(schedule.getProgram());
 				}catch (JsonParseException e) {
 					// TODO Auto-generated catch block

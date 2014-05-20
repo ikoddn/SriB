@@ -1,7 +1,10 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.util.DTImageView;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,15 +27,13 @@ public class LiveRadioFragment extends Fragment {
 	private TextView programNameTextView;
 	private ImageButton playButton;
 
-
 	public void setOnLiveRadioClickListener(
 			OnLiveRadioClickListener liveRadioClickListener) {
 		this.liveRadioClickListener = liveRadioClickListener;
 	}
-	
-	
-	public void setProgramNameText(CharSequence text){
-		if(text != null){
+
+	public void setProgramNameText(CharSequence text) {
+		if (text != null) {
 			programNameTextView.setText(text);
 		}
 	}
@@ -52,28 +53,45 @@ public class LiveRadioFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_liveradio,
+		final View rootView = inflater.inflate(R.layout.fragment_liveradio,
 				container, false);
-		Typeface appFont = Typeface.createFromAsset(rootView.getContext().getAssets(), "fonts/clairehandbold.ttf");
+
+		rootView.post(new Runnable() {
+			public void run() {
+				DTImageView bgImageView = (DTImageView) rootView
+						.findViewById(R.id.dtImageView_liveradio_background);
+
+				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+						R.drawable.layout);
+
+				bgImageView.setBitmap(Bitmap.createScaledBitmap(bitmap,
+						rootView.getWidth(), rootView.getHeight(), true));
+			}
+		});
+
 		statusTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_status);
 		streamTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_stream);
-		programNameTextView = (TextView) rootView.findViewById(R.id.programName);
-		programNameTextView.setTypeface(appFont);
-		
-		statusTextView.setTypeface(appFont);
+		programNameTextView = (TextView) rootView
+				.findViewById(R.id.programName);
+
 		statusTextView.setText("Live radio fragment");
 		streamTextView.setText("PLACEHOLDER TEXT");
+
+		Typeface appFont = Typeface.createFromAsset(rootView.getContext()
+				.getAssets(), "fonts/clairehandbold.ttf");
+		statusTextView.setTypeface(appFont);
 		streamTextView.setTypeface(appFont);
-		
+		programNameTextView.setTypeface(appFont);
+
 		playButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_play);
 		playButton.setOnClickListener(new PlayPauseButtonListener());
 
-		ImageButton pauseButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_pause);
-		pauseButton.setOnClickListener(new StopButtonListener());
+		ImageButton stopButton = (ImageButton) rootView
+				.findViewById(R.id.button_liveradio_stop);
+		stopButton.setOnClickListener(new StopButtonListener());
 
 		return rootView;
 	}
@@ -116,13 +134,12 @@ public class LiveRadioFragment extends Fragment {
 
 		void onStopClicked();
 	}
-	
 
 	private class PlayPauseButtonListener implements OnClickListener {
 
 		@Override
 		public void onClick(View button) {
-			
+
 			liveRadioClickListener.onPlayPauseClicked();
 		}
 	}
@@ -136,13 +153,14 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public void setPauseIcon() {
-		playButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
-		
+		playButton.setImageDrawable(getResources()
+				.getDrawable(R.drawable.pause));
+
 	}
 
-
 	public void setPlayIcon() {
-		playButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
-		
+		playButton
+				.setImageDrawable(getResources().getDrawable(R.drawable.play));
+
 	}
 }
