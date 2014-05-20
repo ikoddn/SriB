@@ -44,6 +44,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -89,6 +90,13 @@ public class MainActivity extends ActionBarActivity implements
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
 		articleListAdapter = null;
+	}
+	
+	@Override
+	public void onLowMemory() {
+		Toast.makeText(getApplicationContext(), "Low memory", Toast.LENGTH_LONG).show();
+		
+		super.onLowMemory();
 	}
 
 	@Override
