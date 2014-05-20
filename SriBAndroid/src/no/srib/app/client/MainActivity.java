@@ -36,7 +36,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -395,7 +394,6 @@ public class MainActivity extends ActionBarActivity implements
 				podcast.execute(url);
 				
 			} else {
-				Log.i("DEBUG", "DOWNLOADING NEW LIST");
 				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
 				String url = getResources().getString(R.string.getAllPodcast);
 				podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 public class ArticleFragment extends Fragment {
 
@@ -36,9 +35,7 @@ public class ArticleFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_article, container,
 				false);
 
-		TextView textView = (TextView) rootView
-				.findViewById(R.id.textview_article);
-		textView.setText("ArticleFragment");
+
 
 		if (url != null) {
 			WebView webView = (WebView) rootView

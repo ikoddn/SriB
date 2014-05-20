@@ -9,6 +9,7 @@ import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.TimeUtil;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -62,8 +63,10 @@ public class GridArrayAdapter extends BaseAdapter{
 		
 		
 		convertView = inflater.inflate(R.layout.podcast_grid_item, null);
+		Typeface appFont = Typeface.createFromAsset(convertView.getContext().getAssets(), "fonts/clairehandbold.ttf");
 		Podcast podcast = podcastList.get(position);
 		TextView programNameTextView = (TextView) convertView.findViewById(R.id.label_gridViewItem_programname);
+		programNameTextView.setTypeface(appFont);
 		String programName = podcast.getProgram();
 		
 		if(programName != null){
@@ -73,6 +76,7 @@ public class GridArrayAdapter extends BaseAdapter{
 			programNameTextView.setText(programName);
 		}
 		TextView programNameDate = (TextView) convertView.findViewById(R.id.label_gridViewItem_date);
+		programNameDate.setTypeface(appFont);
 		int date = podcast.getCreatedate();
 		Calendar cal = TimeUtil.parseIntDate(date);
 		String format = "dd-MM-yyyy";

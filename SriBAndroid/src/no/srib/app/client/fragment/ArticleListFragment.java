@@ -15,7 +15,7 @@ import android.widget.TextView;
 public class ArticleListFragment extends Fragment {
 
 	private ListView listView;
-	private TextView label;
+
 	private OnArticlesFragmentReadyListener readyListener;
 	private OnItemClickListener articleClickedListener;
 
@@ -29,7 +29,7 @@ public class ArticleListFragment extends Fragment {
 
 	public ArticleListFragment() {
 		listView = null;
-		label = null;
+		
 		readyListener = null;
 	}
 
@@ -50,8 +50,7 @@ public class ArticleListFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_articlelist,
 				container, false);
 
-		label = (TextView) rootView.findViewById(R.id.label_articlelist);
-		label.setText("Articles fragment");
+		
 
 		listView = (ListView) rootView.findViewById(R.id.listview_articlelist);
 		listView.setOnItemClickListener(articleClickedListener);

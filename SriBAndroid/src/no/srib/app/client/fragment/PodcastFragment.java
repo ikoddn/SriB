@@ -2,6 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -73,8 +74,10 @@ public class PodcastFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_podcast, container,
 				false);
 		setRetainInstance(true);
+		Typeface appFont = Typeface.createFromAsset(rootView.getContext().getAssets(), "fonts/clairehandbold.ttf");
 		TextView textView1 = (TextView) rootView
 				.findViewById(R.id.label_program_name);
+		textView1.setTypeface(appFont);
 		textView1.setText("Program navn:");
 	
 		spinner = (Spinner) rootView.findViewById(R.id.spinner1);

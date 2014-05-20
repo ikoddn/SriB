@@ -6,6 +6,7 @@ import java.util.List;
 import no.srib.app.client.R;
 import no.srib.app.client.model.ProgramName;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -62,8 +63,9 @@ public class StableArrayAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		convertView = inflater.inflate(R.layout.podcastlist, null);
-		
+		Typeface appFont = Typeface.createFromAsset(convertView.getContext().getAssets(), "fonts/clairehandbold.ttf");
 		TextView text = (TextView) convertView.findViewById(R.id.label_spinnerItem_name);
+		text.setTypeface(appFont);
 		ProgramName prog = programList.get(position);
 		String name = prog.getName();
 		if(name != null){
