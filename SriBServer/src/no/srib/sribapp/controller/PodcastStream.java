@@ -19,7 +19,7 @@ import no.srib.sribapp.controller.exception.InvalidParameterException;
  */
 @WebServlet("/PodcastStream")
 public class PodcastStream extends HttpServlet {
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -33,30 +33,36 @@ public class PodcastStream extends HttpServlet {
         ServletOutputStream outStream = null;
 
         String fileName = req.getParameter("file");
+        String podcastFilesRoot = getServletContext().getInitParameter(
+                "podcastFilesRoot");
+
+        // TODO Remove after testing
+        fileName = "SRRED15_F7B8269B43F24F669E8E8923F90A6B77.MP3";
 
         try {
             if (fileName == null || fileName.equals("")) {
                 throw new InvalidParameterException();
             }
 
-            File mp3 = new File(getServletContext().getRealPath("/")
-                    + "podcast", fileName);
+            File mp3 = new File(podcastFilesRoot, fileName);
 
             FileInputStream inputStream = new FileInputStream(mp3);
             bufferStream = new BufferedInputStream(inputStream);
-            
+
             resp.setContentType("audio/mpeg");
             resp.setContentLength((int) mp3.length());
-            
+
             outStream = resp.getOutputStream();
             int readByte = bufferStream.read();
-            
+
             while (readByte != -1) {
                 outStream.write(readByte);
                 readByte = bufferStream.read();
             }
         } catch (InvalidParameterException e) {
-            // TODO Treat exceptions, this will currently display an Apache error page
+            // TODO Treat exceptions, this will currently display an Apache
+            // error page
+            e.printStackTrace();
             throw new ServletException(e);
         } finally {
             if (outStream != null) {
