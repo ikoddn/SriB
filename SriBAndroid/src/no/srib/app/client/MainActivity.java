@@ -176,8 +176,8 @@ public class MainActivity extends ActionBarActivity implements
 			LiveRadioFragment liveRadioFragment = null;
 
 			if (liveRadioSectionFragment != null) {
-				liveRadioFragment = liveRadioSectionFragment
-						.getLiveRadioFragment();
+				liveRadioFragment = (LiveRadioFragment) liveRadioSectionFragment
+						.getBaseFragment();
 			}
 
 			if (liveRadioFragment != null) {
@@ -192,8 +192,8 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onStatus(Status status) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = liveRadioSectionFragment
-					.getLiveRadioFragment();
+			LiveRadioFragment fragment = (LiveRadioFragment) liveRadioSectionFragment
+					.getBaseFragment();
 
 			if (fragment != null) {
 				switch (status) {
@@ -219,7 +219,8 @@ public class MainActivity extends ActionBarActivity implements
 			LiveRadioFragment fragment = null;
 
 			if (liveRadioSectionFragment != null) {
-				fragment = liveRadioSectionFragment.getLiveRadioFragment();
+				fragment = (LiveRadioFragment) liveRadioSectionFragment
+						.getBaseFragment();
 			}
 
 			try {
@@ -256,7 +257,8 @@ public class MainActivity extends ActionBarActivity implements
 			LiveRadioFragment fragment = null;
 
 			if (liveRadioSectionFragment != null) {
-				fragment = liveRadioSectionFragment.getLiveRadioFragment();
+				fragment = (LiveRadioFragment) liveRadioSectionFragment
+						.getBaseFragment();
 			}
 
 			switch (state) {
@@ -434,8 +436,8 @@ public class MainActivity extends ActionBarActivity implements
 					LiveRadioFragment fragment = null;
 
 					if (liveRadioSectionFragment != null) {
-						fragment = liveRadioSectionFragment
-								.getLiveRadioFragment();
+						fragment = (LiveRadioFragment) liveRadioSectionFragment
+								.getBaseFragment();
 					}
 
 					if (fragment != null) {
@@ -535,7 +537,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		if (viewPager.getCurrentItem() == id) {
 			ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(id);
-			close = !fragment.backPressed();
+			close = !fragment.popFragment();
 		}
 
 		if (close) {
