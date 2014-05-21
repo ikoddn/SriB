@@ -29,14 +29,17 @@ public class DTImageView extends View {
 		this.bitmap = bitmap;
 	}
 
+	public void cleanup() {
+		bitmap.recycle();
+		bitmap = null;
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
 		if (bitmap != null) {
 			canvas.drawBitmap(bitmap, 0, 0, null);
-			bitmap.recycle();
-			bitmap = null;
 		}
 	}
 }

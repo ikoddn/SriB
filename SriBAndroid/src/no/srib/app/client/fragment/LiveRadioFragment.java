@@ -29,6 +29,7 @@ public class LiveRadioFragment extends Fragment {
 	private TextView streamTextView;
 	private TextView programNameTextView;
 	private ImageButton playButton;
+	private DTImageView background;
 
 	public LiveRadioFragment() {
 		playing = false;
@@ -68,7 +69,7 @@ public class LiveRadioFragment extends Fragment {
 				int height = rootView.getHeight();
 				int width = rootView.getWidth();
 
-				DTImageView bgImageView = (DTImageView) rootView
+				background = (DTImageView) rootView
 						.findViewById(R.id.dtImageView_liveradio_background);
 
 				Activity activity = getParentFragment().getActivity();
@@ -76,7 +77,7 @@ public class LiveRadioFragment extends Fragment {
 						activity.getResources(), R.drawable.layout, width,
 						height);
 
-				bgImageView.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
+				background.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
 						height, true));
 			}
 		});
@@ -142,6 +143,15 @@ public class LiveRadioFragment extends Fragment {
 		editor.putBoolean(KEY_IS_PLAYING, playing);
 
 		editor.commit();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		if (background != null) {
+			background.cleanup();
+		}
 	}
 
 	public interface OnLiveRadioClickListener {
