@@ -25,14 +25,12 @@ import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
+import no.srib.app.client.service.BaseService;
+import no.srib.app.client.service.ServiceHandler;
+import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -74,13 +72,8 @@ public class MainActivity extends ActionBarActivity implements
 
 	private boolean autoPlayAfterConnect;
 
-	private boolean audioPlayerServiceBound;
-	private AudioPlayer audioPlayer;
-	private ServiceConnection audioPlayerServiceConnection;
-
-	private boolean streamUpdaterServiceBound;
-	private StreamUpdaterService streamUpdater;
-	private ServiceConnection streamUpdaterServiceConnection;
+	private ServiceHandler<AudioPlayerService> audioPlayerService;
+	private ServiceHandler<StreamUpdaterService> streamUpdaterService;
 
 	private HttpAsyncTask programTask;
 	private HttpAsyncTask podcastTask;
@@ -115,19 +108,20 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the ViewPager with the sections adapter.
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
-		viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+		viewPager
+				.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
 		autoPlayAfterConnect = false;
 
-		audioPlayerServiceBound = false;
-		audioPlayer = null;
-		audioPlayerServiceConnection = new AudioPlayerServiceConnection();
+		audioPlayerService = new ServiceHandler<AudioPlayerService>(
+				AudioPlayerService.class, new AudioPlayerServiceReadyListener());
 
-		streamUpdaterServiceBound = false;
-		streamUpdater = null;
-		streamUpdaterServiceConnection = new StreamUpdaterServiceConnection();
+		streamUpdaterService = new ServiceHandler<StreamUpdaterService>(
+				StreamUpdaterService.class,
+				new StreamUpdaterServiceReadyListener());
 
-		bindServices();
+		audioPlayerService.bind(MainActivity.this);
+		streamUpdaterService.bind(MainActivity.this);
 
 		articleListAdapter = new ArticleListAdapter(
 				LayoutInflater.from(MainActivity.this));
@@ -164,13 +158,6 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-		// unbindServices();
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -189,90 +176,38 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void bindServices() {
-		// Establish a connection with the service. We use an explicit
-		// class name because we want a specific service implementation that
-		// we know will be running in our own process (and thus won't be
-		// supporting component replacement by other applications).
-		Context context = getApplicationContext();
-
-		context.bindService(new Intent(MainActivity.this,
-				AudioPlayerService.class), audioPlayerServiceConnection,
-				Context.BIND_AUTO_CREATE);
-		audioPlayerServiceBound = true;
-
-		context.bindService(new Intent(MainActivity.this,
-				StreamUpdaterService.class), streamUpdaterServiceConnection,
-				Context.BIND_AUTO_CREATE);
-		streamUpdaterServiceBound = true;
-	}
-
-	public void unbindServices() {
-		Context context = getApplicationContext();
-
-		if (audioPlayerServiceBound) {
-			context.unbindService(audioPlayerServiceConnection);
-			audioPlayerServiceBound = false;
-		}
-
-		if (streamUpdaterServiceBound) {
-			context.unbindService(streamUpdaterServiceConnection);
-			streamUpdaterServiceBound = false;
-		}
-	}
-
-	private class AudioPlayerServiceConnection implements ServiceConnection {
+	private class StreamUpdaterServiceReadyListener implements
+			OnServiceReadyListener {
 
 		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			// This is called when the connection with the service has been
-			// established, giving us the service object we can use to
-			// interact with the service. Because we have bound to a explicit
-			// service that we know is running in our own process, we can
-			// cast its IBinder to a concrete class and directly access it.
-			audioPlayer = ((AudioPlayerService.AudioPlayerBinder) service)
-					.getService();
+		public void onServiceReady(BaseService baseService) {
+			StreamUpdaterService service = (StreamUpdaterService) baseService;
+			String radioUrl = getResources().getString(R.string.currentUrl);
+			service.setStreamUpdateListener(new StreamUpdateListener());
+			service.updateFrom(radioUrl);
+		}
+	}
 
+	private class AudioPlayerServiceReadyListener implements
+			OnServiceReadyListener {
+
+		@Override
+		public void onServiceReady(BaseService baseService) {
+			AudioPlayerService audioPlayer = (AudioPlayerService) baseService;
 			audioPlayer.setStateListener(new AudioPlayerStateListener());
 
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment liveRadioFragment = null;
-			
+
 			if (liveRadioSectionFragment != null) {
-				liveRadioFragment = liveRadioSectionFragment.getLiveRadioFragment();
+				liveRadioFragment = liveRadioSectionFragment
+						.getLiveRadioFragment();
 			}
 
 			if (liveRadioFragment != null) {
 				liveRadioFragment
 						.setOnLiveRadioClickListener(new LiveRadioClickListener());
 			}
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			// This is called when the connection with the service has been
-			// unexpectedly disconnected -- that is, its process crashed.
-			// Because it is running in our same process, we should never
-			// see this happen.
-			audioPlayer = null;
-		}
-	}
-
-	private class StreamUpdaterServiceConnection implements ServiceConnection {
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-
-			streamUpdater = ((StreamUpdaterService.StreamUpdaterBinder) service)
-					.getService();
-			String radioUrl = getResources().getString(R.string.currentUrl);
-			streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
-			streamUpdater.updateFrom(radioUrl);
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			streamUpdater = null;
 		}
 	}
 
@@ -281,7 +216,8 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onStatus(Status status) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = liveRadioSectionFragment.getLiveRadioFragment();
+			LiveRadioFragment fragment = liveRadioSectionFragment
+					.getLiveRadioFragment();
 
 			if (fragment != null) {
 				switch (status) {
@@ -305,7 +241,7 @@ public class MainActivity extends ActionBarActivity implements
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
-			
+
 			if (liveRadioSectionFragment != null) {
 				fragment = liveRadioSectionFragment.getLiveRadioFragment();
 			}
@@ -317,6 +253,8 @@ public class MainActivity extends ActionBarActivity implements
 					throw new AudioPlayerException();
 				}
 
+				AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+						.getService();
 				audioPlayer.setDataSource(url);
 
 				if (autoPlayAfterConnect) {
@@ -340,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements
 		public void onStateChanged(AudioPlayer.State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
-			
+
 			if (liveRadioSectionFragment != null) {
 				fragment = liveRadioSectionFragment.getLiveRadioFragment();
 			}
@@ -377,6 +315,9 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		public void onPlayPauseClicked() {
+			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+					.getService();
+
 			switch (audioPlayer.getState()) {
 			case PAUSED:
 			case PREPARING:
@@ -392,6 +333,9 @@ public class MainActivity extends ActionBarActivity implements
 			case COMPLETED:
 				autoPlayAfterConnect = true;
 
+				StreamUpdaterService streamUpdater = (StreamUpdaterService) streamUpdaterService
+						.getService();
+
 				if (!streamUpdater.isUpdating()) {
 					streamUpdater.update();
 				}
@@ -402,6 +346,8 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onStopClicked() {
 			autoPlayAfterConnect = false;
+			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+					.getService();
 			audioPlayer.stop();
 		}
 	}
@@ -444,6 +390,8 @@ public class MainActivity extends ActionBarActivity implements
 		public void onItemClick(AdapterView<?> adapter, View view,
 				int position, long id) {
 
+			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+					.getService();
 			String url = (String) view.getTag(R.id.podcast_url);
 			String correctUrl = url.substring(3, url.length());
 			String nasUrl = getResources().getString(R.string.podcast_nas_URL);
@@ -454,9 +402,10 @@ public class MainActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			// TODO Info screen may be in focus, should show live radio screen
-			viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			viewPager
+					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
 			audioPlayer.start();
 
@@ -507,9 +456,10 @@ public class MainActivity extends ActionBarActivity implements
 					schedule = MAPPER.readValue(response, Schedule.class);
 					LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 					LiveRadioFragment fragment = null;
-					
+
 					if (liveRadioSectionFragment != null) {
-						fragment = liveRadioSectionFragment.getLiveRadioFragment();
+						fragment = liveRadioSectionFragment
+								.getLiveRadioFragment();
 					}
 
 					if (fragment != null) {

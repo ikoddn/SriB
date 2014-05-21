@@ -3,20 +3,15 @@ package no.srib.app.client.service;
 import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.audioplayer.StateHandler;
-import android.app.Service;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
-import android.os.IBinder;
 import android.util.Log;
 
-public class AudioPlayerService extends Service implements AudioPlayer {
-
-	private final IBinder binder;
+public class AudioPlayerService extends BaseService implements AudioPlayer {
 
 	private boolean streaming;
 	private String dataSource;
@@ -24,17 +19,15 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 	private MediaPlayer mediaPlayer;
 
 	public AudioPlayerService() {
-		binder = new AudioPlayerBinder();
+		streaming = false;
+		dataSource = null;
+		stateHandler = new StateHandler();
+		mediaPlayer = new MediaPlayer();
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
-		streaming = false;
-		dataSource = null;
-		stateHandler = new StateHandler();
-		mediaPlayer = new MediaPlayer();
 
 		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
 		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
@@ -58,11 +51,6 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 			uninitializeMediaPlayer();
 			mediaPlayer.release();
 		}
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return binder;
 	}
 
 	@Override
@@ -159,7 +147,7 @@ public class AudioPlayerService extends Service implements AudioPlayer {
 		public void onCompletion(MediaPlayer arg0) {
 			State beforeState = stateHandler.getState();
 			stateHandler.setState(State.COMPLETED);
-			
+
 			if (streaming && beforeState != State.UNINITIALIZED) {
 				try {
 					setDataSource(dataSource);

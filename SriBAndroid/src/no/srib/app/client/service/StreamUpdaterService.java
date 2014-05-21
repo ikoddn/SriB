@@ -4,30 +4,24 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver.OnConnectionChangedListener;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
-
-import android.app.Service;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.os.Binder;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
 
-public class StreamUpdaterService extends Service {
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class StreamUpdaterService extends BaseService {
 
 	private static final int MAX_TIMER_FAILS = 2;
 	private static final int TIMER_FAIL_TRESHOLD = 10000;
 
-	private final IBinder BINDER;
 	private final ObjectMapper MAPPER;
 
 	private AtomicBoolean updating;
@@ -38,7 +32,6 @@ public class StreamUpdaterService extends Service {
 	private ConnectivityChangeReceiver connectionChangeReceiver;
 
 	public StreamUpdaterService() {
-		BINDER = new StreamUpdaterBinder();
 		MAPPER = new ObjectMapper();
 	}
 
@@ -98,17 +91,6 @@ public class StreamUpdaterService extends Service {
 		updating.set(false);
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return BINDER;
-	}
-
-	public class StreamUpdaterBinder extends Binder {
-		public StreamUpdaterService getService() {
-			return StreamUpdaterService.this;
-		}
-	}
-
 	public interface OnStreamUpdateListener {
 		enum Status {
 			NO_INTERNET,
@@ -156,7 +138,7 @@ public class StreamUpdaterService extends Service {
 				}
 			} else {
 				Log.d("SriB", response);
-					
+
 				try {
 					StreamSchedule streamSchedule = MAPPER.readValue(response,
 							StreamSchedule.class);
@@ -201,7 +183,7 @@ public class StreamUpdaterService extends Service {
 		@Override
 		public void onNetworkUnavailable() {
 			stopUpdating();
-			
+
 			if (streamUpdateListener != null) {
 				streamUpdateListener.onStatus(Status.NO_INTERNET);
 			}
