@@ -35,6 +35,8 @@ public class DTImageView extends View {
 
 		if (bitmap != null) {
 			canvas.drawBitmap(bitmap, 0, 0, null);
+			bitmap.recycle();
+			bitmap = null;
 		}
 	}
 }
