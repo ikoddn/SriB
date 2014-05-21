@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class ArticleListFragment extends Fragment {
 
@@ -29,7 +28,7 @@ public class ArticleListFragment extends Fragment {
 
 	public ArticleListFragment() {
 		listView = null;
-		
+
 		readyListener = null;
 	}
 
@@ -49,8 +48,6 @@ public class ArticleListFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_articlelist,
 				container, false);
-
-		
 
 		listView = (ListView) rootView.findViewById(R.id.listview_articlelist);
 		listView.setOnItemClickListener(articleClickedListener);

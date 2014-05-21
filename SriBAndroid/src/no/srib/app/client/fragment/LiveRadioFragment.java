@@ -39,7 +39,7 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public void setProgramNameText(CharSequence text) {
-		if (text != null) {
+		if (programNameTextView != null) {
 			programNameTextView.setText(text);
 		}
 	}
@@ -84,9 +84,6 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.textview_liveradio_stream);
 		programNameTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_programname);
-
-		statusTextView.setText("Live radio fragment");
-		streamTextView.setText("PLACEHOLDER TEXT");
 
 		Typeface appFont = Typeface.createFromAsset(rootView.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
