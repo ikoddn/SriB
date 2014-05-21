@@ -36,8 +36,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -74,9 +72,6 @@ public class MainActivity extends ActionBarActivity implements
 
 	private ServiceHandler<AudioPlayerService> audioPlayerService;
 	private ServiceHandler<StreamUpdaterService> streamUpdaterService;
-
-	private HttpAsyncTask programTask;
-	private HttpAsyncTask podcastTask;
 
 	private GridArrayAdapter gridViewAdapter = null;
 	private SpinnerAdapter spinnerListAdapter = null;
@@ -135,8 +130,8 @@ public class MainActivity extends ActionBarActivity implements
 		gridViewAdapter = new GridArrayAdapter(MainActivity.this);
 		spinnerListAdapter = new SpinnerAdapter(MainActivity.this);
 
-		programTask = new HttpAsyncTask(new GetProgramNames());
-		podcastTask = new HttpAsyncTask(new GetAllPodcast());
+		HttpAsyncTask programTask = new HttpAsyncTask(new GetProgramNames());
+		HttpAsyncTask podcastTask = new HttpAsyncTask(new GetAllPodcast());
 
 		String programTaskUrl = getResources().getString(
 				R.string.getAllProgramNames);
@@ -155,25 +150,6 @@ public class MainActivity extends ActionBarActivity implements
 
 		programName.execute(programNameURL);
 
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	private class StreamUpdaterServiceReadyListener implements
@@ -575,7 +551,5 @@ public class MainActivity extends ActionBarActivity implements
 	private static String getFragmentTag(int viewPagerId, int index) {
 		return "android:switcher:" + viewPagerId + ":" + index;
 	}
-	
-	
-	
+
 }
