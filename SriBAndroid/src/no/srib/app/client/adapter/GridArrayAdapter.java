@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.TimeUtil;
@@ -18,8 +20,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class GridArrayAdapter extends BaseAdapter{
 
@@ -83,9 +83,16 @@ public class GridArrayAdapter extends BaseAdapter{
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		programNameDate.setText(sdf.format(cal.getTime()));
 		
-		ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
-		String url = podcast.getImageUrl();
-		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
+		final ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
+		final String url = podcast.getImageUrl();
+	
+		        	UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
+		
+
+		
+		
+		
+		
 		convertView.setTag(R.id.podcast_url, podcast.getFilename());
 		
 		
@@ -93,3 +100,5 @@ public class GridArrayAdapter extends BaseAdapter{
 	}
 	
 }
+
+

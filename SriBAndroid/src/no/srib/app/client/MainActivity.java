@@ -6,7 +6,7 @@ import java.util.List;
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.GridArrayAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
-import no.srib.app.client.adapter.StableArrayAdapter;
+import no.srib.app.client.adapter.SpinnerAdapter;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
@@ -79,7 +79,7 @@ public class MainActivity extends ActionBarActivity implements
 	private HttpAsyncTask podcastTask;
 
 	private GridArrayAdapter gridViewAdapter = null;
-	private StableArrayAdapter spinnerListAdapter = null;
+	private SpinnerAdapter spinnerListAdapter = null;
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// Podcast Part
 		gridViewAdapter = new GridArrayAdapter(MainActivity.this);
-		spinnerListAdapter = new StableArrayAdapter(MainActivity.this);
+		spinnerListAdapter = new SpinnerAdapter(MainActivity.this);
 
 		programTask = new HttpAsyncTask(new GetProgramNames());
 		podcastTask = new HttpAsyncTask(new GetAllPodcast());
@@ -575,4 +575,7 @@ public class MainActivity extends ActionBarActivity implements
 	private static String getFragmentTag(int viewPagerId, int index) {
 		return "android:switcher:" + viewPagerId + ":" + index;
 	}
+	
+	
+	
 }

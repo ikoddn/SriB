@@ -45,7 +45,7 @@ public class PodcastFragment extends Fragment {
 		this.spinnerSelectedListener = spinnerListClickListener;
 	}
 	
-	public void setSpinnerListAdapter(no.srib.app.client.adapter.StableArrayAdapter spinnerListAdapter) {
+	public void setSpinnerListAdapter(no.srib.app.client.adapter.SpinnerAdapter spinnerListAdapter) {
 		if (spinner != null) {
 			spinner.setAdapter(spinnerListAdapter);
 		}

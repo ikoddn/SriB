@@ -15,13 +15,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class StableArrayAdapter extends BaseAdapter {
+public class SpinnerAdapter extends BaseAdapter {
 
 	List<ProgramName> programList = new ArrayList<ProgramName>();
 	LayoutInflater inflater;
 	Context context;
 	
-	public StableArrayAdapter(Context context) {
+	public SpinnerAdapter(Context context) {
 		
 		this.context = context;
 		inflater = LayoutInflater.from(this.context);
@@ -71,8 +71,6 @@ public class StableArrayAdapter extends BaseAdapter {
 		if(name != null){
 			Spanned safeName = Html.fromHtml(name);
 			text.setText(safeName);
-		}else{
-			text.setText(name);
 		}
 		
 		return convertView;

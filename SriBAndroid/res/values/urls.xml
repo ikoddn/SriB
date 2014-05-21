@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="currentUrl">http://158.37.6.78:8080/SriBServer/rest/radiourl</string>
-    <string name="currentProgram">http://158.37.6.78:8080/SriBServer/rest/schedule/now</string>
-    <string name="getAllPodcast">http://158.37.6.78:8080/SriBServer/rest/podcast</string>
-    <string name="getAllProgramNames">http://158.37.6.78:8080/SriBServer/rest/podcast/names</string>
-    <string name="url_articles">http://158.37.6.78:8080/SriBServer/rest/news</string>
-    <string name="podcast_nas_URL">http://158.37.6.78:8080/SriBServer/podcasts/</string>
+    <!-- Stream -->
+    <string name="currentUrl">http://app.srib.no:8080/SriBServer/rest/radiourl</string>
+   <!-- Current program name -->
+    <string name="currentProgram">http://app.srib.no:8080/SriBServer/rest/schedule/now</string>
+    <!-- Podcast -->
+    <string name="getAllPodcast">http://app.srib.no:8080/SriBServer/rest/podcast</string>
+    <string name="getAllProgramNames">http://app.srib.no:8080/SriBServer/rest/podcast/names</string>
+    <!--Articles-->
+    <string name="url_articles">http://app.srib.no:8080/SriBServer/rest/news</string>
+    <!-- Podcast NAS -->
+    <string name="podcast_nas_URL">http://app.srib.no:8080/SriBServer/podcasts/</string>
 
 </resources>
