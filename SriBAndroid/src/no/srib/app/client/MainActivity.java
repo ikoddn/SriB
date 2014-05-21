@@ -92,11 +92,12 @@ public class MainActivity extends ActionBarActivity implements
 		MAPPER = new ObjectMapper();
 		articleListAdapter = null;
 	}
-	
+
 	@Override
 	public void onLowMemory() {
-		Toast.makeText(getApplicationContext(), "Low memory", Toast.LENGTH_LONG).show();
-		
+		Toast.makeText(getApplicationContext(), "Low memory", Toast.LENGTH_LONG)
+				.show();
+
 		super.onLowMemory();
 	}
 
@@ -150,12 +151,14 @@ public class MainActivity extends ActionBarActivity implements
 
 		podcastTask.execute(podcastTaskUrl);
 		programTask.execute(programTaskUrl);
-		
-		//ProgramName
-		HttpAsyncTask programName = new HttpAsyncTask(new GetCurrentProgramName());
-		
-		String programNameURL = getResources().getString(R.string.currentProgram);
-		
+
+		// ProgramName
+		HttpAsyncTask programName = new HttpAsyncTask(
+				new GetCurrentProgramName());
+
+		String programNameURL = getResources().getString(
+				R.string.currentProgram);
+
 		programName.execute(programNameURL);
 
 	}
@@ -390,23 +393,23 @@ public class MainActivity extends ActionBarActivity implements
 	private class ListViewItemClickListener implements OnItemSelectedListener {
 
 		@Override
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
+		public void onItemSelected(AdapterView<?> parent, View view,
+				int position, long id) {
 
 			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
-			
-			
-			if (arg2 == 0) {
+
+			if (position == 0) {
 
 				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
 				String url = getResources().getString(R.string.getAllPodcast);
 				podcast.execute(url);
-				
+
 			} else {
 				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
 				String url = getResources().getString(R.string.getAllPodcast);
-				podcast.execute(url + "/" + arg0.getItemIdAtPosition(arg2));
-			
+				podcast.execute(url + "/"
+						+ parent.getItemIdAtPosition(position));
+
 			}
 			GridView grid = fragment.getGridView();
 			grid.smoothScrollToPosition(0);
@@ -422,8 +425,8 @@ public class MainActivity extends ActionBarActivity implements
 	private class GridViewItemClickListener implements OnItemClickListener {
 
 		@Override
-		public void onItemClick(AdapterView<?> adapter, View view, int position,
-				long id) {
+		public void onItemClick(AdapterView<?> adapter, View view,
+				int position, long id) {
 
 			String url = (String) view.getTag(R.id.podcast_url);
 			String correctUrl = url.substring(3, url.length());
@@ -436,10 +439,9 @@ public class MainActivity extends ActionBarActivity implements
 				e.printStackTrace();
 			}
 			viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
-			
+
 			audioPlayer.start();
-			
-			
+
 		}
 
 	}
@@ -456,8 +458,8 @@ public class MainActivity extends ActionBarActivity implements
 					list = MAPPER.readValue(response,
 							new TypeReference<List<ProgramName>>() {
 							});
-					
-					list.add(0,new ProgramName(0, "Velg program"));
+
+					list.add(0, new ProgramName(0, "Velg program"));
 					spinnerListAdapter.setList(list);
 					spinnerListAdapter.notifyDataSetChanged();
 				} catch (JsonParseException e) {
@@ -475,28 +477,28 @@ public class MainActivity extends ActionBarActivity implements
 		}
 
 	}
-	
-	private class GetCurrentProgramName implements HttpResponseListener{
+
+	private class GetCurrentProgramName implements HttpResponseListener {
 
 		@Override
 		public void onResponse(String response) {
 			Schedule schedule = null;
-			
-			if(response != null){
-				try{
+
+			if (response != null) {
+				try {
 					schedule = MAPPER.readValue(response, Schedule.class);
 					LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
-					
+
 					if (fragment == null) {
 						Log.d("SriB", "fragment == null");
 					}
-					
+
 					if (schedule == null) {
 						Log.d("SriB", "schedule == null");
 					}
-					
+
 					fragment.setProgramNameText(schedule.getProgram());
-				}catch (JsonParseException e) {
+				} catch (JsonParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -506,16 +508,12 @@ public class MainActivity extends ActionBarActivity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 		}
-		
-		
-		
+
 	}
-	
-	
 
 	private class GetAllPodcast implements HttpResponseListener {
 
