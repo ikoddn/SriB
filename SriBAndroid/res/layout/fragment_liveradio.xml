@@ -23,39 +23,65 @@
         android:layout_below="@id/textview_liveradio_status" />
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:weightSum="1300" >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="328"
+            android:visibility="invisible" >
+        </View>
+
+        <TextView
+            android:id="@+id/textview_liveradio_programname"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="37" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="229"
+            android:visibility="invisible" >
+        </View>
 
         <ImageButton
             android:id="@+id/button_liveradio_play"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="203"
             android:background="@null"
             android:contentDescription="@string/imagebutton_liveradio_play_desc"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:src="@drawable/play" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="68"
+            android:visibility="invisible" >
+        </View>
+
+        <ImageButton
+            android:id="@+id/button_liveradio_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="67"
+            android:background="@null"
+            android:contentDescription="@string/imagebutton_liveradio_stop_desc"
+            android:scaleType="fitCenter"
+            android:src="@drawable/stopp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="368"
+            android:visibility="invisible" >
+        </View>
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/button_liveradio_stop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_centerHorizontal="true"
-        android:background="@null"
-        android:contentDescription="@string/imagebutton_liveradio_stop_desc"
-        android:scaleType="fitXY"
-        android:src="@drawable/stopp" />
-
-    <TextView
-        android:id="@+id/programName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="46dp" />
 
 </RelativeLayout>

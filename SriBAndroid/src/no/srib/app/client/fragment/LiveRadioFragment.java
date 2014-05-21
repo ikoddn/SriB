@@ -58,14 +58,17 @@ public class LiveRadioFragment extends Fragment {
 
 		rootView.post(new Runnable() {
 			public void run() {
+				int height = rootView.getHeight();
+				int width = rootView.getWidth();
+
 				DTImageView bgImageView = (DTImageView) rootView
 						.findViewById(R.id.dtImageView_liveradio_background);
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 						R.drawable.layout);
 
-				bgImageView.setBitmap(Bitmap.createScaledBitmap(bitmap,
-						rootView.getWidth(), rootView.getHeight(), true));
+				bgImageView.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
+						height, true));
 			}
 		});
 
@@ -74,7 +77,7 @@ public class LiveRadioFragment extends Fragment {
 		streamTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_stream);
 		programNameTextView = (TextView) rootView
-				.findViewById(R.id.programName);
+				.findViewById(R.id.textview_liveradio_programname);
 
 		statusTextView.setText("Live radio fragment");
 		streamTextView.setText("PLACEHOLDER TEXT");
