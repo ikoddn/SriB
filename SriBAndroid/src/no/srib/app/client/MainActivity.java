@@ -16,6 +16,7 @@ import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyLi
 import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
+import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
 import no.srib.app.client.model.NewsArticle;
@@ -114,7 +115,7 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the ViewPager with the sections adapter.
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
-		viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+		viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
 		autoPlayAfterConnect = false;
 
@@ -234,7 +235,12 @@ public class MainActivity extends ActionBarActivity implements
 
 			audioPlayer.setStateListener(new AudioPlayerStateListener());
 
-			LiveRadioFragment liveRadioFragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment liveRadioFragment = null;
+			
+			if (liveRadioSectionFragment != null) {
+				liveRadioFragment = liveRadioSectionFragment.getLiveRadioFragment();
+			}
 
 			if (liveRadioFragment != null) {
 				liveRadioFragment
@@ -274,7 +280,8 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		public void onStatus(Status status) {
-			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment fragment = liveRadioSectionFragment.getLiveRadioFragment();
 
 			if (fragment != null) {
 				switch (status) {
@@ -296,7 +303,12 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
-			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment fragment = null;
+			
+			if (liveRadioSectionFragment != null) {
+				fragment = liveRadioSectionFragment.getLiveRadioFragment();
+			}
 
 			try {
 				String url = streamSchedule.getUrl();
@@ -326,7 +338,12 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		public void onStateChanged(AudioPlayer.State state) {
-			LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment fragment = null;
+			
+			if (liveRadioSectionFragment != null) {
+				fragment = liveRadioSectionFragment.getLiveRadioFragment();
+			}
 
 			switch (state) {
 			case PAUSED:
@@ -437,7 +454,9 @@ public class MainActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+			
+			// TODO Info screen may be in focus, should show live radio screen
+			viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
 			audioPlayer.start();
 
@@ -486,7 +505,12 @@ public class MainActivity extends ActionBarActivity implements
 			if (response != null) {
 				try {
 					schedule = MAPPER.readValue(response, Schedule.class);
-					LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
+					LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+					LiveRadioFragment fragment = null;
+					
+					if (liveRadioSectionFragment != null) {
+						fragment = liveRadioSectionFragment.getLiveRadioFragment();
+					}
 
 					if (fragment != null) {
 						fragment.setProgramNameText(schedule.getProgram());
@@ -562,7 +586,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void onArticlesFragmentReady() {
-		ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(SectionsPagerAdapter.ARTICLESECTION_FRAGMENT);
+		ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(SectionsPagerAdapter.ARTICLE_SECTION_FRAGMENT);
 		ArticleListFragment listFragment = (ArticleListFragment) fragment
 				.getChildFragmentManager().getFragments().get(0);
 		listFragment.setArticleListAdapter(articleListAdapter);
@@ -581,7 +605,7 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void onBackPressed() {
 		boolean close = true;
-		int id = SectionsPagerAdapter.ARTICLESECTION_FRAGMENT;
+		int id = SectionsPagerAdapter.ARTICLE_SECTION_FRAGMENT;
 
 		if (viewPager.getCurrentItem() == id) {
 			ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(id);

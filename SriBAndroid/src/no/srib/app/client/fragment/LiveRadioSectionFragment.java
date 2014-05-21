@@ -12,6 +12,12 @@ import android.widget.TextView;
 
 public class LiveRadioSectionFragment extends Fragment {
 
+	private LiveRadioFragment liveRadioFragment;
+	
+	public LiveRadioFragment getLiveRadioFragment() {
+		return liveRadioFragment;
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -26,10 +32,10 @@ public class LiveRadioSectionFragment extends Fragment {
 		FragmentManager manager = getChildFragmentManager();
 
 		if (manager.getBackStackEntryCount() == 0) {
-			LiveRadioFragment fragment = new LiveRadioFragment();
+			liveRadioFragment = new LiveRadioFragment();
 
 			FragmentTransaction transaction = manager.beginTransaction();
-			transaction.replace(R.id.framelayout_liveradiosection, fragment);
+			transaction.replace(R.id.framelayout_liveradiosection, liveRadioFragment);
 			transaction.commit();
 		}
 
