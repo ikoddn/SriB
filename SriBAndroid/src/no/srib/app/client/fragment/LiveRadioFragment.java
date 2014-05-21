@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class LiveRadioFragment extends Fragment {
@@ -102,6 +103,10 @@ public class LiveRadioFragment extends Fragment {
 		ImageButton stopButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_stop);
 		stopButton.setOnClickListener(new StopButtonListener());
+
+		((LayoutParams) programNameTextView.getLayoutParams()).weight = 37.0f;
+		((LayoutParams) playButton.getLayoutParams()).weight = 203.0f;
+		((LayoutParams) stopButton.getLayoutParams()).weight = 67.0f;
 
 		return rootView;
 	}
