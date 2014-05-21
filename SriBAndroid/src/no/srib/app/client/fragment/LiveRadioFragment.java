@@ -1,10 +1,10 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.util.BitmapUtil;
 import no.srib.app.client.util.DTImageView;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -70,8 +70,8 @@ public class LiveRadioFragment extends Fragment {
 				DTImageView bgImageView = (DTImageView) rootView
 						.findViewById(R.id.dtImageView_liveradio_background);
 
-				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-						R.drawable.layout);
+				Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromResource(
+						getResources(), R.drawable.layout, width, height);
 
 				bgImageView.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
 						height, true));
