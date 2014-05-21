@@ -36,7 +36,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -115,7 +114,7 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the ViewPager with the sections adapter.
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(sectionsPagerAdapter);
-		viewPager.setCurrentItem(1);
+		viewPager.setCurrentItem(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
 		autoPlayAfterConnect = false;
 
@@ -489,15 +488,9 @@ public class MainActivity extends ActionBarActivity implements
 					schedule = MAPPER.readValue(response, Schedule.class);
 					LiveRadioFragment fragment = (LiveRadioFragment) getFragment(SectionsPagerAdapter.LIVERADIO_FRAGMENT);
 
-					if (fragment == null) {
-						Log.d("SriB", "fragment == null");
+					if (fragment != null) {
+						fragment.setProgramNameText(schedule.getProgram());
 					}
-
-					if (schedule == null) {
-						Log.d("SriB", "schedule == null");
-					}
-
-					fragment.setProgramNameText(schedule.getProgram());
 				} catch (JsonParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -508,11 +501,8 @@ public class MainActivity extends ActionBarActivity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
-
 		}
-
 	}
 
 	private class GetAllPodcast implements HttpResponseListener {

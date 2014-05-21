@@ -18,14 +18,20 @@ import android.widget.TextView;
 public class LiveRadioFragment extends Fragment {
 
 	private static final String PREFS_NAME = "prefsLiveRadio";
+	private static final String KEY_IS_PLAYING = "isPlaying";
 	private static final String KEY_STATUS = "status";
 	private static final String KEY_STREAM = "stream";
 
+	private boolean playing;
 	private OnLiveRadioClickListener liveRadioClickListener;
 	private TextView statusTextView;
 	private TextView streamTextView;
 	private TextView programNameTextView;
 	private ImageButton playButton;
+
+	public LiveRadioFragment() {
+		playing = false;
+	}
 
 	public void setOnLiveRadioClickListener(
 			OnLiveRadioClickListener liveRadioClickListener) {
@@ -108,6 +114,7 @@ public class LiveRadioFragment extends Fragment {
 
 		String status = prefs.getString(KEY_STATUS, null);
 		String stream = prefs.getString(KEY_STREAM, null);
+		playing = prefs.getBoolean(KEY_IS_PLAYING, false);
 
 		if (status != null) {
 			setStatusText(status);
@@ -115,6 +122,10 @@ public class LiveRadioFragment extends Fragment {
 
 		if (stream != null) {
 			setStreamText(stream);
+		}
+
+		if (playing) {
+			setPauseIcon();
 		}
 	}
 
@@ -128,6 +139,7 @@ public class LiveRadioFragment extends Fragment {
 
 		editor.putString(KEY_STATUS, statusTextView.getText().toString());
 		editor.putString(KEY_STREAM, streamTextView.getText().toString());
+		editor.putBoolean(KEY_IS_PLAYING, playing);
 
 		editor.commit();
 	}
@@ -158,12 +170,12 @@ public class LiveRadioFragment extends Fragment {
 	public void setPauseIcon() {
 		playButton.setImageDrawable(getResources()
 				.getDrawable(R.drawable.pause));
-
+		playing = true;
 	}
 
 	public void setPlayIcon() {
 		playButton
 				.setImageDrawable(getResources().getDrawable(R.drawable.play));
-
+		playing = false;
 	}
 }
