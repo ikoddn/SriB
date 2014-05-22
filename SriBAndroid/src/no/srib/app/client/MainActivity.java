@@ -10,12 +10,14 @@ import no.srib.app.client.adapter.SpinnerAdapter;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
+import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyListener;
 import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
+import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioFragmentReadyListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
@@ -34,16 +36,20 @@ import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -52,7 +58,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MainActivity extends ActionBarActivity implements
-		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener {
+		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener, OnLiveRadioFragmentReadyListener {
 
 	private final ObjectMapper MAPPER;
 	private ArticleListAdapter articleListAdapter;
@@ -78,6 +84,8 @@ public class MainActivity extends ActionBarActivity implements
 
 	private GridArrayAdapter gridViewAdapter = null;
 	private SpinnerAdapter spinnerListAdapter = null;
+	
+	Handler seekHandler = new Handler();
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
@@ -152,6 +160,10 @@ public class MainActivity extends ActionBarActivity implements
 				R.string.currentProgram);
 
 		programName.execute(programNameURL);
+		
+		
+		
+	
 
 	}
 
@@ -258,7 +270,8 @@ public class MainActivity extends ActionBarActivity implements
 		public void onStateChanged(AudioPlayer.State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
-
+			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService.getService();
+			
 			if (liveRadioSectionFragment != null) {
 				fragment = (LiveRadioFragment) liveRadioSectionFragment
 						.getBaseFragment();
@@ -276,6 +289,8 @@ public class MainActivity extends ActionBarActivity implements
 			case STARTED:
 				fragment.setStatusText("started");
 				fragment.setPauseIcon();
+				int duration = audioservice.getDuration();
+				fragment.setMaxOnSeekBar(duration);
 				break;
 			case STOPPED:
 				fragment.setStatusText("stopped");
@@ -392,7 +407,8 @@ public class MainActivity extends ActionBarActivity implements
 			String url = (String) view.getTag(R.id.podcast_url);
 			String correctUrl = url.substring(3, url.length());
 			String nasUrl = getResources().getString(R.string.podcast_nas_URL);
-			String URL = nasUrl + correctUrl;
+			String URL = nasUrl + "/" + correctUrl;
+			System.out.println(URL);
 			try {
 				audioPlayer.setDataSource(URL);
 			} catch (AudioPlayerException e) {
@@ -549,6 +565,54 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
+	@Override
+	public void onLiveRadioFragmentReady() {
+		LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+		LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
+				.getChildFragmentManager().getFragments().get(0);
+		liveFrag.setOnClickListenerDEVBUTTON(new Onclick());
+		liveFrag.setSeekBarOnChangeListener(new SeekBarListener());
+	
+	}
+	
+	
+	
+	private class Onclick implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			AudioPlayerService audioService = (AudioPlayerService) audioPlayerService.getService();
+			if(audioService.getState() == State.STARTED || audioService.getState() == State.PAUSED){
+				audioService.seekTo(10000);
+			}
+			
+		}
+		
+	}
+	
+	private class SeekBarListener implements OnSeekBarChangeListener{
+
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress,
+				boolean fromUser) {
+			
+			
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	@Override
 	public void onBackPressed() {
 		boolean close = true;
