@@ -99,18 +99,17 @@ public class LiveRadioFragment extends Fragment {
 
 		playButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_play);
-		playButton.setOnClickListener(new PlayPauseButtonListener());
-
 		ImageButton stopButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_stop);
-		stopButton.setOnClickListener(new StopButtonListener());
-
 		ImageButton twitterButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_twitter);
-		twitterButton.setOnClickListener(new TwitterButtonListener());
-
 		ImageButton instagramButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_instagram);
+
+		playButton.setOnClickListener(new PlayPauseButtonListener());
+		stopButton.setOnClickListener(new StopButtonListener());
+		twitterButton.setOnClickListener(new TwitterButtonListener());
+		instagramButton.setOnClickListener(new InstagramButtonListener());
 
 		float smallButtonWeight = 67.0f;
 
@@ -210,6 +209,14 @@ public class LiveRadioFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			liveRadioClickListener.onStopClicked();
+		}
+	}
+
+	private class InstagramButtonListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			liveRadioClickListener.onInstagramClicked();
 		}
 	}
 

@@ -347,8 +347,10 @@ public class MainActivity extends ActionBarActivity implements
 
 		@Override
 		public void onInstagramClicked() {
-			// TODO Auto-generated method stub
-
+			String url = getResources().getString(R.string.url_instagram);
+			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
+					.parse(url));
+			startActivity(intent);
 		}
 	}
 
