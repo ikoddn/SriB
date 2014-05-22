@@ -101,6 +101,8 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_play);
 		ImageButton stopButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_stop);
+		ImageButton infoButton = (ImageButton) root
+				.findViewById(R.id.button_liveradio_info);
 		ImageButton twitterButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_twitter);
 		ImageButton instagramButton = (ImageButton) root
@@ -113,19 +115,27 @@ public class LiveRadioFragment extends Fragment {
 
 		float smallButtonWeight = 67.0f;
 
-		// Main LinearLayout
-		ViewUtil.setWeight(R.id.view_liveradio_vspace1, root, 328.0f);
-		ViewUtil.setWeight(programNameTextView, 37.0f);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace2, root, 229.0f);
+		// Main vertical LinearLayout
+		ViewUtil.setWeight(R.id.view_liveradio_vspace1, root, 27.0f);
+		ViewUtil.setWeight(R.id.linearlayout_liveradio_info, root,
+				smallButtonWeight);
+		ViewUtil.setWeight(R.id.view_liveradio_vspace2, root, 234.0f);
+		ViewUtil.setWeight(programNameTextView, 40.0f);
+		ViewUtil.setWeight(R.id.view_liveradio_vspace3, root, 226.0f);
 		ViewUtil.setWeight(playButton, 203.0f);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace3, root, 68.0f);
+		ViewUtil.setWeight(R.id.view_liveradio_vspace4, root, 68.0f);
 		ViewUtil.setWeight(stopButton, smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace4, root, 251.0f);
+		ViewUtil.setWeight(R.id.view_liveradio_vspace5, root, 251.0f);
 		ViewUtil.setWeight(R.id.linearlayout_liveradio_social, root,
 				smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace5, root, 50.0f);
+		ViewUtil.setWeight(R.id.view_liveradio_vspace6, root, 50.0f);
 
-		// LinearLayout for social media buttons
+		// Horizontal LinearLayout for info button
+		ViewUtil.setWeight(R.id.view_liveradio_info_hspace1, root, 678.0f);
+		ViewUtil.setWeight(infoButton, smallButtonWeight);
+		ViewUtil.setWeight(R.id.view_liveradio_info_hspace2, root, 35.0f);
+
+		// Horizontal LinearLayout for social media buttons
 		ViewUtil.setWeight(R.id.view_liveradio_social_hspace1, root, 289.0f);
 		ViewUtil.setWeight(instagramButton, smallButtonWeight);
 		ViewUtil.setWeight(R.id.view_liveradio_social_hspace2, root, 68.0f);

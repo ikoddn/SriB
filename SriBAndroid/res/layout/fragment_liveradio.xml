@@ -37,13 +37,51 @@
             android:visibility="invisible" >
         </View>
 
+        <LinearLayout
+            android:id="@+id/linearlayout_liveradio_info"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="780" >
+
+            <View
+                android:id="@+id/view_liveradio_info_hspace1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+
+            <ImageButton
+                android:id="@+id/button_liveradio_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/imagebutton_liveradio_info_desc"
+                android:scaleType="fitCenter"
+                android:src="@drawable/info" />
+
+            <View
+                android:id="@+id/view_liveradio_info_hspace2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view_liveradio_vspace2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="invisible" >
+        </View>
+
         <TextView
             android:id="@+id/textview_liveradio_programname"
             android:layout_width="wrap_content"
             android:layout_height="0dp" />
 
         <View
-            android:id="@+id/view_liveradio_vspace2"
+            android:id="@+id/view_liveradio_vspace3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="invisible" >
@@ -59,7 +97,7 @@
             android:src="@drawable/play" />
 
         <View
-            android:id="@+id/view_liveradio_vspace3"
+            android:id="@+id/view_liveradio_vspace4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="invisible" >
@@ -75,7 +113,7 @@
             android:src="@drawable/stop" />
 
         <View
-            android:id="@+id/view_liveradio_vspace4"
+            android:id="@+id/view_liveradio_vspace5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="invisible" >
@@ -130,7 +168,7 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/view_liveradio_vspace5"
+            android:id="@+id/view_liveradio_vspace6"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="invisible" >
