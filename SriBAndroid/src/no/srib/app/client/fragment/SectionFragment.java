@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-abstract class SectionFragment extends Fragment {
+public abstract class SectionFragment extends Fragment {
 
 	public abstract int getFrameLayoutID();
 

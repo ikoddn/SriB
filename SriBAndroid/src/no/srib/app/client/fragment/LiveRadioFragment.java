@@ -25,6 +25,7 @@ public class LiveRadioFragment extends Fragment {
 	private static final String KEY_STREAM = "stream";
 
 	private boolean playing;
+	private OnClickListener infoClickListener;
 	private OnLiveRadioClickListener liveRadioClickListener;
 	private TextView statusTextView;
 	private TextView streamTextView;
@@ -32,8 +33,21 @@ public class LiveRadioFragment extends Fragment {
 	private ImageButton playButton;
 	private DTImageView background;
 
+	public static LiveRadioFragment newInstance(
+			OnClickListener infoClickListener) {
+
+		LiveRadioFragment fragment = new LiveRadioFragment();
+		fragment.setOnInfoClickListener(infoClickListener);
+
+		return fragment;
+	}
+
 	public LiveRadioFragment() {
 		playing = false;
+	}
+
+	private void setOnInfoClickListener(OnClickListener infoClickListener) {
+		this.infoClickListener = infoClickListener;
 	}
 
 	public void setOnLiveRadioClickListener(
@@ -112,6 +126,10 @@ public class LiveRadioFragment extends Fragment {
 		stopButton.setOnClickListener(new StopButtonListener());
 		twitterButton.setOnClickListener(new TwitterButtonListener());
 		instagramButton.setOnClickListener(new InstagramButtonListener());
+
+		if (infoClickListener != null) {
+			infoButton.setOnClickListener(infoClickListener);
+		}
 
 		float smallButtonWeight = 67.0f;
 
@@ -194,8 +212,6 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public interface OnLiveRadioClickListener {
-		void onInfoClicked();
-
 		void onInstagramClicked();
 
 		void onPlayPauseClicked();

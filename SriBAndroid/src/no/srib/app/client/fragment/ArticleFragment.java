@@ -35,8 +35,6 @@ public class ArticleFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_article, container,
 				false);
 
-
-
 		if (url != null) {
 			WebView webView = (WebView) rootView
 					.findViewById(R.id.webview_article);

@@ -19,6 +19,7 @@ import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
+import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.model.NewsArticle;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
@@ -340,12 +341,6 @@ public class MainActivity extends ActionBarActivity implements
 		}
 
 		@Override
-		public void onInfoClicked() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
 		public void onInstagramClicked() {
 			String url = getResources().getString(R.string.url_instagram);
 			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
@@ -557,11 +552,15 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void onBackPressed() {
 		boolean close = true;
-		int id = SectionsPagerAdapter.ARTICLE_SECTION_FRAGMENT;
 
-		if (viewPager.getCurrentItem() == id) {
-			ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(id);
+		int id = viewPager.getCurrentItem();
+
+		switch (id) {
+		case SectionsPagerAdapter.ARTICLE_SECTION_FRAGMENT:
+		case SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT:
+			SectionFragment fragment = (SectionFragment) getFragment(id);
 			close = !fragment.popFragment();
+			break;
 		}
 
 		if (close) {

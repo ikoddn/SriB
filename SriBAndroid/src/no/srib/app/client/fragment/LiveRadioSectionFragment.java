@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -28,7 +29,8 @@ public class LiveRadioSectionFragment extends SectionFragment {
 		textView.setText("LiveRadioSectionFragment");
 
 		if (liveRadioFragment == null) {
-			liveRadioFragment = new LiveRadioFragment();
+			liveRadioFragment = LiveRadioFragment
+					.newInstance(new InfoClickedListener());
 		}
 
 		return rootView;
@@ -42,5 +44,13 @@ public class LiveRadioSectionFragment extends SectionFragment {
 	@Override
 	public Fragment getBaseFragment() {
 		return liveRadioFragment;
+	}
+
+	private class InfoClickedListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			pushFragment(new InfoFragment());
+		}
 	}
 }

@@ -14,7 +14,6 @@ import android.widget.ListView;
 public class ArticleListFragment extends Fragment {
 
 	private ListView listView;
-
 	private OnArticlesFragmentReadyListener readyListener;
 	private OnItemClickListener articleClickedListener;
 
@@ -23,16 +22,17 @@ public class ArticleListFragment extends Fragment {
 
 		ArticleListFragment fragment = new ArticleListFragment();
 		fragment.setArticleClickedListener(articleClickedListener);
+
 		return fragment;
 	}
 
 	public ArticleListFragment() {
 		listView = null;
-
 		readyListener = null;
+		articleClickedListener = null;
 	}
 
-	public void setArticleClickedListener(
+	private void setArticleClickedListener(
 			OnItemClickListener articleClickedListener) {
 		this.articleClickedListener = articleClickedListener;
 	}
@@ -46,6 +46,7 @@ public class ArticleListFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
 		View rootView = inflater.inflate(R.layout.fragment_articlelist,
 				container, false);
 
