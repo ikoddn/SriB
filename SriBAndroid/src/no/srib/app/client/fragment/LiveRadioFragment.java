@@ -109,15 +109,29 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_twitter);
 		twitterButton.setOnClickListener(new TwitterButtonListener());
 
+		ImageButton instagramButton = (ImageButton) root
+				.findViewById(R.id.button_liveradio_instagram);
+
+		float smallButtonWeight = 67.0f;
+
+		// Main LinearLayout
 		ViewUtil.setWeight(R.id.view_liveradio_vspace1, root, 328.0f);
 		ViewUtil.setWeight(programNameTextView, 37.0f);
 		ViewUtil.setWeight(R.id.view_liveradio_vspace2, root, 229.0f);
 		ViewUtil.setWeight(playButton, 203.0f);
 		ViewUtil.setWeight(R.id.view_liveradio_vspace3, root, 68.0f);
-		ViewUtil.setWeight(stopButton, 67.0f);
+		ViewUtil.setWeight(stopButton, smallButtonWeight);
 		ViewUtil.setWeight(R.id.view_liveradio_vspace4, root, 251.0f);
-		ViewUtil.setWeight(twitterButton, 67.0f);
+		ViewUtil.setWeight(R.id.linearlayout_liveradio_social, root,
+				smallButtonWeight);
 		ViewUtil.setWeight(R.id.view_liveradio_vspace5, root, 50.0f);
+
+		// LinearLayout for social media buttons
+		ViewUtil.setWeight(R.id.view_liveradio_social_hspace1, root, 289.0f);
+		ViewUtil.setWeight(instagramButton, smallButtonWeight);
+		ViewUtil.setWeight(R.id.view_liveradio_social_hspace2, root, 68.0f);
+		ViewUtil.setWeight(twitterButton, smallButtonWeight);
+		ViewUtil.setWeight(R.id.view_liveradio_social_hspace3, root, 289.0f);
 
 		return root;
 	}

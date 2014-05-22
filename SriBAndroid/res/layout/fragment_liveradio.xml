@@ -81,14 +81,53 @@
             android:visibility="invisible" >
         </View>
 
-        <ImageButton
-            android:id="@+id/button_liveradio_twitter"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearlayout_liveradio_social"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@null"
-            android:contentDescription="@string/imagebutton_liveradio_stop_desc"
-            android:scaleType="fitCenter"
-            android:src="@drawable/twitter" />
+            android:orientation="horizontal"
+            android:weightSum="780" >
+
+            <View
+                android:id="@+id/view_liveradio_social_hspace1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+
+            <ImageButton
+                android:id="@+id/button_liveradio_instagram"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/imagebutton_liveradio_instagram_desc"
+                android:scaleType="fitCenter"
+                android:src="@drawable/instagram" />
+
+            <View
+                android:id="@+id/view_liveradio_social_hspace2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="68"
+                android:visibility="invisible" >
+            </View>
+
+            <ImageButton
+                android:id="@+id/button_liveradio_twitter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/imagebutton_liveradio_twitter_desc"
+                android:scaleType="fitCenter"
+                android:src="@drawable/twitter" />
+
+            <View
+                android:id="@+id/view_liveradio_social_hspace3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+        </LinearLayout>
 
         <View
             android:id="@+id/view_liveradio_vspace5"
