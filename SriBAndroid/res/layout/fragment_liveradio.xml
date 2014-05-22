@@ -23,6 +23,7 @@
         android:layout_below="@id/textview_liveradio_status" />
 
     <LinearLayout
+        android:id="@+id/linearlayout_liveradio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -30,9 +31,9 @@
         android:weightSum="1300" >
 
         <View
+            android:id="@+id/view_liveradio_vspace1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="328"
             android:visibility="invisible" >
         </View>
 
@@ -42,9 +43,9 @@
             android:layout_height="0dp" />
 
         <View
+            android:id="@+id/view_liveradio_vspace2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="229"
             android:visibility="invisible" >
         </View>
 
@@ -58,9 +59,9 @@
             android:src="@drawable/play" />
 
         <View
+            android:id="@+id/view_liveradio_vspace3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="68"
             android:visibility="invisible" >
         </View>
 
@@ -74,9 +75,9 @@
             android:src="@drawable/stop" />
 
         <View
+            android:id="@+id/view_liveradio_vspace4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="251"
             android:visibility="invisible" >
         </View>
 
@@ -84,16 +85,15 @@
             android:id="@+id/button_liveradio_twitter"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="67"
             android:background="@null"
             android:contentDescription="@string/imagebutton_liveradio_stop_desc"
             android:scaleType="fitCenter"
             android:src="@drawable/twitter" />
 
         <View
+            android:id="@+id/view_liveradio_vspace5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="50"
             android:visibility="invisible" >
         </View>
     </LinearLayout>
