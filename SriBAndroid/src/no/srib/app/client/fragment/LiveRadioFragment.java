@@ -59,7 +59,6 @@ public class LiveRadioFragment extends Fragment {
 		return fragment;
 	}
 
-
 	public LiveRadioFragment() {
 		playing = false;
 		statusTextView = null;
@@ -67,18 +66,16 @@ public class LiveRadioFragment extends Fragment {
 		playButton = null;
 	}
 
-
-	public void setSeekBarOnChangeListener(OnSeekBarChangeListener seekBarListener){
-		if(seekbar != null){
+	public void setSeekBarOnChangeListener(
+			OnSeekBarChangeListener seekBarListener) {
+		if (seekbar != null) {
 			seekbar.setOnSeekBarChangeListener(seekBarListener);
 		}
 	}
-	
 
 	private void setOnInfoClickListener(OnClickListener infoClickListener) {
 		this.infoClickListener = infoClickListener;
 	}
-
 
 	public void setOnLiveRadioClickListener(
 			OnLiveRadioClickListener liveRadioClickListener) {
@@ -102,13 +99,13 @@ public class LiveRadioFragment extends Fragment {
 			streamTextView.setText(text);
 		}
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		try{
+		try {
 			liveRadioReadyListener = (OnLiveRadioFragmentReadyListener) getActivity();
-		}catch(ClassCastException e ){
+		} catch (ClassCastException e) {
 			liveRadioReadyListener = null;
 		}
 	}
@@ -117,11 +114,10 @@ public class LiveRadioFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-
 		rootView = inflater.inflate(R.layout.fragment_liveradio, container,
 				false);
 
-	//	seekbar = (SribSeekBar) rootView.findViewById(R.id.sribSeekBar);
+		// seekbar = (SribSeekBar) rootView.findViewById(R.id.sribSeekBar);
 		statusTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_status);
 		streamTextView = (TextView) rootView
@@ -186,23 +182,22 @@ public class LiveRadioFragment extends Fragment {
 		ViewUtil.setWeight(twitterButton, smallButtonWeight);
 		ViewUtil.setWeight(R.id.view_liveradio_social_hspace3, rootView, 289.0f);
 
-		//TEST AV MEDIAPLAYER SEEKTO
-		//devButton = (Button) rootView.findViewById(R.id.devButton);
-		
-		if(liveRadioReadyListener != null){
+		// TEST AV MEDIAPLAYER SEEKTO
+		// devButton = (Button) rootView.findViewById(R.id.devButton);
+
+		if (liveRadioReadyListener != null) {
 			liveRadioReadyListener.onLiveRadioFragmentReady();
 		}
-		
+
 		return rootView;
 	}
 
-	public void setOnClickListenerDEVBUTTON(OnClickListener click){
-		if(devButton != null){
+	public void setOnClickListenerDEVBUTTON(OnClickListener click) {
+		if (devButton != null) {
 			devButton.setOnClickListener(click);
 		}
 	}
-	
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -333,12 +328,13 @@ public class LiveRadioFragment extends Fragment {
 					height, true));
 		}
 	}
-	
-	public void setMaxOnSeekBar(int max){
-		seekbar.setMax(max);
-		
+
+	public void setMaxOnSeekBar(int max) {
+		if (seekbar != null) {
+			seekbar.setMax(max);
+		}
 	}
-	
+
 	public interface OnLiveRadioFragmentReadyListener {
 		void onLiveRadioFragmentReady();
 	}

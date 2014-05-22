@@ -23,6 +23,8 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_liveradiosection,
 				container, false);
+		
+		setRetainInstance(true);
 
 		TextView textView = (TextView) rootView
 				.findViewById(R.id.textview_liveradiosection);
