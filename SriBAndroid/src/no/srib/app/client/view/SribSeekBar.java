@@ -2,7 +2,6 @@ package no.srib.app.client.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.DragEvent;
 import android.widget.SeekBar;
 
 public class SribSeekBar extends SeekBar {
@@ -21,6 +20,5 @@ public class SribSeekBar extends SeekBar {
 		super(context, attrs, defStyle);
 		// TODO Auto-generated constructor stub
 	}
-	
 
 }

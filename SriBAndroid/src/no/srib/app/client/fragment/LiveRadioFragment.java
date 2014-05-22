@@ -62,6 +62,9 @@ public class LiveRadioFragment extends Fragment {
 
 	public LiveRadioFragment() {
 		playing = false;
+		statusTextView = null;
+		streamTextView = null;
+		playButton = null;
 	}
 
 

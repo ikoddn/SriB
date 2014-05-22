@@ -35,7 +35,7 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				httpResponse.getEntity().writeTo(out);
 				out.close();
-				responseString = out.toString();
+				responseString = out.toString("UTF-8");
 			} else {
 				Log.d("SriB", "HttpAsyncTask: HTTP status code " + statusCode);
 			}

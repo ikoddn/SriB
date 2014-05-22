@@ -15,7 +15,7 @@ public class ArticleFragment extends Fragment {
 
 	public static ArticleFragment newInstance(String url) {
 		ArticleFragment fragment = new ArticleFragment();
-		fragment.setURL(url);
+		fragment.setUrl(url);
 
 		return fragment;
 	}
@@ -24,7 +24,7 @@ public class ArticleFragment extends Fragment {
 		url = null;
 	}
 
-	public void setURL(String url) {
+	public void setUrl(String url) {
 		this.url = url;
 	}
 

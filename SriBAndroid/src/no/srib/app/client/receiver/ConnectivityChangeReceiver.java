@@ -9,6 +9,10 @@ import android.net.NetworkInfo;
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
 	private OnConnectionChangedListener connectionChangedListener;
+	
+	public ConnectivityChangeReceiver() {
+		connectionChangedListener = null;
+	}
 
 	public void setConnectionChangedListener(
 			OnConnectionChangedListener connectionChangedListener) {

@@ -58,7 +58,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MainActivity extends ActionBarActivity implements
-		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener, OnLiveRadioFragmentReadyListener {
+		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener,
+		OnLiveRadioFragmentReadyListener {
 
 	private final ObjectMapper MAPPER;
 	private ArticleListAdapter articleListAdapter;
@@ -84,12 +85,13 @@ public class MainActivity extends ActionBarActivity implements
 
 	private GridArrayAdapter gridViewAdapter = null;
 	private SpinnerAdapter spinnerListAdapter = null;
-	
+
 	Handler seekHandler = new Handler();
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
 		articleListAdapter = null;
+		viewPager = null;
 	}
 
 	@Override
@@ -160,10 +162,6 @@ public class MainActivity extends ActionBarActivity implements
 				R.string.currentProgram);
 
 		programName.execute(programNameURL);
-		
-		
-		
-	
 
 	}
 
@@ -270,8 +268,9 @@ public class MainActivity extends ActionBarActivity implements
 		public void onStateChanged(AudioPlayer.State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
-			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService.getService();
-			
+			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
+					.getService();
+
 			if (liveRadioSectionFragment != null) {
 				fragment = (LiveRadioFragment) liveRadioSectionFragment
 						.getBaseFragment();
@@ -572,47 +571,46 @@ public class MainActivity extends ActionBarActivity implements
 				.getChildFragmentManager().getFragments().get(0);
 		liveFrag.setOnClickListenerDEVBUTTON(new Onclick());
 		liveFrag.setSeekBarOnChangeListener(new SeekBarListener());
-	
+
 	}
-	
-	
-	
-	private class Onclick implements OnClickListener{
+
+	private class Onclick implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			AudioPlayerService audioService = (AudioPlayerService) audioPlayerService.getService();
-			if(audioService.getState() == State.STARTED || audioService.getState() == State.PAUSED){
+			AudioPlayerService audioService = (AudioPlayerService) audioPlayerService
+					.getService();
+			if (audioService.getState() == State.STARTED
+					|| audioService.getState() == State.PAUSED) {
 				audioService.seekTo(10000);
 			}
-			
+
 		}
-		
+
 	}
-	
-	private class SeekBarListener implements OnSeekBarChangeListener{
+
+	private class SeekBarListener implements OnSeekBarChangeListener {
 
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int progress,
 				boolean fromUser) {
-			
-			
+
 		}
 
 		@Override
 		public void onStartTrackingTouch(SeekBar seekBar) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		boolean close = true;
@@ -624,6 +622,8 @@ public class MainActivity extends ActionBarActivity implements
 		case SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT:
 			SectionFragment fragment = (SectionFragment) getFragment(id);
 			close = !fragment.popFragment();
+			break;
+		default:
 			break;
 		}
 

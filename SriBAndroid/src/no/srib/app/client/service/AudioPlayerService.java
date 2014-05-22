@@ -17,17 +17,14 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 	private String dataSource;
 	private StateHandler stateHandler;
 	private MediaPlayer mediaPlayer;
-	
 
 	public AudioPlayerService() {
 		streaming = false;
 		dataSource = null;
 		stateHandler = new StateHandler();
 		mediaPlayer = new MediaPlayer();
-		
+
 	}
-
-
 
 	@Override
 	public void onCreate() {
@@ -129,7 +126,7 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 	public void setStateListener(StateListener stateListener) {
 		stateHandler.setStateListener(stateListener);
 	}
-	
+
 	public int getDuration() {
 		if (mediaPlayer != null) {
 			return mediaPlayer.getDuration();
@@ -137,9 +134,9 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 			return 0;
 		}
 	}
-	
-	public void seekTo(int msFromStart){
-		if(mediaPlayer != null){
+
+	public void seekTo(int msFromStart) {
+		if (mediaPlayer != null) {
 			mediaPlayer.seekTo(msFromStart);
 		}
 	}
@@ -190,6 +187,8 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 				break;
 			case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
 				sb.append("Server died");
+				break;
+			default:
 				break;
 			}
 

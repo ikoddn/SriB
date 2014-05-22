@@ -3,43 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-<LinearLayout
-    android:orientation="horizontal"
-     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:weightSum="7" 
-     >
-<LinearLayout 
-	android:layout_weight="7"
-	android:layout_width="0dp"
-    android:layout_height="match_parent"  
-    android:orientation="vertical"
-    >
-    <TextView
-        android:id="@+id/label_gridViewItem_date"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Dato" />
 
-    <TextView
-        android:id="@+id/label_gridViewItem_programname"
-      android:layout_width="fill_parent"
-        
-        android:layout_height="wrap_content"
-        android:text="Program Navn" />
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="7" >
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/label_gridViewItem_date"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/label_gridViewItem_programname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="fill_parent"
         android:layout_height="180dp"
+        android:contentDescription="@string/imageview_podcastitem_desc"
         android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:src="@drawable/imgres"
-        />
-
-
-    
+        android:focusableInTouchMode="false"
+        android:src="@drawable/imgres" />
 
 </LinearLayout>

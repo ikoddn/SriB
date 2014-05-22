@@ -16,5 +16,8 @@
 
     <!-- Articles fragment -->
     <string name="imageview_articleitem_desc">Image</string>
+    
+    <!-- Podcast fragment -->
+    <string name="imageview_podcastitem_desc">Podcast art</string>
 
 </resources>

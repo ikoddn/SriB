@@ -45,13 +45,19 @@ public class ArticleListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = inflater.inflate(R.layout.listitem_articlelist, null);
+		View view;
 
-		ImageView image = (ImageView) convertView
+		if (convertView == null) {
+			view = inflater.inflate(R.layout.listitem_articlelist, null);
+		} else {
+			view = convertView;
+		}
+
+		ImageView image = (ImageView) view
 				.findViewById(R.id.imageview_articleitem);
-		TextView title = (TextView) convertView
+		TextView title = (TextView) view
 				.findViewById(R.id.textview_articleitem_title);
-		TextView excerpt = (TextView) convertView
+		TextView excerpt = (TextView) view
 				.findViewById(R.id.textview_articleitem_excerpt);
 
 		NewsArticle newsArticle = list.get(position);
@@ -64,8 +70,8 @@ public class ArticleListAdapter extends BaseAdapter {
 		title.setText(newsArticle.getTitle());
 		excerpt.setText(newsArticle.getExcerptDisplay());
 
-		convertView.setTag(R.id.key_article_url, newsArticle.getPermalink());
+		view.setTag(R.id.key_article_url, newsArticle.getPermalink());
 
-		return convertView;
+		return view;
 	}
 }
