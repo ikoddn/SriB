@@ -30,6 +30,8 @@ import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -327,6 +329,26 @@ public class MainActivity extends ActionBarActivity implements
 			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
 					.getService();
 			audioPlayer.stop();
+		}
+
+		@Override
+		public void onTwitterClicked() {
+			String url = getResources().getString(R.string.url_twitter);
+			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
+					.parse(url));
+			startActivity(intent);
+		}
+
+		@Override
+		public void onInfoClicked() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onInstagramClicked() {
+			// TODO Auto-generated method stub
+
 		}
 	}
 

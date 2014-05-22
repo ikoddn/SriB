@@ -107,6 +107,7 @@ public class LiveRadioFragment extends Fragment {
 
 		ImageButton twitterButton = (ImageButton) root
 				.findViewById(R.id.button_liveradio_twitter);
+		twitterButton.setOnClickListener(new TwitterButtonListener());
 
 		ViewUtil.setWeight(R.id.view_liveradio_vspace1, root, 328.0f);
 		ViewUtil.setWeight(programNameTextView, 37.0f);
@@ -170,9 +171,15 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public interface OnLiveRadioClickListener {
+		void onInfoClicked();
+
+		void onInstagramClicked();
+
 		void onPlayPauseClicked();
 
 		void onStopClicked();
+
+		void onTwitterClicked();
 	}
 
 	private class PlayPauseButtonListener implements OnClickListener {
@@ -189,6 +196,14 @@ public class LiveRadioFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			liveRadioClickListener.onStopClicked();
+		}
+	}
+
+	private class TwitterButtonListener implements OnClickListener {
+
+		@Override
+		public void onClick(View arg0) {
+			liveRadioClickListener.onTwitterClicked();
 		}
 	}
 

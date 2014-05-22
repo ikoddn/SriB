@@ -3,14 +3,19 @@
 
     <!-- Stream -->
     <string name="currentUrl">http://app.srib.no:8080/SriBServer/rest/radiourl</string>
-   <!-- Current program name -->
+    <!-- Current program name -->
     <string name="currentProgram">http://app.srib.no:8080/SriBServer/rest/schedule/now</string>
     <!-- Podcast -->
     <string name="getAllPodcast">http://app.srib.no:8080/SriBServer/rest/podcast</string>
     <string name="getAllProgramNames">http://app.srib.no:8080/SriBServer/rest/podcast/names</string>
-    <!--Articles-->
+    <!-- Articles -->
     <string name="url_articles">http://app.srib.no:8080/SriBServer/rest/news</string>
     <!-- Podcast NAS -->
     <string name="podcast_nas_URL">http://app.srib.no:8080/SriBServer/podcasts/</string>
+    
+    <!-- Social media -->
+    <string name="url_facebook">https://www.facebook.com/studentradioen</string>
+    <string name="url_instagram">http://instagram.com/studentradio</string>
+    <string name="url_twitter">https://twitter.com/SriB</string>
 
 </resources>
