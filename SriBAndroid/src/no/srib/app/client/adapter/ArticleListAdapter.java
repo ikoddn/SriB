@@ -45,12 +45,10 @@ public class ArticleListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View view;
+		View view = convertView;
 
-		if (convertView == null) {
+		if (view == null) {
 			view = inflater.inflate(R.layout.listitem_articlelist, null);
-		} else {
-			view = convertView;
 		}
 
 		ImageView image = (ImageView) view
