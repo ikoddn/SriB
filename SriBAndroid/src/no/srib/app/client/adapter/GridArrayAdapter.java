@@ -88,9 +88,16 @@ public class GridArrayAdapter extends BaseAdapter {
 
 		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
 
+
+		
 		view.setTag(R.id.podcast_url, podcast.getFilename());
 
+		view.setTag(R.id.podcast_name,podcast.getProgram());
+		view.setTag(R.id.podcast_date,podcast.getCreatedate());
+
+
 		return view;
+
 	}
 
 }

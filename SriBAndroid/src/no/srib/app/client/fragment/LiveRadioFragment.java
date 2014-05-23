@@ -9,8 +9,12 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -42,7 +46,7 @@ public class LiveRadioFragment extends Fragment {
 	private ImageButton playButton;
 
 	private SribSeekBar seekbar;
-	private Button devButton;
+	private SeekBarInterface seekBarListener;
 	private OnLiveRadioFragmentReadyListener liveRadioReadyListener;
 
 	private DTImageView background;
@@ -56,6 +60,15 @@ public class LiveRadioFragment extends Fragment {
 
 		return fragment;
 	}
+
+	
+	public void setSeekBarProgress(int value){
+		if(seekbar != null){
+		
+			seekbar.setProgress(value);
+		}
+	}
+	
 
 	public LiveRadioFragment() {
 		playing = false;
@@ -72,6 +85,7 @@ public class LiveRadioFragment extends Fragment {
 			seekbar.setOnSeekBarChangeListener(seekBarListener);
 		}
 	}
+	
 
 	private void setOnInfoClickListener(OnClickListener infoClickListener) {
 		this.infoClickListener = infoClickListener;
@@ -82,6 +96,12 @@ public class LiveRadioFragment extends Fragment {
 		this.liveRadioClickListener = liveRadioClickListener;
 	}
 
+	public void setSeekBarListener(SeekBarInterface seekBar){
+		this.seekBarListener = seekBar;
+		
+		
+	}
+	
 	public void setProgramNameText(CharSequence text) {
 		if (programNameTextView != null) {
 			programNameTextView.setText(text);
@@ -129,7 +149,7 @@ public class LiveRadioFragment extends Fragment {
 		rootView = inflater.inflate(R.layout.fragment_liveradio, container,
 				false);
 
-		// seekbar = (SribSeekBar) rootView.findViewById(R.id.sribSeekBar);
+
 		statusTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_status);
 		streamTextView = (TextView) rootView
@@ -144,10 +164,15 @@ public class LiveRadioFragment extends Fragment {
 		statusTextView.setTypeface(font);
 		streamTextView.setTypeface(font);
 		programNameTextView.setTypeface(font);
+
+		seekbar = (SribSeekBar) rootView.findViewById(R.id.sribSeekBar);
+		
+
 		timeTextView.setTypeface(font);
 
 		// TODO Remove when time functionality works
 		timeTextView.setText("2:23:57");
+
 
 		playButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_play);
@@ -242,22 +267,32 @@ public class LiveRadioFragment extends Fragment {
 				smallButtonWeight);
 		viewUtil.setWeight(twitterButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, socialSpacing);
-
-		// TEST AV MEDIAPLAYER SEEKTO
-		// devButton = (Button) rootView.findViewById(R.id.devButton);
-
+		
+		setSeekBarThumb();
+		
 		if (liveRadioReadyListener != null) {
+
 			liveRadioReadyListener.onLiveRadioFragmentReady();
 		}
 
 		return rootView;
 	}
 
-	public void setOnClickListenerDEVBUTTON(OnClickListener click) {
-		if (devButton != null) {
-			devButton.setOnClickListener(click);
-		}
+
+
+
+	private void setSeekBarThumb() {
+		
+		  BitmapDrawable thumb = (BitmapDrawable) getResources().getDrawable(R.drawable.spoleslider);
+		  Bitmap bit= thumb.getBitmap();
+		  int width = 25;
+		  int height = 80;
+		  Bitmap scaled = Bitmap.createScaledBitmap(bit, width, height, false);
+		  BitmapDrawable thumbScaled = new BitmapDrawable(getResources(), scaled);
+	        seekbar.setThumb(thumbScaled); 
+	        seekbar.setThumbOffset(0);		
 	}
+
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -281,6 +316,9 @@ public class LiveRadioFragment extends Fragment {
 		if (playing) {
 			setPauseIcon();
 		}
+
+			
+	
 	}
 
 	@Override
@@ -319,15 +357,8 @@ public class LiveRadioFragment extends Fragment {
 		playing = false;
 	}
 
-	public interface OnLiveRadioClickListener {
-		void onPlayPauseClicked();
 
-		void onStopClicked();
 
-		void onInstagramClicked();
-
-		void onTwitterClicked();
-	}
 
 	private class PlayPauseButtonListener implements OnClickListener {
 
@@ -383,13 +414,29 @@ public class LiveRadioFragment extends Fragment {
 		}
 	}
 
-	public void setMaxOnSeekBar(int max) {
-		if (seekbar != null) {
+	
+	public void setMaxOnSeekBar(int max){
+		if(seekbar != null){
 			seekbar.setMax(max);
 		}
-	}
 
+	}
+	
 	public interface OnLiveRadioFragmentReadyListener {
 		void onLiveRadioFragmentReady();
+	}
+	
+	public interface OnLiveRadioClickListener {
+		void onInstagramClicked();
+
+		void onPlayPauseClicked();
+
+		void onStopClicked();
+
+		void onTwitterClicked();
+	}
+	
+	public interface SeekBarInterface{
+		 void updateSeekBar();
 	}
 }

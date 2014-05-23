@@ -86,11 +86,20 @@
                 android:visibility="invisible" >
             </View>
 
-            <TextView
-                android:id="@+id/textview_liveradio_programname"
-                android:layout_width="0dp"
-                android:layout_height="match_parent" />
 
+
+                <TextView
+                    android:id="@+id/textview_liveradio_programname"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <no.srib.app.client.view.SribSeekBar
+                    android:id="@+id/sribSeekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp" />
+       
             <View
                 android:id="@+id/view_liveradio_textfields_hspace2"
                 android:layout_width="0dp"
@@ -192,25 +201,6 @@
             android:layout_height="0dp"
             android:visibility="invisible" >
         </View>
-
-        <!--
-        <no.srib.app.client.view.SribSeekBar
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:id="@+id/sribSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" 
-            android:thumb="@drawable/npslider"
-            
-            />
-
-        <Button
-            android:id="@+id/devButton"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button" />
-        -->
 
         <LinearLayout
             android:id="@+id/linearlayout_liveradio_social"

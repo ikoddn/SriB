@@ -135,6 +135,14 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
+	public int getProgress() {
+		if (mediaPlayer != null) {
+			return mediaPlayer.getCurrentPosition();
+		} else {
+			return 0;
+		}
+	}
+
 	public void seekTo(int msFromStart) {
 		if (mediaPlayer != null) {
 			mediaPlayer.seekTo(msFromStart);

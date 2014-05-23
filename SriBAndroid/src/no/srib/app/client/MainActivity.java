@@ -18,6 +18,7 @@ import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioFragmentReadyListener;
+import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
@@ -43,14 +44,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -87,19 +86,12 @@ public class MainActivity extends ActionBarActivity implements
 	private SpinnerAdapter spinnerListAdapter = null;
 
 	Handler seekHandler = new Handler();
+	Runnable run;
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
 		articleListAdapter = null;
 		viewPager = null;
-	}
-
-	@Override
-	public void onLowMemory() {
-		Toast.makeText(getApplicationContext(), "Low memory", Toast.LENGTH_LONG)
-				.show();
-
-		super.onLowMemory();
 	}
 
 	@Override
@@ -197,6 +189,7 @@ public class MainActivity extends ActionBarActivity implements
 				liveRadioFragment
 						.setOnLiveRadioClickListener(new LiveRadioClickListener());
 			}
+
 		}
 	}
 
@@ -280,6 +273,7 @@ public class MainActivity extends ActionBarActivity implements
 			case PAUSED:
 				fragment.setStatusText("paused");
 				fragment.setPlayIcon();
+				seekHandler.removeCallbacks(run);
 				break;
 			case PREPARING:
 				fragment.setStatusText("preparing");
@@ -288,12 +282,17 @@ public class MainActivity extends ActionBarActivity implements
 			case STARTED:
 				fragment.setStatusText("started");
 				fragment.setPauseIcon();
+				seekHandler.removeCallbacks(run);
 				int duration = audioservice.getDuration();
 				fragment.setMaxOnSeekBar(duration);
+				SeekBarInterface seekBar = new SeekBarImpl();
+				seekBar.updateSeekBar();
 				break;
 			case STOPPED:
 				fragment.setStatusText("stopped");
 				fragment.setPlayIcon();
+				seekHandler.removeCallbacks(run);
+				
 				break;
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
@@ -301,6 +300,8 @@ public class MainActivity extends ActionBarActivity implements
 			case COMPLETED:
 				fragment.setStatusText("completed");
 				fragment.setPlayIcon();
+				seekHandler.removeCallbacks(run);
+				
 				break;
 			}
 		}
@@ -404,21 +405,34 @@ public class MainActivity extends ActionBarActivity implements
 			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
 					.getService();
 			String url = (String) view.getTag(R.id.podcast_url);
+			String podcastName = (String) view.getTag(R.id.podcast_name);
 			String correctUrl = url.substring(3, url.length());
 			String nasUrl = getResources().getString(R.string.podcast_nas_URL);
-			String URL = nasUrl + "/" + correctUrl;
+			String URL = nasUrl + correctUrl;
 			System.out.println(URL);
 			try {
 				audioPlayer.setDataSource(URL);
 			} catch (AudioPlayerException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
+			
+			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment fragment = null;
 
+			if (liveRadioSectionFragment != null) {
+				fragment = (LiveRadioFragment) liveRadioSectionFragment
+						.getBaseFragment();
+			}
+
+			if (fragment != null) {
+				fragment.setProgramNameText(podcastName);
+			}
+			
 			// TODO Info screen may be in focus, should show live radio screen
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-
+			
 			audioPlayer.start();
 
 		}
@@ -569,32 +583,26 @@ public class MainActivity extends ActionBarActivity implements
 		LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 		LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
 				.getChildFragmentManager().getFragments().get(0);
-		liveFrag.setOnClickListenerDEVBUTTON(new Onclick());
 		liveFrag.setSeekBarOnChangeListener(new SeekBarListener());
+		liveFrag.setSeekBarListener(new SeekBarImpl());
 
 	}
 
-	private class Onclick implements OnClickListener {
 
-		@Override
-		public void onClick(View v) {
-			AudioPlayerService audioService = (AudioPlayerService) audioPlayerService
-					.getService();
-			if (audioService.getState() == State.STARTED
-					|| audioService.getState() == State.PAUSED) {
-				audioService.seekTo(10000);
-			}
-
-		}
-
-	}
 
 	private class SeekBarListener implements OnSeekBarChangeListener {
 
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int progress,
 				boolean fromUser) {
-
+			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
+					.getService();
+			State currentState = audioservice.getState();
+			if (fromUser && currentState == State.STARTED || currentState == State.PAUSED) {
+				System.out.println(progress + " " + seekBar.getMax());
+				
+				audioservice.seekTo(progress);
+			}
 		}
 
 		@Override
@@ -639,6 +647,44 @@ public class MainActivity extends ActionBarActivity implements
 
 	private static String getFragmentTag(int viewPagerId, int index) {
 		return "android:switcher:" + viewPagerId + ":" + index;
+	}
+
+	private class SeekBarImpl implements SeekBarInterface {
+
+		
+		public SeekBarImpl(){
+			run = new Runnable() {
+
+				@Override
+				public void run() {
+					SeekBarInterface sek = new SeekBarImpl();
+					sek.updateSeekBar();
+
+				}
+			};
+
+		}
+		
+		
+		@Override
+		public void updateSeekBar() {
+			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
+					.getChildFragmentManager().getFragments().get(0);
+			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
+					.getService();
+
+			
+			int progress = audioservice.getProgress();
+			int max = audioservice.getDuration();
+			System.out.println(progress + "/" + max);
+			liveFrag.setSeekBarProgress(progress);
+			seekHandler.postDelayed(run, 1000);
+			
+		}
+
+		
+		
 	}
 
 }

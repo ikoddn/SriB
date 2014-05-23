@@ -3,5 +3,7 @@
 
     <item name="key_article_url" type="id"/>
     <item name="podcast_url" type="id"/>
+    <item name="podcast_name" type="id" />
+    <item name="podcast_date" type="id"/>
 
 </resources>
