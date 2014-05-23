@@ -397,7 +397,8 @@ public class LiveRadioFragment extends Fragment {
 			BitmapDrawable thumbScaled = new BitmapDrawable(getResources(),
 					scaled);
 			seekbar.setThumb(thumbScaled);
-			seekbar.setThumbOffset(50);
+			final float offsetFactor = 0.046f;
+			seekbar.setThumbOffset((int) (offsetFactor * width));
 		}
 	}
 
