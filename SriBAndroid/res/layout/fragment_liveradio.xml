@@ -73,53 +73,83 @@
             android:visibility="invisible" >
         </View>
 
-        <LinearLayout
-            android:id="@+id/linearlayout_liveradio_textfields"
+        <RelativeLayout
+            android:id="@+id/relativelayout_liveradio_textfields"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal" >
 
-            <View
-                android:id="@+id/view_liveradio_textfields_hspace1"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/linearlayout_liveradio_textfields"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible" >
-            </View>
+                android:layout_centerVertical="true"
+                android:orientation="horizontal" >
 
-
+                <View
+                    android:id="@+id/view_liveradio_textfields_hspace1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible" >
+                </View>
 
                 <TextView
                     android:id="@+id/textview_liveradio_programname"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical" />
+
+                <View
+                    android:id="@+id/view_liveradio_textfields_hspace2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible" >
+                </View>
+
+                <TextView
+                    android:id="@+id/textview_liveradio_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center" />
+
+                <View
+                    android:id="@+id/view_liveradio_textfields_hspace3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible" >
+                </View>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearlayout_liveradio_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+
+                <View
+                    android:id="@+id/view_liveradio_seekbar_hspace1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="118"
+                    android:visibility="invisible" >
+                </View>
 
                 <no.srib.app.client.view.SribSeekBar
                     android:id="@+id/sribSeekBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp" />
-       
-            <View
-                android:id="@+id/view_liveradio_textfields_hspace2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:visibility="invisible" >
-            </View>
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="417"
+                    android:progressDrawable="@android:color/transparent" />
 
-            <TextView
-                android:id="@+id/textview_liveradio_time"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:gravity="center" />
-
-            <View
-                android:id="@+id/view_liveradio_textfields_hspace3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:visibility="invisible" >
-            </View>
-        </LinearLayout>
+                <View
+                    android:id="@+id/view_liveradio_seekbar_hspace2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="245"
+                    android:visibility="invisible" >
+                </View>
+            </LinearLayout>
+        </RelativeLayout>
 
         <View
             android:id="@+id/view_liveradio_vspace3"
