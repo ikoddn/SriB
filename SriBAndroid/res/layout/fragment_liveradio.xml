@@ -99,12 +99,14 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical" />
 
+
                 <View
                     android:id="@+id/view_liveradio_textfields_hspace2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:visibility="invisible" >
-                </View>
+                    android:visibility="invisible" />
+               
+
 
                 <TextView
                     android:id="@+id/textview_liveradio_time"
