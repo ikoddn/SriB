@@ -19,7 +19,7 @@ public class ViewUtil {
 		setWeight(view, weight);
 	}
 
-	public static void setWeight(View view, float weight) {
+	public void setWeight(View view, float weight) {
 		LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view
 				.getLayoutParams();
 		layoutParams.weight = weight;

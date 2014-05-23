@@ -193,7 +193,7 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.linearlayout_liveradio_info);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_info_hspace1, 678.0f);
-		ViewUtil.setWeight(infoButton, smallButtonWeight);
+		viewUtil.setWeight(infoButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_info_hspace2, 35.0f);
 
 		// Horizontal LinearLayout for text fields
@@ -201,9 +201,9 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.linearlayout_liveradio_textfields);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace1, 130.0f);
-		ViewUtil.setWeight(programNameTextView, 395.0f);
+		viewUtil.setWeight(programNameTextView, 395.0f);
 		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace2, 15.0f);
-		ViewUtil.setWeight(timeTextView, 104.0f);
+		viewUtil.setWeight(timeTextView, 104.0f);
 		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace3, 136.0f);
 
 		// Horizontal LinearLayout for play button
@@ -212,7 +212,7 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.linearlayout_liveradio_play);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_play_hspace1, playSpacing);
-		ViewUtil.setWeight(playButton, playButtonWeight);
+		viewUtil.setWeight(playButton, playButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_play_hspace2, playSpacing);
 
 		// Horizontal LinearLayout for stop button
@@ -221,18 +221,19 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.linearlayout_liveradio_stop);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace1, stopSpacing);
-		ViewUtil.setWeight(stopButton, smallButtonWeight);
+		viewUtil.setWeight(stopButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, stopSpacing);
 
 		// Horizontal LinearLayout for social media buttons
+		final float socialSpacing = (horizontalWeightSum - 3 * smallButtonWeight) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_social);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, 289.0f);
-		ViewUtil.setWeight(instagramButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace2, 68.0f);
-		ViewUtil.setWeight(twitterButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, 289.0f);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, socialSpacing);
+		viewUtil.setWeight(instagramButton, smallButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace2, smallButtonWeight);
+		viewUtil.setWeight(twitterButton, smallButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, socialSpacing);
 
 		// TEST AV MEDIAPLAYER SEEKTO
 		// devButton = (Button) rootView.findViewById(R.id.devButton);
