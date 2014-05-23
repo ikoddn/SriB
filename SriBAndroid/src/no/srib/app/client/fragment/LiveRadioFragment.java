@@ -20,6 +20,7 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -163,10 +164,16 @@ public class LiveRadioFragment extends Fragment {
 			observer.addOnGlobalLayoutListener(new LayoutReadyListener());
 		}
 
+		final float verticalWeightSum = 1300.0f;
+		final float horizontalWeightSum = 780.0f;
 		final float smallButtonWeight = 67.0f;
 		ViewUtil viewUtil = new ViewUtil(rootView);
+		LinearLayout layout;
 
 		// Main vertical LinearLayout
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.linearlayout_liveradio);
+		layout.setWeightSum(verticalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_vspace1, 27.0f);
 		viewUtil.setWeight(R.id.linearlayout_liveradio_info, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace2, 234.0f);
@@ -181,6 +188,9 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_vspace6, 50.0f);
 
 		// Horizontal LinearLayout for text fields
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.linearlayout_liveradio_textfields);
+		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace1, 130.0f);
 		ViewUtil.setWeight(programNameTextView, 395.0f);
 		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace2, 15.0f);
@@ -188,11 +198,17 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace3, 136.0f);
 
 		// Horizontal LinearLayout for info button
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.linearlayout_liveradio_info);
+		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_info_hspace1, 678.0f);
 		ViewUtil.setWeight(infoButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_info_hspace2, 35.0f);
 
 		// Horizontal LinearLayout for social media buttons
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.linearlayout_liveradio_social);
+		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, 289.0f);
 		ViewUtil.setWeight(instagramButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace2, 68.0f);
