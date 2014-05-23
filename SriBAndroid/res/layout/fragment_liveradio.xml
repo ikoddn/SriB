@@ -75,10 +75,45 @@
             android:visibility="invisible" >
         </View>
 
-        <TextView
-            android:id="@+id/textview_liveradio_programname"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp" />
+        <LinearLayout
+            android:id="@+id/linearlayout_liveradio_textfields"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="780" >
+
+            <View
+                android:id="@+id/view_liveradio_textfields_hspace1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+
+            <TextView
+                android:id="@+id/textview_liveradio_programname"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+            <View
+                android:id="@+id/view_liveradio_textfields_hspace2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+
+            <TextView
+                android:id="@+id/textview_liveradio_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center" />
+
+            <View
+                android:id="@+id/view_liveradio_textfields_hspace3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+        </LinearLayout>
 
         <View
             android:id="@+id/view_liveradio_vspace3"
@@ -164,7 +199,6 @@
                 android:id="@+id/view_liveradio_social_hspace2"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="68"
                 android:visibility="invisible" >
             </View>
 

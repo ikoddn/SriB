@@ -8,7 +8,13 @@ import android.widget.LinearLayout;
 
 public class ViewUtil {
 
-	public static void setWeight(int id, View rootView, float weight) {
+	private final View rootView;
+
+	public ViewUtil(final View rootView) {
+		this.rootView = rootView;
+	}
+
+	public void setWeight(int id, float weight) {
 		View view = rootView.findViewById(id);
 		setWeight(view, weight);
 	}

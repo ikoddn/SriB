@@ -3,27 +3,22 @@ package no.srib.app.client.fragment;
 import no.srib.app.client.R;
 import no.srib.app.client.util.BitmapUtil;
 import no.srib.app.client.util.DTImageView;
-import no.srib.app.client.view.SribSeekBar;
-
 import no.srib.app.client.util.ViewUtil;
-
+import no.srib.app.client.view.SribSeekBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-
-import android.widget.Button;
-
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -41,6 +36,7 @@ public class LiveRadioFragment extends Fragment {
 	private TextView statusTextView;
 	private TextView streamTextView;
 	private TextView programNameTextView;
+	private TextView timeTextView;
 	private ImageButton playButton;
 
 	private SribSeekBar seekbar;
@@ -63,6 +59,8 @@ public class LiveRadioFragment extends Fragment {
 		playing = false;
 		statusTextView = null;
 		streamTextView = null;
+		programNameTextView = null;
+		timeTextView = null;
 		playButton = null;
 	}
 
@@ -100,6 +98,12 @@ public class LiveRadioFragment extends Fragment {
 		}
 	}
 
+	public void setTimeText(CharSequence text) {
+		if (timeTextView != null) {
+			timeTextView.setText(text);
+		}
+	}
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -124,12 +128,18 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.textview_liveradio_stream);
 		programNameTextView = (TextView) rootView
 				.findViewById(R.id.textview_liveradio_programname);
+		timeTextView = (TextView) rootView
+				.findViewById(R.id.textview_liveradio_time);
 
 		Typeface font = Typeface.createFromAsset(rootView.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
 		statusTextView.setTypeface(font);
 		streamTextView.setTypeface(font);
 		programNameTextView.setTypeface(font);
+		timeTextView.setTypeface(font);
+
+		// TODO Remove when time functionality works
+		timeTextView.setText("23:57");
 
 		playButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_play);
@@ -153,34 +163,41 @@ public class LiveRadioFragment extends Fragment {
 			observer.addOnGlobalLayoutListener(new LayoutReadyListener());
 		}
 
-		float smallButtonWeight = 67.0f;
+		final float smallButtonWeight = 67.0f;
+		ViewUtil viewUtil = new ViewUtil(rootView);
 
 		// Main vertical LinearLayout
-		ViewUtil.setWeight(R.id.view_liveradio_vspace1, rootView, 27.0f);
-		ViewUtil.setWeight(R.id.linearlayout_liveradio_info, rootView,
-				smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace2, rootView, 234.0f);
-		ViewUtil.setWeight(programNameTextView, 40.0f);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace3, rootView, 226.0f);
+		viewUtil.setWeight(R.id.view_liveradio_vspace1, 27.0f);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_info, smallButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace2, 234.0f);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_textfields, 40.0f);
+		viewUtil.setWeight(R.id.view_liveradio_vspace3, 226.0f);
 		ViewUtil.setWeight(playButton, 203.0f);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace4, rootView, 68.0f);
+		viewUtil.setWeight(R.id.view_liveradio_vspace4, 68.0f);
 		ViewUtil.setWeight(stopButton, smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace5, rootView, 251.0f);
-		ViewUtil.setWeight(R.id.linearlayout_liveradio_social, rootView,
+		viewUtil.setWeight(R.id.view_liveradio_vspace5, 251.0f);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_social,
 				smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_vspace6, rootView, 50.0f);
+		viewUtil.setWeight(R.id.view_liveradio_vspace6, 50.0f);
+
+		// Horizontal LinearLayout for text fields
+		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace1, 130.0f);
+		ViewUtil.setWeight(programNameTextView, 395.0f);
+		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace2, 15.0f);
+		ViewUtil.setWeight(timeTextView, 104.0f);
+		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace3, 136.0f);
 
 		// Horizontal LinearLayout for info button
-		ViewUtil.setWeight(R.id.view_liveradio_info_hspace1, rootView, 678.0f);
+		viewUtil.setWeight(R.id.view_liveradio_info_hspace1, 678.0f);
 		ViewUtil.setWeight(infoButton, smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_info_hspace2, rootView, 35.0f);
+		viewUtil.setWeight(R.id.view_liveradio_info_hspace2, 35.0f);
 
 		// Horizontal LinearLayout for social media buttons
-		ViewUtil.setWeight(R.id.view_liveradio_social_hspace1, rootView, 289.0f);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, 289.0f);
 		ViewUtil.setWeight(instagramButton, smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_social_hspace2, rootView, 68.0f);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace2, 68.0f);
 		ViewUtil.setWeight(twitterButton, smallButtonWeight);
-		ViewUtil.setWeight(R.id.view_liveradio_social_hspace3, rootView, 289.0f);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, 289.0f);
 
 		// TEST AV MEDIAPLAYER SEEKTO
 		// devButton = (Button) rootView.findViewById(R.id.devButton);
@@ -220,9 +237,6 @@ public class LiveRadioFragment extends Fragment {
 		if (playing) {
 			setPauseIcon();
 		}
-
-		Log.d("SriB", "onActivityCreated");
-
 	}
 
 	@Override
@@ -238,8 +252,6 @@ public class LiveRadioFragment extends Fragment {
 		editor.putBoolean(KEY_IS_PLAYING, playing);
 
 		editor.commit();
-
-		Log.d("SriB", "onStop");
 	}
 
 	@Override
@@ -249,28 +261,26 @@ public class LiveRadioFragment extends Fragment {
 		if (background != null) {
 			background.cleanup();
 		}
-
-		Log.d("SriB", "onDestroyView");
 	}
 
 	public void setPauseIcon() {
-		playButton.setImageDrawable(getResources()
-				.getDrawable(R.drawable.pause));
+		Drawable icon = getResources().getDrawable(R.drawable.pause);
+		playButton.setImageDrawable(icon);
 		playing = true;
 	}
 
 	public void setPlayIcon() {
-		playButton
-				.setImageDrawable(getResources().getDrawable(R.drawable.play));
+		Drawable icon = getResources().getDrawable(R.drawable.play);
+		playButton.setImageDrawable(icon);
 		playing = false;
 	}
 
 	public interface OnLiveRadioClickListener {
-		void onInstagramClicked();
-
 		void onPlayPauseClicked();
 
 		void onStopClicked();
+
+		void onInstagramClicked();
 
 		void onTwitterClicked();
 	}
