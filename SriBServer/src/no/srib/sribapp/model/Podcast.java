@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
         @NamedQuery(name = "melk", query = "SELECT P FROM Podcast P WHERE P.program=:id AND P.softdel=0 ORDER BY P.createdate DESC", hints = {
                 @javax.persistence.QueryHint(name = "eclipselink.query-results-cache", value = "true"),
                 @javax.persistence.QueryHint(name = "eclipselink.query-results-cache.size", value = "500") }),
-        @NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p WHERE p.softdel=0 ORDER BY p.createdate DESC,p.createtime DESC") })
+        @NamedQuery(name = "Podcast.findAll", query = "SELECT p FROM Podcast p WHERE p.softdel=0 AND p.program <> 0 ORDER BY p.createdate DESC,p.createtime DESC") })
 @XmlType(name = "")
 // Remove "@type" from the marshalled JSON
 public class Podcast extends AbstractModel {

@@ -1,5 +1,6 @@
 package no.srib.sribapp.dao.interfaces;
 
+import java.util.Calendar;
 import java.util.List;
 
 import no.srib.sribapp.dao.exception.DAOException;
@@ -23,11 +24,15 @@ public interface PrograminfoDAO extends AbstractModelDAO<Programinfo> {
      */
     Programinfo getById(final int id) throws DAOException;
     
-    /**
-     * Returns a List with {@link Programinfo} with minimum one podcast in database. 
-     * @return Only programs with a podcast
-     * @throws DAOException
-     */
+   /**
+    *  Returns a List with {@link Programinfo} with minimum one podcast in database and is created after or before the given Calendar object. 
+    * @param cal
+    * @param beforeDate 
+    * @return
+    * @throws DAOException
+    */
     
-    List<Programinfo> getProgramInfosWithPodcast() throws DAOException;
+    List<Programinfo> getProgramInfosWithPodcast(Calendar cal, boolean afterDate) throws DAOException;
+    
+  
 }

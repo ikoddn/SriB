@@ -1,6 +1,7 @@
 package no.srib.sribapp.resource;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,22 +150,29 @@ public class PodcastResource {
     @Path("names")
     public final List<Definition> getAllPodcastNames() {
         List<Definition> defList = new ArrayList<Definition>();
-        List<Programinfo> programInfoList = null;
-
+        List<Programinfo> programInfoListNew = null;
+        List<Programinfo> programInfoListOld = null;
+        
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -6);
         try {
-            programInfoList = programInfoDAO.getProgramInfosWithPodcast();
+            programInfoListNew = programInfoDAO.getProgramInfosWithPodcast(cal,true);
+            programInfoListOld = programInfoDAO.getProgramInfosWithPodcast(cal, false);
             
         } catch (DAOException e) {
             
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if ( programInfoList == null || programInfoList.isEmpty()) {
+        
+        programInfoListNew.addAll(programInfoListOld);
+        System.out.println("Størrelse: " +  programInfoListNew.size());
+        if ( programInfoListNew == null || programInfoListNew.isEmpty()) {
             System.out.println("NO CONTENT");
             throw new WebApplicationException(Status.NO_CONTENT);
         }
-        System.out.println("Størrelse: " +  programInfoList.size());
-        for(Programinfo prog : programInfoList){
+        
+        for(Programinfo prog : programInfoListNew){
             Definition def = new Definition();
             def.setDefnr(prog.getProgram());
             def.setName(prog.getTitle());

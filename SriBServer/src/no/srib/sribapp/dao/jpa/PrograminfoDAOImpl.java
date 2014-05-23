@@ -1,5 +1,7 @@
 package no.srib.sribapp.dao.jpa;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -35,13 +37,36 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
         return result;
     }
 
+    // SELECT DISTINCT A FROM Podcast P, Programinfo A WHERE A.program=P.program
+    // ORDER BY A.title
+    // SELECT P FROM (SELECT DISTINCT I.title FROM digas.PODCAST C, "
+    // +
+    // "digas.PROGRAMINFO I WHERE CREATEDATE > 20130520 AND C.PROGRAM=I.program "
+    // +
+    // "order by I.TITLE) P UNION SELECT A FROM (SELECT DISTINCT I.title FROM digas.PODCAST C, digas.PROGRAMINFO I WHERE CREATEDATE < 20130520  AND C.PROGRAM=I.program order by I.TITLE) A"
     @Override
-    public List<Programinfo> getProgramInfosWithPodcast() throws DAOException {
+    public List<Programinfo> getProgramInfosWithPodcast(Calendar cal,
+            boolean afterDate) throws DAOException {
+       
+        
         List<Programinfo> list = null;
-        String queryString = "SELECT DISTINCT A FROM Podcast P, Programinfo A WHERE A.program=P.program ORDER BY A.title ";
+       
+        String format = "yyyyMMdd";
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        String stringDate = sdf.format(cal.getTime());
+        int date = Integer.parseInt(stringDate);
+        
+        String queryString;
+        
+        if (afterDate) {
+             queryString = "SELECT DISTINCT I FROM Podcast P, Programinfo I WHERE P.createdate > :date AND P.program=I.program order by I.title, P.createdate desc, P.createtime desc";
+        } else {
+             queryString = "SELECT DISTINCT I FROM Podcast P, Programinfo I WHERE P.createdate <= :date AND P.program=I.program order by I.title,P.createdate desc, P.createtime desc";
+        }
+        
         TypedQuery<Programinfo> query = em.createQuery(queryString,
                 Programinfo.class);
-
+        query.setParameter("date", date);
         try {
             list = query.getResultList();
             if (list.isEmpty()) {
@@ -52,6 +77,11 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
             throw new DAOException(e);
         }
 
+        for(Programinfo  a: list){
+            System.out.println(a.getTitle());
+        }
+        
         return list;
     }
+
 }
