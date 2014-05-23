@@ -1,6 +1,8 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,7 +25,7 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_liveradiosection,
 				container, false);
-		
+
 		setRetainInstance(true);
 
 		TextView textView = (TextView) rootView
@@ -46,6 +48,18 @@ public class LiveRadioSectionFragment extends SectionFragment {
 	@Override
 	public Fragment getBaseFragment() {
 		return liveRadioFragment;
+	}
+
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+
+		if (isVisibleToUser) {
+			Activity a = getActivity();
+			if (a != null) {
+				a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			}
+		}
 	}
 
 	private class InfoClickedListener implements OnClickListener {

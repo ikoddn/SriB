@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,12 @@ public class InfoFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+		Configuration conf = getParentFragment().getResources()
+				.getConfiguration();
+		if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			return null;
+		}
 
 		View rootView = inflater.inflate(R.layout.fragment_info, container,
 				false);

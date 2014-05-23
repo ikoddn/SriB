@@ -7,6 +7,7 @@ import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.SribSeekBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -118,6 +119,12 @@ public class LiveRadioFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+		Configuration conf = getParentFragment().getResources()
+				.getConfiguration();
+		if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			return null;
+		}
 
 		rootView = inflater.inflate(R.layout.fragment_liveradio, container,
 				false);
@@ -231,7 +238,8 @@ public class LiveRadioFragment extends Fragment {
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, socialSpacing);
 		viewUtil.setWeight(instagramButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace2, smallButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace2,
+				smallButtonWeight);
 		viewUtil.setWeight(twitterButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, socialSpacing);
 

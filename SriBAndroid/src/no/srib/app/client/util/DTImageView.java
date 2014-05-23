@@ -30,8 +30,10 @@ public class DTImageView extends View {
 	}
 
 	public void cleanup() {
-		bitmap.recycle();
-		bitmap = null;
+		if (bitmap != null) {
+			bitmap.recycle();
+			bitmap = null;
+		}
 	}
 
 	@Override
