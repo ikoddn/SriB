@@ -95,9 +95,9 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public void setProgramNameText(CharSequence text) {
-		
+
 		String textString = text.toString();
-		
+
 		if (textString != null) {
 			Spanned safeText = Html.fromHtml(textString);
 			programNameTextView.setText(safeText);
@@ -303,15 +303,17 @@ public class LiveRadioFragment extends Fragment {
 	public void onStop() {
 		super.onStop();
 
-		SharedPreferences prefs = getActivity().getSharedPreferences(
-				PREFS_NAME, 0);
-		SharedPreferences.Editor editor = prefs.edit();
+		if (statusTextView != null && streamTextView != null) {
+			SharedPreferences prefs = getActivity().getSharedPreferences(
+					PREFS_NAME, 0);
+			SharedPreferences.Editor editor = prefs.edit();
 
-		editor.putString(KEY_STATUS, statusTextView.getText().toString());
-		editor.putString(KEY_STREAM, streamTextView.getText().toString());
-		editor.putBoolean(KEY_IS_PLAYING, playing);
+			editor.putString(KEY_STATUS, statusTextView.getText().toString());
+			editor.putString(KEY_STREAM, streamTextView.getText().toString());
+			editor.putBoolean(KEY_IS_PLAYING, playing);
 
-		editor.commit();
+			editor.commit();
+		}
 	}
 
 	@Override
