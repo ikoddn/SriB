@@ -3,8 +3,10 @@ package no.srib.app.client.util;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
-public class BitmapUtil {
+public class ImageUtil {
 
 	public static Bitmap decodeSampledBitmapFromResource(Resources res,
 			int resId, int reqWidth, int reqHeight) {
@@ -46,5 +48,14 @@ public class BitmapUtil {
 		}
 
 		return inSampleSize;
+	}
+
+	public static Drawable resize(Drawable image, int width, int height,
+			Resources resources) {
+
+		Bitmap b = ((BitmapDrawable) image).getBitmap();
+		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, width, height,
+				false);
+		return new BitmapDrawable(resources, bitmapResized);
 	}
 }

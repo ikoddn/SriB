@@ -1,16 +1,16 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
-import no.srib.app.client.util.BitmapUtil;
 import no.srib.app.client.util.DTImageView;
+import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.SribSeekBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -226,7 +226,6 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_info_hspace2, 35.0f);
 
 		// Horizontal LinearLayout for text fields
-
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_textfields);
 		layout.setWeightSum(horizontalWeightSum);
@@ -267,7 +266,6 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, socialSpacing);
 
 		if (liveRadioReadyListener != null) {
-
 			liveRadioReadyListener.onLiveRadioFragmentReady();
 		}
 
@@ -379,27 +377,23 @@ public class LiveRadioFragment extends Fragment {
 			int height = rootView.getHeight();
 			int width = rootView.getWidth();
 
+			Resources res = getResources();
+
+			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
+					R.drawable.layout, width, height);
 			background = (DTImageView) rootView
 					.findViewById(R.id.dtImageView_liveradio_background);
-
-			Activity activity = getParentFragment().getActivity();
-			Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromResource(
-					activity.getResources(), R.drawable.layout, width, height);
-
 			background.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
 					height, true));
 
-			BitmapDrawable thumb = (BitmapDrawable) getResources().getDrawable(
-					R.drawable.spoleslider);
-			Bitmap bit = thumb.getBitmap();
 			View textFieldLayout = rootView
 					.findViewById(R.id.relativelayout_liveradio_textfields);
 			final float seekbarWidthFactor = 0.023f;
 			int seekbarWidth = (int) (seekbarWidthFactor * width);
-			Bitmap scaled = Bitmap.createScaledBitmap(bit, seekbarWidth,
-					textFieldLayout.getHeight(), false);
-			BitmapDrawable thumbScaled = new BitmapDrawable(getResources(),
-					scaled);
+
+			Drawable thumb = res.getDrawable(R.drawable.spoleslider);
+			Drawable thumbScaled = ImageUtil.resize(thumb, seekbarWidth,
+					textFieldLayout.getHeight(), res);
 			seekbar.setThumb(thumbScaled);
 			seekbar.setThumbOffset(0);
 			seekbar.setPadding(0, 0, 0, 0);
@@ -410,7 +404,6 @@ public class LiveRadioFragment extends Fragment {
 		if (seekbar != null) {
 			seekbar.setMax(max);
 		}
-
 	}
 
 	public interface OnLiveRadioFragmentReadyListener {
