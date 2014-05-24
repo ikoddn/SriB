@@ -39,11 +39,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -56,7 +57,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends FragmentActivity implements
 		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener,
 		OnLiveRadioFragmentReadyListener {
 
@@ -97,7 +98,8 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().hide();
+
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
 		// Create the adapter that will return a fragment for each of the three
@@ -292,7 +294,7 @@ public class MainActivity extends ActionBarActivity implements
 				fragment.setStatusText("stopped");
 				fragment.setPlayIcon();
 				seekHandler.removeCallbacks(run);
-				
+
 				break;
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
@@ -301,7 +303,7 @@ public class MainActivity extends ActionBarActivity implements
 				fragment.setStatusText("completed");
 				fragment.setPlayIcon();
 				seekHandler.removeCallbacks(run);
-				
+
 				break;
 			}
 		}
@@ -413,10 +415,10 @@ public class MainActivity extends ActionBarActivity implements
 			try {
 				audioPlayer.setDataSource(URL);
 			} catch (AudioPlayerException e) {
-				
+
 				e.printStackTrace();
 			}
-			
+
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
 
@@ -428,11 +430,11 @@ public class MainActivity extends ActionBarActivity implements
 			if (fragment != null) {
 				fragment.setProgramNameText(podcastName);
 			}
-			
+
 			// TODO Info screen may be in focus, should show live radio screen
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			
+
 			audioPlayer.start();
 
 		}
@@ -588,8 +590,6 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
-
-
 	private class SeekBarListener implements OnSeekBarChangeListener {
 
 		@Override
@@ -598,9 +598,10 @@ public class MainActivity extends ActionBarActivity implements
 			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
 					.getService();
 			State currentState = audioservice.getState();
-			if (fromUser && currentState == State.STARTED || currentState == State.PAUSED) {
+			if (fromUser && currentState == State.STARTED
+					|| currentState == State.PAUSED) {
 				System.out.println(progress + " " + seekBar.getMax());
-				
+
 				audioservice.seekTo(progress);
 			}
 		}
@@ -651,8 +652,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	private class SeekBarImpl implements SeekBarInterface {
 
-		
-		public SeekBarImpl(){
+		public SeekBarImpl() {
 			run = new Runnable() {
 
 				@Override
@@ -664,8 +664,7 @@ public class MainActivity extends ActionBarActivity implements
 			};
 
 		}
-		
-		
+
 		@Override
 		public void updateSeekBar() {
 			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
@@ -674,17 +673,14 @@ public class MainActivity extends ActionBarActivity implements
 			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
 					.getService();
 
-			
 			int progress = audioservice.getProgress();
 			int max = audioservice.getDuration();
 			System.out.println(progress + "/" + max);
 			liveFrag.setSeekBarProgress(progress);
 			seekHandler.postDelayed(run, 1000);
-			
+
 		}
 
-		
-		
 	}
 
 }
