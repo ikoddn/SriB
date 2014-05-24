@@ -394,13 +394,15 @@ public class LiveRadioFragment extends Fragment {
 			Bitmap bit = thumb.getBitmap();
 			View textFieldLayout = rootView
 					.findViewById(R.id.relativelayout_liveradio_textfields);
-			Bitmap scaled = Bitmap.createScaledBitmap(bit, 25,
+			final float seekbarWidthFactor = 0.023f;
+			int seekbarWidth = (int) (seekbarWidthFactor * width);
+			Bitmap scaled = Bitmap.createScaledBitmap(bit, seekbarWidth,
 					textFieldLayout.getHeight(), false);
 			BitmapDrawable thumbScaled = new BitmapDrawable(getResources(),
 					scaled);
 			seekbar.setThumb(thumbScaled);
-			final float offsetFactor = 0.046f;
-			seekbar.setThumbOffset((int) (offsetFactor * width));
+			seekbar.setThumbOffset(0);
+			seekbar.setPadding(0, 0, 0, 0);
 		}
 	}
 
