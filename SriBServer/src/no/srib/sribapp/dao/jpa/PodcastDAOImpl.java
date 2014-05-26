@@ -52,17 +52,17 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
     }
 
     @Override
-    public void addElement(Podcast el) throws DAOException {
+    public void add(Podcast el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void updateElement(Podcast el) throws DAOException {
+    public void update(Podcast el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void removeElement(Podcast el) throws DAOException {
+    public void remove(Podcast el) throws DAOException {
         throw new DAOException("Not supported");
     }
 }

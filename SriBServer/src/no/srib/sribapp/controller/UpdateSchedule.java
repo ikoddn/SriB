@@ -25,27 +25,13 @@ public class UpdateSchedule extends HttpServlet {
     @EJB
     private ScheduleDAO scheduleDAO;
 
-    public UpdateSchedule() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
-     */
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
-      
-    }
-
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
     protected void doPost(HttpServletRequest request,
-           
-            HttpServletResponse response) throws ServletException, IOException {
+
+    HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession(false);
         if (ses != null && ses.getAttribute("loggedIn") != null
@@ -62,12 +48,11 @@ public class UpdateSchedule extends HttpServlet {
             String fromTimeString = request.getParameter("fromTime");
             String dayString = request.getParameter("day");
             String programString = request.getParameter("program");
-            System.out.println(fromTimeString + " " + toTimeString + " " + dayString + " " + programString);
-            if (fromTimeString != null
-                    && toTimeString != null && dayString != null
-                    && programString != null) {
-                
-                
+            System.out.println(fromTimeString + " " + toTimeString + " "
+                    + dayString + " " + programString);
+            if (fromTimeString != null && toTimeString != null
+                    && dayString != null && programString != null) {
+
                 day = Integer.parseInt(dayString);
                 try {
                     if (fromTimeString.length() == 5) {
@@ -95,25 +80,24 @@ public class UpdateSchedule extends HttpServlet {
 
                 sch.setProgram(program);
                 if (request.getParameter("add") != null) {
-                  System.out.println("legger til");
-                    
+                    System.out.println("legger til");
+
                     try {
-                        scheduleDAO.addElement(sch);
+                        scheduleDAO.add(sch);
                     } catch (DAOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    
-                    
+
                 } else {
-                    if(idString != null){
+                    if (idString != null) {
                         id = Integer.parseInt(idString);
                         sch.setId(id);
                     }
                     if (request.getParameter("edit") != null) {
 
                         try {
-                            scheduleDAO.updateElement(sch);
+                            scheduleDAO.update(sch);
                         } catch (DAOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -121,14 +105,14 @@ public class UpdateSchedule extends HttpServlet {
 
                     } else if (request.getParameter("delete") != null) {
                         try {
-                            scheduleDAO.removeElement(sch);
+                            scheduleDAO.remove(sch);
                         } catch (DAOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
                 }
-               
+
                 response.sendRedirect("SetSchedule");
 
             } else {

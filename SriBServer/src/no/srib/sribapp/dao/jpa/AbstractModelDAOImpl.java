@@ -47,7 +47,7 @@ abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
     }
 
     @Override
-    public void addElement(T el) throws DAOException {
+    public void add(T el) throws DAOException {
         try {
             em.persist(el);
         } catch (Exception e) {
@@ -57,7 +57,7 @@ abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
     }
 
     @Override
-    public void updateElement(T el) throws DAOException {
+    public void update(T el) throws DAOException {
         try {
             em.merge(el);
         } catch (Exception e) {
@@ -66,7 +66,7 @@ abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
     }
 
     @Override
-    public void removeElement(T el) throws DAOException {
+    public void remove(T el) throws DAOException {
         try {
             em.remove(em.merge(el));
         } catch (Exception e) {

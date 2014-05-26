@@ -74,17 +74,17 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
     }
 
     @Override
-    public void addElement(NewsArticle el) throws DAOException {
+    public void add(NewsArticle el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void updateElement(NewsArticle el) throws DAOException {
+    public void update(NewsArticle el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void removeElement(NewsArticle el) throws DAOException {
+    public void remove(NewsArticle el) throws DAOException {
         throw new DAOException("Not supported");
     }
 }

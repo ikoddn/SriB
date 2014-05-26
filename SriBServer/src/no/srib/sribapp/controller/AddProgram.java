@@ -83,7 +83,7 @@ public class AddProgram extends HttpServlet {
             if (request.getParameter("add") != null) {
 
                 try {
-                    pDAO.addProgramName(pName);
+                    pDAO.add(pName);
                 } catch (DuplicateEntryException e) {
                     ses.setAttribute("errorDuplicate", new Boolean(true));
                     response.sendRedirect("AddProgram");
@@ -107,20 +107,19 @@ public class AddProgram extends HttpServlet {
                 if (request.getParameter("edit") != null) {
 
                     try {
-                        pDAO.addProgramName(pName);
-                    } catch (DAOException e) {
-
-                        e.printStackTrace();
+                        pDAO.add(pName);
                     } catch (DuplicateEntryException e) {
                         ses.setAttribute("errorDuplicate", new Boolean(true));
                         response.sendRedirect("AddProgram");
                         return;
+                    } catch (DAOException e) {
+                        e.printStackTrace();
                     }
 
                 } else if (request.getParameter("delete") != null) {
 
                     try {
-                        pDAO.removeElement(pName);
+                        pDAO.remove(pName);
                     } catch (DAOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

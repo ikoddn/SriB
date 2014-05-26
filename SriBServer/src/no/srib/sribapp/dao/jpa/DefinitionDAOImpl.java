@@ -15,17 +15,17 @@ public class DefinitionDAOImpl extends AbstractModelDAOImpl<Definition>
     }
 
     @Override
-    public void addElement(Definition el) throws DAOException {
+    public void add(Definition el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void updateElement(Definition el) throws DAOException {
+    public void update(Definition el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void removeElement(Definition el) throws DAOException {
+    public void remove(Definition el) throws DAOException {
         throw new DAOException("Not supported");
     }
 }

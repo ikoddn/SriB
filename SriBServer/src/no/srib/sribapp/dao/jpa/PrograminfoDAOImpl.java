@@ -59,17 +59,17 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
     }
 
     @Override
-    public void addElement(Programinfo el) throws DAOException {
+    public void add(Programinfo el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void updateElement(Programinfo el) throws DAOException {
+    public void update(Programinfo el) throws DAOException {
         throw new DAOException("Not supported");
     }
 
     @Override
-    public void removeElement(Programinfo el) throws DAOException {
+    public void remove(Programinfo el) throws DAOException {
         throw new DAOException("Not supported");
     }
 }
