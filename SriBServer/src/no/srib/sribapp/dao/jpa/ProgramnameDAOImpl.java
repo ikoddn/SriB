@@ -62,43 +62,43 @@ public class ProgramnameDAOImpl extends AbstractModelDAOImpl<Programname>
     @Override
     public void addProgramName(Programname programName) throws DAOException,
             DuplicateEntryException {
-       try{
-          
-        em.persist(programName);
-        em.flush();
-       }catch(PersistenceException e){
-           
-           if(e.getCause() instanceof DatabaseException){
-               
-               throw new DuplicateEntryException();
-           }else{
-               throw new DAOException();
-           }
-       }
-   
+        try {
 
-       catch(Exception e){
-           throw new DAOException();
-       }
-        
+            em.persist(programName);
+            em.flush();
+        } catch (PersistenceException e) {
+
+            if (e.getCause() instanceof DatabaseException) {
+
+                throw new DuplicateEntryException();
+            } else {
+                throw new DAOException();
+            }
+        }
+
+        catch (Exception e) {
+            throw new DAOException();
+        }
+
     }
 
     @Override
-    public void updateProgramName(Programname programName) throws DAOException, DuplicateEntryException{
-        try{
-        em.merge(programName);
-        em.flush();
-        }catch(PersistenceException e){
-            if(e.getCause() instanceof DatabaseException){
+    public void updateProgramName(Programname programName) throws DAOException,
+            DuplicateEntryException {
+        try {
+            em.merge(programName);
+            em.flush();
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof DatabaseException) {
                 System.out.println("yololololo");
                 throw new DuplicateEntryException();
-            }else{
+            } else {
                 throw new DAOException();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new DAOException();
         }
-        
+
     }
 
 }

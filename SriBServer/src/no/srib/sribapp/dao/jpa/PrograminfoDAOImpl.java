@@ -47,23 +47,22 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
     @Override
     public List<Programinfo> getProgramInfosWithPodcast(Calendar cal,
             boolean afterDate) throws DAOException {
-       
-        
+
         List<Programinfo> list = null;
-       
+
         String format = "yyyyMMdd";
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         String stringDate = sdf.format(cal.getTime());
         int date = Integer.parseInt(stringDate);
-        
+
         String queryString;
-        
+
         if (afterDate) {
-             queryString = "SELECT DISTINCT I FROM Podcast P, Programinfo I WHERE P.createdate > :date AND P.program=I.program order by I.title, P.createdate desc, P.createtime desc";
+            queryString = "SELECT DISTINCT I FROM Podcast P, Programinfo I WHERE P.createdate > :date AND P.program=I.program order by I.title, P.createdate desc, P.createtime desc";
         } else {
-             queryString = "SELECT DISTINCT I FROM Podcast P, Programinfo I WHERE P.createdate <= :date AND P.program=I.program order by I.title,P.createdate desc, P.createtime desc";
+            queryString = "SELECT DISTINCT I FROM Podcast P, Programinfo I WHERE P.createdate <= :date AND P.program=I.program order by I.title,P.createdate desc, P.createtime desc";
         }
-        
+
         TypedQuery<Programinfo> query = em.createQuery(queryString,
                 Programinfo.class);
         query.setParameter("date", date);
@@ -77,11 +76,25 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
             throw new DAOException(e);
         }
 
-        for(Programinfo  a: list){
+        for (Programinfo a : list) {
             System.out.println(a.getTitle());
         }
-        
+
         return list;
     }
 
+    @Override
+    public void addElement(Programinfo el) throws DAOException {
+        throw new DAOException("Not supported");
+    }
+
+    @Override
+    public void updateElement(Programinfo el) throws DAOException {
+        throw new DAOException("Not supported");
+    }
+
+    @Override
+    public void removeElement(Programinfo el) throws DAOException {
+        throw new DAOException("Not supported");
+    }
 }
