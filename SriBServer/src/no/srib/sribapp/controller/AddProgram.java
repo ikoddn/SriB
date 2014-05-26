@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,11 +25,6 @@ public class AddProgram extends HttpServlet {
 
     @EJB
     private ProgramnameDAO pDAO;
-
-    public AddProgram() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -79,7 +73,6 @@ public class AddProgram extends HttpServlet {
 
             if (name != null && name.length() > 0) {
 
-               
             } else {
                 ses.setAttribute("error", new Boolean(true));
                 response.sendRedirect("/SriBServer/AddProgram");
