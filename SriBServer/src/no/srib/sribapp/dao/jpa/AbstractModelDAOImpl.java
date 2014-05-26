@@ -36,41 +36,32 @@ abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
 
         return list;
     }
-    
+
     @Override
     public void addElement(T el) throws DAOException {
         try {
             em.persist(el);
-        }
-        
-        
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new DAOException(e);
-        } 
-       
-        
+        }
+
     }
-    
+
     @Override
     public void updateElement(T el) throws DAOException {
-       try{
-        
-        em.merge(el);
-        
-       } catch(Exception e){
-           throw new DAOException(e);
-       }
+        try {
+            em.merge(el);
+        } catch (Exception e) {
+            throw new DAOException(e);
+        }
     }
-    
+
     @Override
     public void removeElement(T el) throws DAOException {
-      try{
-      
-          em.remove(em.merge(el));
-          
-      }catch(Exception e){
-          throw new DAOException(e);
-      }
-        
+        try {
+            em.remove(em.merge(el));
+        } catch (Exception e) {
+            throw new DAOException(e);
+        }
     }
 }
