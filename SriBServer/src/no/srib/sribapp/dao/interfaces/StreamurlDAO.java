@@ -1,6 +1,5 @@
 package no.srib.sribapp.dao.interfaces;
 
-import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.model.Streamurl;
 
 /**
@@ -11,7 +10,4 @@ import no.srib.sribapp.model.Streamurl;
  */
 public interface StreamurlDAO extends AbstractModelDAO<Streamurl> {
 
-    Streamurl getById(int id) throws DAOException;
-
-    Streamurl getCurrent() throws DAOException;
 }

@@ -24,6 +24,15 @@ abstract class AbstractModelDAOImpl<T extends AbstractModel> implements
     }
 
     @Override
+    public T getById(final int id) throws DAOException {
+        try {
+            return em.find(TYPECLASS, id);
+        } catch (Exception e) {
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
     public List<T> getList() throws DAOException {
         List<T> list = null;
 

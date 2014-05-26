@@ -18,27 +18,8 @@ import org.eclipse.persistence.exceptions.DatabaseException;
 public class ProgramnameDAOImpl extends AbstractModelDAOImpl<Programname>
         implements ProgramnameDAO {
 
-    protected ProgramnameDAOImpl() {
+    public ProgramnameDAOImpl() {
         super(Programname.class);
-
-    }
-
-    @Override
-    public Programname getById(int id) throws DAOException {
-        Programname progName = null;
-        String queryString = "SELECT P FROM Programname P WHERE P.id=:id";
-        TypedQuery<Programname> query = em.createQuery(queryString,
-                Programname.class);
-        query.setParameter("id", id);
-
-        try {
-            progName = query.getSingleResult();
-        } catch (NoResultException e) {
-            progName = null;
-        } catch (Exception e) {
-            throw new DAOException(e);
-        }
-        return progName;
     }
 
     public List<Programname> getSortedList() throws DAOException {

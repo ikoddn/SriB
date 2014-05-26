@@ -17,13 +17,4 @@ public interface NewsArticleDAO extends AbstractModelDAO<NewsArticle> {
      */
     List<NewsArticle> getRecentArticles(final int number) throws DAOException;
 
-    /**
-     * Returns the article with the given ID.
-     * 
-     * @param id
-     *            - The article ID.
-     * @return The article or {@code null} if no article was found.
-     * @throws DAOException
-     */
-    NewsArticle getById(final int id) throws DAOException;
 }

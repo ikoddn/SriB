@@ -20,15 +20,6 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
     }
 
     @Override
-    public Programinfo getById(final int id) throws DAOException {
-        try {
-            return em.find(Programinfo.class, id);
-        } catch (Exception e) {
-            throw new DAOException(e);
-        }
-    }
-
-    @Override
     public List<Programinfo> getProgramInfosWithPodcast(Calendar cal,
             boolean afterDate) throws DAOException {
 

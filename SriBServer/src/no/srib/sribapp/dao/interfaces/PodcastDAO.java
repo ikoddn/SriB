@@ -23,13 +23,4 @@ public interface PodcastDAO extends AbstractModelDAO<Podcast> {
      */
     List<Podcast> getPodcasts(final int programID) throws DAOException;
 
-    /**
-     * Get single {@link Podcast} by refnr.
-     * 
-     * @param refnr
-     *            - Id to Podcast
-     * @return Podcast with matching refnr
-     * @throws DAOException
-     */
-    Podcast getPodcastByRefnr(final int refnr) throws DAOException;
 }

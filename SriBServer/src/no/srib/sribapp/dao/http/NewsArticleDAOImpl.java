@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.http.helper.NewsArticles;
 import no.srib.sribapp.dao.interfaces.NewsArticleDAO;
 import no.srib.sribapp.model.NewsArticle;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Stateless
 public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
@@ -75,19 +75,16 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
 
     @Override
     public void addElement(NewsArticle el) throws DAOException {
-        // TODO Auto-generated method stub
-        
+        throw new DAOException("Not supported");
     }
 
     @Override
     public void updateElement(NewsArticle el) throws DAOException {
-        // TODO Auto-generated method stub
-        
+        throw new DAOException("Not supported");
     }
 
     @Override
     public void removeElement(NewsArticle el) throws DAOException {
-        // TODO Auto-generated method stub
-        
+        throw new DAOException("Not supported");
     }
 }

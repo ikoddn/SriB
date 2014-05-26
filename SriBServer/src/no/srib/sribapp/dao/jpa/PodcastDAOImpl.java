@@ -52,11 +52,6 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
     }
 
     @Override
-    public Podcast getPodcastByRefnr(int refnr) throws DAOException {
-        throw new DAOException("Not implemented yet");
-    }
-
-    @Override
     public void addElement(Podcast el) throws DAOException {
         throw new DAOException("Not supported");
     }

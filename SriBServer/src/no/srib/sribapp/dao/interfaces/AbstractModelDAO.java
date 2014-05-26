@@ -15,6 +15,15 @@ import no.srib.sribapp.model.AbstractModel;
 public interface AbstractModelDAO<T extends AbstractModel> {
 
     /**
+     * Gets the element with the given ID.
+     * 
+     * @param id
+     * @return
+     * @throws DAOException
+     */
+    T getById(final int id) throws DAOException;
+
+    /**
      * Get a list of all the entities in the model of the given type.
      * 
      * @return A list of entities.

@@ -9,16 +9,6 @@ import no.srib.sribapp.model.Programname;
 public interface ProgramnameDAO extends AbstractModelDAO<Programname> {
 
     /**
-     * Return element by id.
-     * 
-     * @param id
-     *            - The id for the element.
-     * @return The element.
-     * @throws DAOException
-     */
-    Programname getById(int id) throws DAOException;
-
-    /**
      * Get a sorted list of all programnames.
      * 
      * @return Sorted list of all programnames.

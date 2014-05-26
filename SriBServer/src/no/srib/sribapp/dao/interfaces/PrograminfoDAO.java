@@ -15,16 +15,6 @@ import no.srib.sribapp.model.Programinfo;
 public interface PrograminfoDAO extends AbstractModelDAO<Programinfo> {
 
     /**
-     * Returns a Program with the given ID, or {@code null} if the Program
-     * doesn't exist.
-     * 
-     * @param id
-     * @return
-     * @throws DAOException
-     */
-    Programinfo getById(final int id) throws DAOException;
-
-    /**
      * Returns a List with {@link Programinfo} with minimum one podcast in
      * database and is created after or before the given Calendar object.
      * 
