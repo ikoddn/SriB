@@ -169,7 +169,7 @@ public class LiveRadioFragment extends Fragment {
 		timeTextView.setTypeface(font);
 
 		// TODO Remove when time functionality works
-		timeTextView.setText("2:23:57");
+		timeTextView.setText("00:00");
 
 		playButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_play);

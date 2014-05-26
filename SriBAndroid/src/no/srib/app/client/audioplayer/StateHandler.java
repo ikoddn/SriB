@@ -11,7 +11,7 @@ import no.srib.app.client.audioplayer.AudioPlayer.StateListener;
  * 
  */
 public class StateHandler {
-
+	
 	private State state;
 	private StateListener stateListener;
 

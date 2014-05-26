@@ -63,6 +63,13 @@ public interface AudioPlayer {
 		PAUSED,
 		COMPLETED
 	}
+	
+	/**
+	 * The drifferent modes for the audio player.
+	 * @author Richard
+	 *
+	 */
+	
 
 	/**
 	 * The audio player's state listener.

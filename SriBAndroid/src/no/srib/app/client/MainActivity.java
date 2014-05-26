@@ -2,6 +2,7 @@ package no.srib.app.client;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.GridArrayAdapter;
@@ -85,9 +86,9 @@ public class MainActivity extends FragmentActivity implements
 
 	private GridArrayAdapter gridViewAdapter = null;
 	private SpinnerAdapter spinnerListAdapter = null;
-
-	Handler seekHandler = new Handler();
-	Runnable run;
+	private Handler seekHandler = new Handler();
+	private Runnable run;
+	private int updateTimeTextIntervall = 1000;
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
@@ -608,13 +609,18 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onStartTrackingTouch(SeekBar seekBar) {
-			// TODO Auto-generated method stub
+			seekHandler.removeCallbacks(run);
+			updateTimeTextIntervall = 10;
+			seekHandler.postDelayed(run, updateTimeTextIntervall);
+			
 
 		}
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
-			// TODO Auto-generated method stub
+			seekHandler.removeCallbacks(run);
+			updateTimeTextIntervall = 1000;
+			seekHandler.postDelayed(run, updateTimeTextIntervall);
 
 		}
 
@@ -675,10 +681,28 @@ public class MainActivity extends FragmentActivity implements
 
 			int progress = audioservice.getProgress();
 			int max = audioservice.getDuration();
+			String time = fromMsToTime(progress);
+			liveFrag.setTimeText(time);
 			System.out.println(progress + "/" + max);
 			liveFrag.setSeekBarProgress(progress);
-			seekHandler.postDelayed(run, 1000);
+			seekHandler.postDelayed(run, updateTimeTextIntervall);
+			
+		}
+		
+		
+		private String fromMsToTime(int ms){
+			String time = "";
+			long hours = TimeUnit.MILLISECONDS.toHours(ms);
+			long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) - TimeUnit.HOURS.toMinutes(hours);
+			long seconds = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(minutes);
+			
+			if(hours == 0){
+				time = String.format("%02d:%02d", minutes,seconds);
+			}else{
+				time = String.format("%02d:%02d:%02d", hours,minutes,seconds);
+			}
 
+			return time;
 		}
 
 	}
