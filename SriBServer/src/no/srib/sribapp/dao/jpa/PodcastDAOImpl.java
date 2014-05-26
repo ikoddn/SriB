@@ -4,10 +4,18 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.PodcastDAO;
 import no.srib.sribapp.model.Podcast;
+
+import org.eclipse.persistence.config.HintValues;
+import org.eclipse.persistence.config.QueryHints;
 
 @Stateless
 public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
@@ -20,14 +28,22 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
     @Override
     public List<Podcast> getPodcasts(final int programID) throws DAOException {
         List<Podcast> result = null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
 
-      //  String queryString = "SELECT P FROM Podcast P WHERE P.program=:id AND P.softdel=0 ORDER BY P.createdate DESC";
-        //TypedQuery<Podcast> query = em.createQuery(queryString, Podcast.class);
-        TypedQuery<Podcast> q = em.createNamedQuery("melk", Podcast.class);
-        q.setParameter("id", programID);
-        //query.setHint("eclipselink.read-only", "true");
+        CriteriaQuery<Podcast> criteria = cb.createQuery(Podcast.class);
+        Root<Podcast> podcast = criteria.from(Podcast.class);
+        Predicate p1 = cb.equal(podcast.get("program"), programID);
+        Predicate p2 = cb.equal(podcast.get("softdel"), 0);
+        criteria.where(p1, p2);
+        Order o1 = cb.desc(podcast.get("createdate"));
+        Order o2 = cb.desc(podcast.get("createtime"));
+        criteria.orderBy(o1, o2);
+
+        TypedQuery<Podcast> query = em.createQuery(criteria);
+        query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
+
         try {
-            result = q.getResultList();
+            result = query.getResultList();
         } catch (Exception e) {
             throw new DAOException(e);
         }
@@ -37,6 +53,21 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
 
     @Override
     public Podcast getPodcastByRefnr(int refnr) throws DAOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new DAOException("Not implemented yet");
+    }
+
+    @Override
+    public void addElement(Podcast el) throws DAOException {
+        throw new DAOException("Not supported");
+    }
+
+    @Override
+    public void updateElement(Podcast el) throws DAOException {
+        throw new DAOException("Not supported");
+    }
+
+    @Override
+    public void removeElement(Podcast el) throws DAOException {
+        throw new DAOException("Not supported");
     }
 }

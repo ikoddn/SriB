@@ -13,7 +13,6 @@ public interface BackendUserDAO extends AbstractModelDAO<Backenduser> {
      * @return
      * 
      */
-
     Backenduser getByUserName(final String username) throws DAOException;
 
 }

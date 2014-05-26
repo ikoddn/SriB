@@ -49,8 +49,8 @@ public class PodcastResource {
         Map<Integer, String> programName = new HashMap<Integer, String>();
         List<Definition> defList = null;
         List<Programinfo> programInfoList = null;
-        Map<Integer,String> programPictureUrl = new HashMap<Integer, String>();
-        
+        Map<Integer, String> programPictureUrl = new HashMap<Integer, String>();
+
         try {
             list = podcastDAO.getList();
             defList = defDAO.getList();
@@ -61,16 +61,17 @@ public class PodcastResource {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if (defList == null || list == null || programInfoList == null || list.isEmpty()
-                || defList.isEmpty() || programInfoList.isEmpty()) {
+        if (defList == null || list == null || programInfoList == null
+                || list.isEmpty() || defList.isEmpty()
+                || programInfoList.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
 
         for (Definition def : defList) {
             programName.put(def.getDefnr(), def.getName());
         }
-        
-        for(Programinfo pi : programInfoList){
+
+        for (Programinfo pi : programInfoList) {
             programPictureUrl.put(pi.getProgram(), pi.getImglink());
         }
 
@@ -89,7 +90,7 @@ public class PodcastResource {
             podcastList.add(podBean);
         }
         podcastList = podcastList.subList(0, 16);
-        
+
         return podcastList;
     }
 
@@ -100,29 +101,28 @@ public class PodcastResource {
         List<Podcast> list = null;
         List<PodcastBean> podList = new ArrayList<PodcastBean>();
         Map<Integer, String> programName = new HashMap<Integer, String>();
-    
+
         List<Programinfo> programInfoList = null;
-        Map<Integer,String> programPictureUrl = new HashMap<Integer, String>();
+        Map<Integer, String> programPictureUrl = new HashMap<Integer, String>();
 
         try {
             list = podcastDAO.getPodcasts(id);
-           
+
             programInfoList = programInfoDAO.getList();
         } catch (DAOException e) {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        if ( list == null || programInfoList == null || list.isEmpty()
-              || programInfoList.isEmpty()) {
+        if (list == null || programInfoList == null || list.isEmpty()
+                || programInfoList.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
 
-        
-        for(Programinfo pi : programInfoList){
+        for (Programinfo pi : programInfoList) {
             programPictureUrl.put(pi.getProgram(), pi.getImglink());
             programName.put(pi.getProgram(), pi.getTitle());
         }
-        
+
         for (Podcast pod : list) {
             PodcastBean podBean = new PodcastBean();
             podBean.setCreatedate(pod.getCreatedate());
@@ -139,8 +139,6 @@ public class PodcastResource {
 
         }
 
-       
-        
         return podList;
 
     }
@@ -152,32 +150,33 @@ public class PodcastResource {
         List<Definition> defList = new ArrayList<Definition>();
         List<Programinfo> programInfoListNew = null;
         List<Programinfo> programInfoListOld = null;
-        
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -6);
         try {
-            programInfoListNew = programInfoDAO.getProgramInfosWithPodcast(cal,true);
-            programInfoListOld = programInfoDAO.getProgramInfosWithPodcast(cal, false);
-            
+            programInfoListNew = programInfoDAO.getProgramInfosWithPodcast(cal,
+                    true);
+            programInfoListOld = programInfoDAO.getProgramInfosWithPodcast(cal,
+                    false);
+
         } catch (DAOException e) {
-            
+
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
 
-        
         programInfoListNew.addAll(programInfoListOld);
-        System.out.println("Størrelse: " +  programInfoListNew.size());
-        if ( programInfoListNew == null || programInfoListNew.isEmpty()) {
+        System.out.println("Størrelse: " + programInfoListNew.size());
+        if (programInfoListNew == null || programInfoListNew.isEmpty()) {
             System.out.println("NO CONTENT");
             throw new WebApplicationException(Status.NO_CONTENT);
         }
-        
-        for(Programinfo prog : programInfoListNew){
+
+        for (Programinfo prog : programInfoListNew) {
             Definition def = new Definition();
             def.setDefnr(prog.getProgram());
             def.setName(prog.getTitle());
             defList.add(def);
-            
+
         }
 
         return defList;

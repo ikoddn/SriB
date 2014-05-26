@@ -23,16 +23,17 @@ public interface PrograminfoDAO extends AbstractModelDAO<Programinfo> {
      * @throws DAOException
      */
     Programinfo getById(final int id) throws DAOException;
-    
-   /**
-    *  Returns a List with {@link Programinfo} with minimum one podcast in database and is created after or before the given Calendar object. 
-    * @param cal
-    * @param beforeDate 
-    * @return
-    * @throws DAOException
-    */
-    
-    List<Programinfo> getProgramInfosWithPodcast(Calendar cal, boolean afterDate) throws DAOException;
-    
-  
+
+    /**
+     * Returns a List with {@link Programinfo} with minimum one podcast in
+     * database and is created after or before the given Calendar object.
+     * 
+     * @param cal
+     * @param beforeDate
+     * @return
+     * @throws DAOException
+     */
+    List<Programinfo> getProgramInfosWithPodcast(Calendar cal, boolean afterDate)
+            throws DAOException;
+
 }
