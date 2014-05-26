@@ -7,6 +7,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
@@ -23,10 +27,16 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
     @Override
     public List<Schedule> getSortedSchedule() throws DAOException {
         List<Schedule> result = null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        String queryString = "SELECT S FROM Schedule S ORDER BY S.day, S.fromtime, S.totime";
-        TypedQuery<Schedule> query = em
-                .createQuery(queryString, Schedule.class);
+        CriteriaQuery<Schedule> criteria = cb.createQuery(Schedule.class);
+        Root<Schedule> schedule = criteria.from(Schedule.class);
+        Order o1 = cb.asc(schedule.get("day"));
+        Order o2 = cb.asc(schedule.get("fromtime"));
+        Order o3 = cb.asc(schedule.get("totime"));
+        criteria.orderBy(o1, o2, o3);
+
+        TypedQuery<Schedule> query = em.createQuery(criteria);
 
         try {
             result = query.getResultList();
@@ -39,7 +49,7 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
 
     @Override
     public Schedule getScheduleForTime(final Calendar time) throws DAOException {
-        Schedule result = null;
+        Schedule result;
         List<Schedule> list = null;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
