@@ -10,37 +10,43 @@ public interface ProgramnameDAO extends AbstractModelDAO<Programname> {
 
     /**
      * Return element by id.
-     * @param id - The id for the element.
+     * 
+     * @param id
+     *            - The id for the element.
      * @return The element.
      * @throws DAOException
      */
-    
     Programname getById(int id) throws DAOException;
-    
+
     /**
      * Get a sorted list of all programnames.
+     * 
      * @return Sorted list of all programnames.
      * @throws DAOException
      */
-    
-    
-    public List<Programname> getSortedList() throws DAOException; 
-    
+    List<Programname> getSortedList() throws DAOException;
+
     /**
-     * Add a {@link Programname}} to the database.
-     * @param programName - The {@link Programname} object.
+     * Add a {@link Programname} to the database.
+     * 
+     * @param programName
+     *            - The {@link Programname} object.
      * @throws DAOException
-     * @throws DuplicateEntryException When trying to add element that is already in database.
+     * @throws DuplicateEntryException
+     *             When trying to add element that is already in database.
      */
-   
-    public void addProgramName(Programname programName) throws DAOException, DuplicateEntryException;
-    
+    void addProgramName(Programname programName) throws DAOException,
+            DuplicateEntryException;
+
     /**
      * Update {@link Programname} in database.
-     * @param programName 
+     * 
+     * @param programName
      * @throws DAOException
-     * @throws DuplicateEntryException When trying to update element to something that exist in database.
+     * @throws DuplicateEntryException
+     *             When trying to update element to something that exist in
+     *             database.
      */
-    
-    public void updateProgramName(Programname programName) throws DAOException, DuplicateEntryException;
+    void updateProgramName(Programname programName) throws DAOException,
+            DuplicateEntryException;
 }

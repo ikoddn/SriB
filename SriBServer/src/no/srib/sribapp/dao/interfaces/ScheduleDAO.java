@@ -32,6 +32,5 @@ public interface ScheduleDAO extends AbstractModelDAO<Schedule> {
      * @throws DAOException
      */
     Schedule getScheduleForTime(final Calendar time) throws DAOException;
-    
-  
+
 }

@@ -21,29 +21,13 @@ public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>
 
     @Override
     public Programinfo getById(final int id) throws DAOException {
-        Programinfo result = null;
-
-        String queryString = "SELECT P FROM PROGRAMINFO P WHERE P.PROGRAM=:id";
-        TypedQuery<Programinfo> query = em.createQuery(queryString,
-                Programinfo.class);
-        query.setParameter("id", id);
-
         try {
-            result = query.getSingleResult();
+            return em.find(Programinfo.class, id);
         } catch (Exception e) {
             throw new DAOException(e);
         }
-
-        return result;
     }
 
-    // SELECT DISTINCT A FROM Podcast P, Programinfo A WHERE A.program=P.program
-    // ORDER BY A.title
-    // SELECT P FROM (SELECT DISTINCT I.title FROM digas.PODCAST C, "
-    // +
-    // "digas.PROGRAMINFO I WHERE CREATEDATE > 20130520 AND C.PROGRAM=I.program "
-    // +
-    // "order by I.TITLE) P UNION SELECT A FROM (SELECT DISTINCT I.title FROM digas.PODCAST C, digas.PROGRAMINFO I WHERE CREATEDATE < 20130520  AND C.PROGRAM=I.program order by I.TITLE) A"
     @Override
     public List<Programinfo> getProgramInfosWithPodcast(Calendar cal,
             boolean afterDate) throws DAOException {

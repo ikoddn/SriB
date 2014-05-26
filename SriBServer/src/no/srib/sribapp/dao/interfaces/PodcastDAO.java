@@ -31,6 +31,5 @@ public interface PodcastDAO extends AbstractModelDAO<Podcast> {
      * @return Podcast with matching refnr
      * @throws DAOException
      */
-
     Podcast getPodcastByRefnr(final int refnr) throws DAOException;
 }
