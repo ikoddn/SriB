@@ -14,21 +14,23 @@ import no.srib.sribapp.model.Podcast;
 public interface PodcastDAO extends AbstractModelDAO<Podcast> {
 
     /**
-     * Returns a list of {@link Podcast} from the given Program ID, or {@code null} if
-     * no Podcasts are found.
+     * Returns a list of {@link Podcast} from the given Program ID, or
+     * {@code null} if no Podcasts are found.
      * 
      * @param programID
      * @return
      * @throws DAOException
      */
     List<Podcast> getPodcasts(final int programID) throws DAOException;
-    
+
     /**
      * Get single {@link Podcast} by refnr.
-     * @param refnr - Id to Podcast
+     * 
+     * @param refnr
+     *            - Id to Podcast
      * @return Podcast with matching refnr
      * @throws DAOException
      */
-    
+
     Podcast getPodcastByRefnr(final int refnr) throws DAOException;
 }

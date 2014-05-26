@@ -37,10 +37,6 @@ public class PodcastDAOImpl extends AbstractModelDAOImpl<Podcast> implements
 
     @Override
     public Podcast getPodcastByRefnr(int refnr) throws DAOException {
-        
-       
-        return new Podcast();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
-
-    
 }
