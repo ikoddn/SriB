@@ -8,6 +8,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.StreamUrlScheduleDAO;
@@ -22,22 +26,26 @@ public class StreamurlscheduleDAOImpl extends
     }
 
     @Override
-    public List<Streamurlschedule> getbyDay(int day) throws DAOException {
-        List<Streamurlschedule> streamurlschedule = null;
+    public List<Streamurlschedule> getbyDay(final int day) throws DAOException {
+        List<Streamurlschedule> result = null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        String queryString = "SELECT S FROM streamurlschedule S WHERE S.day=:day";
+        CriteriaQuery<Streamurlschedule> criteria = cb
+                .createQuery(Streamurlschedule.class);
+        Root<Streamurlschedule> streamurlschedule = criteria
+                .from(Streamurlschedule.class);
+        Predicate p = cb.equal(streamurlschedule.get("day"), day);
+        criteria.where(p);
 
-        TypedQuery<Streamurlschedule> query = em.createQuery(queryString,
-                Streamurlschedule.class);
-        query.setParameter("day", day);
+        TypedQuery<Streamurlschedule> query = em.createQuery(criteria);
 
         try {
-            streamurlschedule = query.getResultList();
+            result = query.getResultList();
         } catch (Exception e) {
             throw new DAOException(e);
         }
 
-        return streamurlschedule;
+        return result;
     }
 
     @Override
