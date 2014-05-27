@@ -106,6 +106,11 @@ public class LiveRadioFragment extends Fragment {
 		}
 
 	}
+	
+	public CharSequence getProgramNameText(){
+		
+		return programNameTextView.getText();
+	}
 
 	public void setStatusText(CharSequence text) {
 		if (statusTextView != null) {

@@ -35,10 +35,14 @@ import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
+import no.srib.app.client.util.AsyncTaskCompleted;
+import no.srib.app.client.util.AsyncTaskCompleted.AsyncTaskFinished;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -89,6 +93,7 @@ public class MainActivity extends FragmentActivity implements
 	private Handler seekHandler = new Handler();
 	private Runnable run;
 	private int updateTimeTextIntervall = 1000;
+	private AsyncTaskCompleted asyncTaskCompleted;
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
@@ -99,7 +104,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		asyncTaskCompleted = new AsyncTaskCompleted(new FragmentsReady(), 4);
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
@@ -157,6 +163,8 @@ public class MainActivity extends FragmentActivity implements
 				R.string.currentProgram);
 
 		programName.execute(programNameURL);
+		
+	
 
 	}
 
@@ -442,7 +450,7 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	public class GetProgramNames implements HttpResponseListener {
+	private class GetProgramNames implements HttpResponseListener {
 
 		@Override
 		public void onResponse(String response) {
@@ -459,15 +467,13 @@ public class MainActivity extends FragmentActivity implements
 					spinnerListAdapter.setList(list);
 					spinnerListAdapter.notifyDataSetChanged();
 				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				asyncTaskCompleted.increaseCount();
 			}
 
 		}
@@ -495,15 +501,13 @@ public class MainActivity extends FragmentActivity implements
 						fragment.setProgramNameText(schedule.getProgram());
 					}
 				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				asyncTaskCompleted.increaseCount();
 			}
 		}
 	}
@@ -522,16 +526,13 @@ public class MainActivity extends FragmentActivity implements
 					gridViewAdapter.setList(podcastList);
 					gridViewAdapter.notifyDataSetChanged();
 				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				asyncTaskCompleted.increaseCount();
 			}
 
 		}
@@ -550,16 +551,16 @@ public class MainActivity extends FragmentActivity implements
 					articleListAdapter.setList(list);
 					articleListAdapter.notifyDataSetChanged();
 				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			
+				asyncTaskCompleted.increaseCount();
 			}
+			
 		}
 	}
 
@@ -706,5 +707,34 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 	}
+	
+	private class FragmentsReady implements AsyncTaskFinished{
+
+		@Override
+		public void onFinished() {
+			
+			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			fragment.startedUp();
+			
+			/*String text = liveFrag.getProgramNameText().toString();
+			liveFrag.setProgramNameText(text + " * ");
+			
+			//Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+			 // Vibrate for 500 milliseconds
+			 //v.vibrate(500);
+			  * 
+			  * 
+			  */
+			
+			
+			
+		}
+		
+		
+		
+	}
+	
+	
+	
 
 }

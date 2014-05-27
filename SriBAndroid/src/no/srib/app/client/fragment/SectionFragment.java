@@ -30,6 +30,15 @@ public abstract class SectionFragment extends Fragment {
 
 		return false;
 	}
+	
+	public void replaceFragment(Fragment frag){
+		FragmentManager manager = getChildFragmentManager();
+
+		FragmentTransaction transaction = manager.beginTransaction();
+		transaction.replace(getFrameLayoutID(), frag);
+		transaction.commit();
+		
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

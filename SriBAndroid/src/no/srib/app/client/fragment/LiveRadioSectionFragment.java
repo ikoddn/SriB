@@ -14,9 +14,13 @@ import android.widget.TextView;
 public class LiveRadioSectionFragment extends SectionFragment {
 
 	private LiveRadioFragment liveRadioFragment;
+	private LoadingFragment loadingFragment;
+	private boolean firstStartUp;
 
 	public LiveRadioSectionFragment() {
 		liveRadioFragment = null;
+		loadingFragment = null;
+		firstStartUp = true;
 	}
 
 	@Override
@@ -37,6 +41,10 @@ public class LiveRadioSectionFragment extends SectionFragment {
 					.newInstance(new InfoClickedListener());
 		}
 
+		if (loadingFragment == null) {
+			loadingFragment = new LoadingFragment();
+		}
+
 		return rootView;
 	}
 
@@ -47,7 +55,17 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 	@Override
 	public Fragment getBaseFragment() {
-		return liveRadioFragment;
+	//	if (firstStartUp) {
+		//	return loadingFragment;
+	//	} else {
+
+			return liveRadioFragment;
+		//}
+	}
+	
+	public void startedUp(){
+		firstStartUp = false;
+		replaceFragment(liveRadioFragment);
 	}
 
 	@Override

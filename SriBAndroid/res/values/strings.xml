@@ -19,5 +19,8 @@
     
     <!-- Podcast fragment -->
     <string name="imageview_podcastitem_desc">Podcast art</string>
+    
+    <!-- Loading fragment -->
+    <string name="imageview_startupscreen">Startup Screen</string>
 
 </resources>
