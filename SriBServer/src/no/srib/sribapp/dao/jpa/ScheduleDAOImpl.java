@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
@@ -51,17 +52,22 @@ public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements
     public Schedule getScheduleForTime(final Calendar time) throws DAOException {
         Schedule result;
         List<Schedule> list = null;
-
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
         int day = time.get(Calendar.DAY_OF_WEEK);
         String timeString = dateFormat.format(time.getTime());
         Time timeNow = Time.valueOf(timeString);
 
-        String queryString = "SELECT S FROM Schedule S WHERE S.day=:day AND S.fromtime<=:timeNow AND S.totime>=:timeNow";
-        TypedQuery<Schedule> query = em
-                .createQuery(queryString, Schedule.class);
-        query.setParameter("day", day);
-        query.setParameter("timeNow", timeNow);
+        CriteriaQuery<Schedule> criteria = cb.createQuery(Schedule.class);
+        Root<Schedule> schedule = criteria.from(Schedule.class);
+        Predicate p1 = cb.equal(schedule.get("day"), day);
+        Predicate p2 = cb.lessThanOrEqualTo(schedule.<Time> get("fromtime"),
+                timeNow);
+        Predicate p3 = cb.greaterThan(schedule.<Time> get("totime"), timeNow);
+        criteria.where(p1, p2, p3);
+
+        TypedQuery<Schedule> query = em.createQuery(criteria);
 
         try {
             list = query.getResultList();
