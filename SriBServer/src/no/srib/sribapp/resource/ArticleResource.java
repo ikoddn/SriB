@@ -19,7 +19,7 @@ import no.srib.sribapp.model.json.Article;
 @Path("news")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 @ManagedBean
-public class NewsArticleResource {
+public class ArticleResource {
 
     private static final int DEFAULT_NUMBER_OF_ARTICLES = 10;
 

@@ -30,6 +30,8 @@ import no.srib.sribapp.resource.helper.PodcastBean;
 @ManagedBean
 public class PodcastResource {
 
+    private static final int DEFAULT_NUMBER_OF_PODCASTS = 16;
+
     @EJB
     private PodcastDAO podcastDAO;
     @EJB
@@ -89,7 +91,10 @@ public class PodcastResource {
             podBean.setImageUrl(programPictureUrl.get(pod.getProgram()));
             podcastList.add(podBean);
         }
-        podcastList = podcastList.subList(0, 16);
+
+        if (podcastList.size() > DEFAULT_NUMBER_OF_PODCASTS) {
+            podcastList = podcastList.subList(0, DEFAULT_NUMBER_OF_PODCASTS);
+        }
 
         return podcastList;
     }
