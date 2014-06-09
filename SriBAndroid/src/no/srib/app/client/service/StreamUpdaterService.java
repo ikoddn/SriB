@@ -126,7 +126,7 @@ public class StreamUpdaterService extends BaseService {
 			HttpResponseListener {
 
 		@Override
-		public void onResponse(String response) {
+		public void onResponse(int statusCode, String response) {
 			updating.set(false);
 
 			if (response == null) {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpStatus;
+
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.GridArrayAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
@@ -57,6 +59,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -455,7 +458,7 @@ public class MainActivity extends FragmentActivity implements
 	private class GetProgramNames implements HttpResponseListener {
 
 		@Override
-		public void onResponse(String response) {
+		public void onResponse(int statusCode, String response) {
 
 			List<ProgramName> list = null;
 
@@ -485,7 +488,7 @@ public class MainActivity extends FragmentActivity implements
 	private class GetCurrentProgramName implements HttpResponseListener {
 
 		@Override
-		public void onResponse(String response) {
+		public void onResponse(int statusCode, String response) {
 			Schedule schedule = null;
 
 			if (response != null) {
@@ -517,7 +520,7 @@ public class MainActivity extends FragmentActivity implements
 	private class GetAllPodcast implements HttpResponseListener {
 
 		@Override
-		public void onResponse(String response) {
+		public void onResponse(int statusCode, String response) {
 			List<Podcast> podcastList = null;
 
 			if (response != null) {
@@ -544,8 +547,9 @@ public class MainActivity extends FragmentActivity implements
 	private class ArticleHttpResponseListener implements HttpResponseListener {
 
 		@Override
-		public void onResponse(String response) {
-			if (response != null) {
+		public void onResponse(final int statusCode, String response) {
+			switch (statusCode) {
+			case HttpStatus.SC_OK:
 				try {
 					List<NewsArticle> list = MAPPER.readValue(response,
 							new TypeReference<List<NewsArticle>>() {
@@ -561,8 +565,14 @@ public class MainActivity extends FragmentActivity implements
 				}
 			
 				asyncTaskCompleted.increaseCount();
+				
+				break;
+			case HttpStatus.SC_NO_CONTENT:
+				Toast.makeText(MainActivity.this, R.string.toast_noContent, Toast.LENGTH_SHORT).show();
+				break;
+			default:
+				break;
 			}
-			
 		}
 	}
 

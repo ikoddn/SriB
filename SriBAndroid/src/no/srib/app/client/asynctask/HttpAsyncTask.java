@@ -14,10 +14,12 @@ import android.util.Log;
 
 public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
+	private int statusCode;
 	private HttpClient httpClient;
 	private HttpResponseListener responseListener;
 
 	public HttpAsyncTask(HttpResponseListener responseListener) {
+		statusCode = -1;
 		httpClient = new DefaultHttpClient();
 		this.responseListener = responseListener;
 	}
@@ -29,7 +31,7 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 		HttpGet httpGet = new HttpGet(url[0]);
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			statusCode = httpResponse.getStatusLine().getStatusCode();
 
 			if (statusCode == HttpStatus.SC_OK) {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -48,10 +50,10 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
 	@Override
 	protected void onPostExecute(String result) {
-		responseListener.onResponse(result);
+		responseListener.onResponse(statusCode, result);
 	}
 
 	public interface HttpResponseListener {
-		void onResponse(String response);
+		void onResponse(int statusCode, String response);
 	}
 }
