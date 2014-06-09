@@ -21,21 +21,21 @@ import no.srib.sribapp.model.json.Article;
 @ManagedBean
 public class ArticleResource {
 
-    private static final int DEFAULT_NUMBER_OF_ARTICLES = 10;
+    private static final int DEFAULT_ARTICLE_COUNT = 10;
 
     @EJB
     private ArticleDAO articleDAO;
 
     @GET
-    public List<Article> getArticles(@QueryParam("n") final int paramNumber,
+    public List<Article> getArticles(@QueryParam("c") final int paramCount,
             @QueryParam("s") final String searchString) {
 
-        int number;
+        int count;
 
-        if (paramNumber > 0) {
-            number = paramNumber;
-        } else if (paramNumber == 0) {
-            number = DEFAULT_NUMBER_OF_ARTICLES;
+        if (paramCount > 0) {
+            count = paramCount;
+        } else if (paramCount == 0) {
+            count = DEFAULT_ARTICLE_COUNT;
         } else {
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
@@ -44,9 +44,9 @@ public class ArticleResource {
 
         try {
             if (searchString == null || searchString.isEmpty()) {
-                list = articleDAO.getRecentArticles(number);
+                list = articleDAO.getRecentArticles(count);
             } else {
-                list = articleDAO.search(searchString, number);
+                list = articleDAO.search(searchString, count);
             }
         } catch (DAOException e) {
             e.printStackTrace();

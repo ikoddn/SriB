@@ -30,7 +30,7 @@ import no.srib.sribapp.resource.helper.PodcastBean;
 @ManagedBean
 public class PodcastResource {
 
-    private static final int DEFAULT_NUMBER_OF_PODCASTS = 16;
+    private static final int DEFAULT_PODCAST_COUNT = 16;
 
     @EJB
     private PodcastDAO podcastDAO;
@@ -92,8 +92,8 @@ public class PodcastResource {
             podcastList.add(podBean);
         }
 
-        if (podcastList.size() > DEFAULT_NUMBER_OF_PODCASTS) {
-            podcastList = podcastList.subList(0, DEFAULT_NUMBER_OF_PODCASTS);
+        if (podcastList.size() > DEFAULT_PODCAST_COUNT) {
+            podcastList = podcastList.subList(0, DEFAULT_PODCAST_COUNT);
         }
 
         return podcastList;
