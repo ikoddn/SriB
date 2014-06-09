@@ -9,7 +9,7 @@ import javax.persistence.TypedQuery;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.PrograminfoDAO;
-import no.srib.sribapp.model.Programinfo;
+import no.srib.sribapp.model.jpa.Programinfo;
 
 @Stateless
 public class PrograminfoDAOImpl extends AbstractModelDAOImpl<Programinfo>

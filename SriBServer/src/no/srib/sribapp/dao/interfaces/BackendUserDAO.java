@@ -1,7 +1,7 @@
 package no.srib.sribapp.dao.interfaces;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.model.Backenduser;
+import no.srib.sribapp.model.jpa.Backenduser;
 
 public interface BackendUserDAO extends AbstractModelDAO<Backenduser> {
 

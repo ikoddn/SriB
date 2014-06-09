@@ -1,15 +1,17 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.json;
 
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
+
+import no.srib.sribapp.model.AbstractModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlType(name = "") // Remove "@type" from the marshalled JSON
-public class NewsArticle extends AbstractModel {
+public class Article extends AbstractModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,16 +26,16 @@ public class NewsArticle extends AbstractModel {
     @JsonProperty("content_display")
     private String contentDisplay;
 
-    private List<NewsArticleMedia> media;
+    private List<ArticleMedia> media;
 
-    public NewsArticle() {
+    public Article() {
     }
 
-    public List<NewsArticleMedia> getMedia() {
+    public List<ArticleMedia> getMedia() {
         return media;
     }
 
-    public void setMedia(List<NewsArticleMedia> media) {
+    public void setMedia(List<ArticleMedia> media) {
         this.media = media;
     }
 

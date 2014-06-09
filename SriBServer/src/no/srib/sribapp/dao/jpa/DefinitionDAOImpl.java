@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.DefinitionDAO;
-import no.srib.sribapp.model.Definition;
+import no.srib.sribapp.model.jpa.Definition;
 
 @Stateless
 public class DefinitionDAOImpl extends AbstractModelDAOImpl<Definition>

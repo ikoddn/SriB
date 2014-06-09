@@ -1,6 +1,6 @@
 package no.srib.sribapp.dao.interfaces;
 
-import no.srib.sribapp.model.Streamurl;
+import no.srib.sribapp.model.jpa.Streamurl;
 
 /**
  * A Data Access Object for Streamurl entities.

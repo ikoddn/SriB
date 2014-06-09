@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.model.Programinfo;
+import no.srib.sribapp.model.jpa.Programinfo;
 
 /**
  * A Data Access Object for Programinfo entities.

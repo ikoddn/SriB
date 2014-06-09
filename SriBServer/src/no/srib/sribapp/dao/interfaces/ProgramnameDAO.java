@@ -3,7 +3,7 @@ package no.srib.sribapp.dao.interfaces;
 import java.util.List;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.model.Programname;
+import no.srib.sribapp.model.jpa.Programname;
 
 public interface ProgramnameDAO extends AbstractModelDAO<Programname> {
 

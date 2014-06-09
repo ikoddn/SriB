@@ -20,9 +20,9 @@ import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.DefinitionDAO;
 import no.srib.sribapp.dao.interfaces.PodcastDAO;
 import no.srib.sribapp.dao.interfaces.PrograminfoDAO;
-import no.srib.sribapp.model.Definition;
-import no.srib.sribapp.model.Podcast;
-import no.srib.sribapp.model.Programinfo;
+import no.srib.sribapp.model.jpa.Definition;
+import no.srib.sribapp.model.jpa.Podcast;
+import no.srib.sribapp.model.jpa.Programinfo;
 import no.srib.sribapp.resource.helper.PodcastBean;
 
 @Path("podcast")

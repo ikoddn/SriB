@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.model.Streamurlschedule;
+import no.srib.sribapp.model.jpa.Streamurlschedule;
 
 public interface StreamUrlScheduleDAO extends
         AbstractModelDAO<Streamurlschedule> {

@@ -15,8 +15,8 @@ import javax.ws.rs.core.Response.Status;
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.ProgramnameDAO;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
-import no.srib.sribapp.model.Programname;
-import no.srib.sribapp.model.Schedule;
+import no.srib.sribapp.model.jpa.Programname;
+import no.srib.sribapp.model.jpa.Schedule;
 import no.srib.sribapp.resource.helper.ScheduleBean;
 
 @Path("/schedule")

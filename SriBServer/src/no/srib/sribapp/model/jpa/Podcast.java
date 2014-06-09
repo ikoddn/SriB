@@ -1,4 +1,4 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +7,8 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
+
+import no.srib.sribapp.model.AbstractModel;
 
 /**
  * The persistent class for the podcast database table.

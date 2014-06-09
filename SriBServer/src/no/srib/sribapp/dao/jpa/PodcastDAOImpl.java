@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.PodcastDAO;
-import no.srib.sribapp.model.Podcast;
+import no.srib.sribapp.model.jpa.Podcast;
 
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;

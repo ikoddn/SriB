@@ -13,8 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.dao.interfaces.NewsArticleDAO;
-import no.srib.sribapp.model.NewsArticle;
+import no.srib.sribapp.dao.interfaces.ArticleDAO;
+import no.srib.sribapp.model.json.Article;
 
 @Path("news")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -24,10 +24,10 @@ public class NewsArticleResource {
     private static final int DEFAULT_NUMBER_OF_ARTICLES = 10;
 
     @EJB
-    private NewsArticleDAO newsArticleDAO;
+    private ArticleDAO newsArticleDAO;
 
     @GET
-    public List<NewsArticle> getRecentArticles(
+    public List<Article> getRecentArticles(
             @QueryParam("number") final int paramNumber) {
 
         int number;
@@ -40,7 +40,7 @@ public class NewsArticleResource {
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
-        List<NewsArticle> list = null;
+        List<Article> list = null;
 
         try {
             list = newsArticleDAO.getRecentArticles(number);

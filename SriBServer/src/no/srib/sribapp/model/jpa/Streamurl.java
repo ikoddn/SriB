@@ -1,7 +1,9 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.jpa;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlType;
+
+import no.srib.sribapp.model.AbstractModel;
 
 
 /**

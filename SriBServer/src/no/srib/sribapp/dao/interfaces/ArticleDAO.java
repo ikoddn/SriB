@@ -3,9 +3,9 @@ package no.srib.sribapp.dao.interfaces;
 import java.util.List;
 
 import no.srib.sribapp.dao.exception.DAOException;
-import no.srib.sribapp.model.NewsArticle;
+import no.srib.sribapp.model.json.Article;
 
-public interface NewsArticleDAO extends AbstractModelDAO<NewsArticle> {
+public interface ArticleDAO extends AbstractModelDAO<Article> {
 
     /**
      * Returns a list of the most recent {@code number} articles.
@@ -15,7 +15,7 @@ public interface NewsArticleDAO extends AbstractModelDAO<NewsArticle> {
      * @return A list of articles or {@code null} if none was found.
      * @throws DAOException
      */
-    List<NewsArticle> getRecentArticles(final int number) throws DAOException;
+    List<Article> getRecentArticles(final int number) throws DAOException;
 
     /**
      * Returns a list of the most recent {@code number} articles containing the
@@ -28,6 +28,6 @@ public interface NewsArticleDAO extends AbstractModelDAO<NewsArticle> {
      * @return A list of articles or {@code null} if none was found.
      * @throws DAOException
      */
-    List<NewsArticle> findArticles(final String searchString, final int number)
+    List<Article> findArticles(final String searchString, final int number)
             throws DAOException;
 }

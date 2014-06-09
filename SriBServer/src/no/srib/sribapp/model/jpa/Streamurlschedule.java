@@ -1,6 +1,9 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.jpa;
 
 import javax.persistence.*;
+
+import no.srib.sribapp.model.AbstractModel;
+
 import java.sql.Time;
 
 /**

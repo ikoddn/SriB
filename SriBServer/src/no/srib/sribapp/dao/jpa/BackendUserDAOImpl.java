@@ -9,7 +9,7 @@ import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.BackendUserDAO;
-import no.srib.sribapp.model.Backenduser;
+import no.srib.sribapp.model.jpa.Backenduser;
 
 @Stateless
 public class BackendUserDAOImpl extends AbstractModelDAOImpl<Backenduser>

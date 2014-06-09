@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.StreamUrlScheduleDAO;
-import no.srib.sribapp.model.Streamurlschedule;
+import no.srib.sribapp.model.jpa.Streamurlschedule;
 
 /**
  * Servlet implementation class UpdateUrlSchedule

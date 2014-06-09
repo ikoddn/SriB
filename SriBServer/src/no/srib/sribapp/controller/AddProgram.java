@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.exception.DuplicateEntryException;
 import no.srib.sribapp.dao.interfaces.ProgramnameDAO;
-import no.srib.sribapp.model.Programname;
+import no.srib.sribapp.model.jpa.Programname;
 
 /**
  * Servlet implementation class AddProgram

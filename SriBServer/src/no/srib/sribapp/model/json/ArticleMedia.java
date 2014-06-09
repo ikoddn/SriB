@@ -1,12 +1,14 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.json;
 
 import java.util.List;
+
+import no.srib.sribapp.model.AbstractModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NewsArticleMedia extends AbstractModel {
+public class ArticleMedia extends AbstractModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -14,9 +16,9 @@ public class NewsArticleMedia extends AbstractModel {
 
     @JsonProperty("alt_text")
     private String altText;
-    private List<NewsArticleImage> sizes;
+    private List<ArticleImage> sizes;
 
-    public NewsArticleMedia() {
+    public ArticleMedia() {
     }
 
     public int getId() {
@@ -35,11 +37,11 @@ public class NewsArticleMedia extends AbstractModel {
         this.altText = altText;
     }
 
-    public List<NewsArticleImage> getSizes() {
+    public List<ArticleImage> getSizes() {
         return sizes;
     }
 
-    public void setSizes(List<NewsArticleImage> sizes) {
+    public void setSizes(List<ArticleImage> sizes) {
         this.sizes = sizes;
     }
 }

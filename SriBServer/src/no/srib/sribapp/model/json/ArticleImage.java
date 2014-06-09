@@ -1,6 +1,8 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.json;
 
-public class NewsArticleImage extends AbstractModel {
+import no.srib.sribapp.model.AbstractModel;
+
+public class ArticleImage extends AbstractModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -9,7 +11,7 @@ public class NewsArticleImage extends AbstractModel {
     private String name;
     private String url;
     
-    public NewsArticleImage() {
+    public ArticleImage() {
     }
 
     public int getHeight() {

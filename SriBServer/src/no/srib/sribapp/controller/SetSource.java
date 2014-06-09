@@ -15,8 +15,8 @@ import javax.servlet.http.HttpSession;
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.StreamUrlScheduleDAO;
 import no.srib.sribapp.dao.interfaces.StreamurlDAO;
-import no.srib.sribapp.model.Streamurl;
-import no.srib.sribapp.model.Streamurlschedule;
+import no.srib.sribapp.model.jpa.Streamurl;
+import no.srib.sribapp.model.jpa.Streamurlschedule;
 
 /**
  * Servlet implementation class SetSource

@@ -15,7 +15,7 @@ import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.StreamUrlScheduleDAO;
-import no.srib.sribapp.model.Streamurlschedule;
+import no.srib.sribapp.model.jpa.Streamurlschedule;
 
 @Stateless
 public class StreamurlscheduleDAOImpl extends

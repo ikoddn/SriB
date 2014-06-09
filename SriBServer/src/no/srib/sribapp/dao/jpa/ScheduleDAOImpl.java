@@ -15,7 +15,7 @@ import javax.persistence.criteria.Root;
 
 import no.srib.sribapp.dao.exception.DAOException;
 import no.srib.sribapp.dao.interfaces.ScheduleDAO;
-import no.srib.sribapp.model.Schedule;
+import no.srib.sribapp.model.jpa.Schedule;
 
 @Stateless
 public class ScheduleDAOImpl extends AbstractModelDAOImpl<Schedule> implements

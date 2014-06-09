@@ -1,6 +1,8 @@
-package no.srib.sribapp.model;
+package no.srib.sribapp.model.jpa;
 
 import javax.persistence.*;
+
+import no.srib.sribapp.model.AbstractModel;
 
 /**
  * The persistent class for the programname database table.
