@@ -28,6 +28,6 @@ public interface ArticleDAO extends AbstractModelDAO<Article> {
      * @return A list of articles or {@code null} if none was found.
      * @throws DAOException
      */
-    List<Article> findArticles(final String searchString, final int number)
+    List<Article> search(final String searchString, final int number)
             throws DAOException;
 }

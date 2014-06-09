@@ -24,11 +24,11 @@ public class ArticleResource {
     private static final int DEFAULT_NUMBER_OF_ARTICLES = 10;
 
     @EJB
-    private ArticleDAO newsArticleDAO;
+    private ArticleDAO articleDAO;
 
     @GET
-    public List<Article> getRecentArticles(
-            @QueryParam("number") final int paramNumber) {
+    public List<Article> getArticles(@QueryParam("n") final int paramNumber,
+            @QueryParam("s") final String searchString) {
 
         int number;
 
@@ -43,7 +43,11 @@ public class ArticleResource {
         List<Article> list = null;
 
         try {
-            list = newsArticleDAO.getRecentArticles(number);
+            if (searchString == null || searchString.isEmpty()) {
+                list = articleDAO.getRecentArticles(number);
+            } else {
+                list = articleDAO.search(searchString, number);
+            }
         } catch (DAOException e) {
             e.printStackTrace();
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);

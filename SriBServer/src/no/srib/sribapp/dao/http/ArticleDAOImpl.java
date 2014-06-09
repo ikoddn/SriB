@@ -2,6 +2,7 @@ package no.srib.sribapp.dao.http;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,8 +15,8 @@ import no.srib.sribapp.model.json.Article;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Stateless
-public class ArticleDAOImpl extends AbstractModelDAOImpl<Article>
-        implements ArticleDAO {
+public class ArticleDAOImpl extends AbstractModelDAOImpl<Article> implements
+        ArticleDAO {
 
     private static final ObjectMapper MAPPER;
     private static final String APIURL;
@@ -33,8 +34,7 @@ public class ArticleDAOImpl extends AbstractModelDAOImpl<Article>
 
         try {
             URL url = new URL(APIURL + POST_TYPE);
-            Articles newsArticles = MAPPER.readValue(url,
-                    Articles.class);
+            Articles newsArticles = MAPPER.readValue(url, Articles.class);
             list = newsArticles.getPosts();
         } catch (IOException e) {
             throw new DAOException(e);
@@ -50,8 +50,7 @@ public class ArticleDAOImpl extends AbstractModelDAOImpl<Article>
 
         try {
             URL url = new URL(APIURL + POST_TYPE + "&per_page=" + number);
-            Articles newsArticles = MAPPER.readValue(url,
-                    Articles.class);
+            Articles newsArticles = MAPPER.readValue(url, Articles.class);
             list = newsArticles.getPosts();
         } catch (IOException e) {
             throw new DAOException(e);
@@ -75,15 +74,17 @@ public class ArticleDAOImpl extends AbstractModelDAOImpl<Article>
     }
 
     @Override
-    public List<Article> findArticles(final String searchString,
-            final int number) throws DAOException {
+    public List<Article> search(final String searchString, final int number)
+            throws DAOException {
+
         List<Article> list = null;
 
         try {
-            URL url = new URL(APIURL + POST_TYPE + "&s=" + searchString
+            String urlEncoded = URLEncoder.encode(searchString, "UTF-8");
+            URL url = new URL(APIURL + POST_TYPE + "&s=" + urlEncoded
                     + "&per_page=" + number);
-            Articles newsArticles = MAPPER.readValue(url,
-                    Articles.class);
+
+            Articles newsArticles = MAPPER.readValue(url, Articles.class);
             list = newsArticles.getPosts();
         } catch (IOException e) {
             throw new DAOException(e);
