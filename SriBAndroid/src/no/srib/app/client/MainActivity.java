@@ -15,6 +15,7 @@ import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyListener;
+import no.srib.app.client.fragment.ArticleListFragment.OnSearchListener;
 import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
@@ -47,6 +48,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -570,6 +572,7 @@ public class MainActivity extends FragmentActivity implements
 		ArticleListFragment listFragment = (ArticleListFragment) fragment
 				.getChildFragmentManager().getFragments().get(0);
 		listFragment.setArticleListAdapter(articleListAdapter);
+		listFragment.setSearchListener(new ArticleSearch());
 	}
 
 	@Override
@@ -708,7 +711,20 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 	
-	private class FragmentsReady implements AsyncTaskFinished{
+	private class ArticleSearch implements OnSearchListener {
+
+		@Override
+		public void onSearch(String query) {
+			HttpAsyncTask httpAsyncTask = new HttpAsyncTask(
+					new ArticleHttpResponseListener());
+			StringBuilder sb = new StringBuilder();
+			sb.append(getResources().getString(R.string.url_articles));
+			sb.append("?s=" + query);
+			httpAsyncTask.execute(sb.toString());
+		}
+	}
+	
+	private class FragmentsReady implements AsyncTaskFinished {
 
 		@Override
 		public void onFinished() {
