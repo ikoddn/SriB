@@ -19,10 +19,12 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
 
     private static final ObjectMapper MAPPER;
     private static final String APIURL;
+    private static final String POST_TYPE;
 
     static {
         MAPPER = new ObjectMapper();
-        APIURL = "http://srib.no/wp_api/v1/";
+        APIURL = "http://srib.no/wp_api/v1/posts";
+        POST_TYPE = "?post_type=post";
     }
 
     @Override
@@ -30,7 +32,7 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         List<NewsArticle> list = null;
 
         try {
-            URL url = new URL(APIURL + "posts?post_type=post");
+            URL url = new URL(APIURL + POST_TYPE);
             NewsArticles newsArticles = MAPPER.readValue(url,
                     NewsArticles.class);
             list = newsArticles.getPosts();
@@ -47,8 +49,7 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         List<NewsArticle> list = null;
 
         try {
-            URL url = new URL(APIURL + "posts?post_type=post&per_page="
-                    + number);
+            URL url = new URL(APIURL + POST_TYPE + "&per_page=" + number);
             NewsArticles newsArticles = MAPPER.readValue(url,
                     NewsArticles.class);
             list = newsArticles.getPosts();
@@ -64,13 +65,31 @@ public class NewsArticleDAOImpl extends AbstractModelDAOImpl<NewsArticle>
         NewsArticle result = null;
 
         try {
-            URL url = new URL(APIURL + "posts/" + id);
+            URL url = new URL(APIURL + "/" + id + POST_TYPE);
             result = MAPPER.readValue(url, NewsArticle.class);
         } catch (IOException e) {
             throw new DAOException(e);
         }
 
         return result;
+    }
+
+    @Override
+    public List<NewsArticle> findArticles(final String searchString,
+            final int number) throws DAOException {
+        List<NewsArticle> list = null;
+
+        try {
+            URL url = new URL(APIURL + POST_TYPE + "&s=" + searchString
+                    + "&per_page=" + number);
+            NewsArticles newsArticles = MAPPER.readValue(url,
+                    NewsArticles.class);
+            list = newsArticles.getPosts();
+        } catch (IOException e) {
+            throw new DAOException(e);
+        }
+
+        return list;
     }
 
     @Override

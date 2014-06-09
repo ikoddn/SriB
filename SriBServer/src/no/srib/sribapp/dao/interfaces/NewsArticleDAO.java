@@ -17,4 +17,17 @@ public interface NewsArticleDAO extends AbstractModelDAO<NewsArticle> {
      */
     List<NewsArticle> getRecentArticles(final int number) throws DAOException;
 
+    /**
+     * Returns a list of the most recent {@code number} articles containing the
+     * given search string.
+     * 
+     * @param searchString
+     *            - The string to search for.
+     * @param number
+     *            - The max number of results.
+     * @return A list of articles or {@code null} if none was found.
+     * @throws DAOException
+     */
+    List<NewsArticle> findArticles(final String searchString, final int number)
+            throws DAOException;
 }
