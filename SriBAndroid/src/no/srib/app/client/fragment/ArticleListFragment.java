@@ -50,7 +50,7 @@ public class ArticleListFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_articlelist,
 				container, false);
 
-		listView = (ListView) rootView.findViewById(R.id.listview_articlelist);
+		listView = (ListView) rootView.findViewById(R.id.listView_articleList);
 		listView.setOnItemClickListener(articleClickedListener);
 
 		if (readyListener != null) {

@@ -16,6 +16,7 @@
 
     <!-- Articles fragment -->
     <string name="imageview_articleitem_desc">Image</string>
+    <string name="searchView_articleList_hint">Søk etter artikkel…</string>
     
     <!-- Podcast fragment -->
     <string name="imageview_podcastitem_desc">Podcast art</string>
