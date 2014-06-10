@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpStatus;
-
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.GridArrayAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
@@ -40,17 +38,17 @@ import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.util.AsyncTaskCompleted;
 import no.srib.app.client.util.AsyncTaskCompleted.AsyncTaskFinished;
-import android.content.Context;
+
+import org.apache.http.HttpStatus;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -59,8 +57,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -110,7 +108,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		asyncTaskCompleted = new AsyncTaskCompleted(new FragmentsReady(), 4);
-		
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
@@ -168,8 +166,6 @@ public class MainActivity extends FragmentActivity implements
 				R.string.currentProgram);
 
 		programName.execute(programNameURL);
-		
-	
 
 	}
 
@@ -563,12 +559,13 @@ public class MainActivity extends FragmentActivity implements
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			
+
 				asyncTaskCompleted.increaseCount();
-				
+
 				break;
 			case HttpStatus.SC_NO_CONTENT:
-				Toast.makeText(MainActivity.this, R.string.toast_noContent, Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this, R.string.toast_noContent,
+						Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				break;
@@ -626,7 +623,6 @@ public class MainActivity extends FragmentActivity implements
 			seekHandler.removeCallbacks(run);
 			updateTimeTextIntervall = 10;
 			seekHandler.postDelayed(run, updateTimeTextIntervall);
-			
 
 		}
 
@@ -700,27 +696,28 @@ public class MainActivity extends FragmentActivity implements
 			System.out.println(progress + "/" + max);
 			liveFrag.setSeekBarProgress(progress);
 			seekHandler.postDelayed(run, updateTimeTextIntervall);
-			
+
 		}
-		
-		
-		private String fromMsToTime(int ms){
+
+		private String fromMsToTime(int ms) {
 			String time = "";
 			long hours = TimeUnit.MILLISECONDS.toHours(ms);
-			long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) - TimeUnit.HOURS.toMinutes(hours);
-			long seconds = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(minutes);
-			
-			if(hours == 0){
-				time = String.format("%02d:%02d", minutes,seconds);
-			}else{
-				time = String.format("%02d:%02d:%02d", hours,minutes,seconds);
+			long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)
+					- TimeUnit.HOURS.toMinutes(hours);
+			long seconds = TimeUnit.MILLISECONDS.toSeconds(ms)
+					- TimeUnit.MINUTES.toSeconds(minutes);
+
+			if (hours == 0) {
+				time = String.format("%02d:%02d", minutes, seconds);
+			} else {
+				time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 			}
 
 			return time;
 		}
 
 	}
-	
+
 	private class ArticleSearch implements OnSearchListener {
 
 		@Override
@@ -733,34 +730,27 @@ public class MainActivity extends FragmentActivity implements
 			httpAsyncTask.execute(sb.toString());
 		}
 	}
-	
+
 	private class FragmentsReady implements AsyncTaskFinished {
 
 		@Override
 		public void onFinished() {
-			
+
 			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			fragment.startedUp();
-			
-			/*String text = liveFrag.getProgramNameText().toString();
-			liveFrag.setProgramNameText(text + " * ");
-			
-			//Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-			 // Vibrate for 500 milliseconds
-			 //v.vibrate(500);
-			  * 
-			  * 
-			  */
-			
-			
-			
+
+			/*
+			 * String text = liveFrag.getProgramNameText().toString();
+			 * liveFrag.setProgramNameText(text + " * ");
+			 * 
+			 * //Vibrator v = (Vibrator)
+			 * getApplicationContext().getSystemService
+			 * (Context.VIBRATOR_SERVICE); // Vibrate for 500 milliseconds
+			 * //v.vibrate(500);
+			 */
+
 		}
-		
-		
-		
+
 	}
-	
-	
-	
 
 }

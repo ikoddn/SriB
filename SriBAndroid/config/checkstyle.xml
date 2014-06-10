@@ -5,9 +5,8 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: Bachelor Checks (Eclipse)
-    Description: 
-Slightly modified version of Sun Checks that better matches the default code formatter setting of Eclipse.
+    Checkstyle-Configuration: SriB app Checks
+    Description: none
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -67,7 +66,9 @@ Slightly modified version of Sun Checks that better matches the default code for
     <module name="AvoidInlineConditionals"/>
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
-    <module name="HiddenField"/>
+    <module name="HiddenField">
+      <property name="tokens" value="VARIABLE_DEF"/>
+    </module>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
     <module name="MagicNumber"/>
@@ -92,6 +93,7 @@ Slightly modified version of Sun Checks that better matches the default code for
   </module>
   <module name="JavadocPackage">
     <property name="severity" value="ignore"/>
+    <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
   </module>
   <module name="NewlineAtEndOfFile">
     <property name="severity" value="ignore"/>
