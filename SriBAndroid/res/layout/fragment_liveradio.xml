@@ -264,6 +264,22 @@
             </View>
 
             <ImageButton
+                android:id="@+id/button_liveradio_soundcloud"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/imagebutton_liveradio_soundcloud_desc"
+                android:scaleType="fitCenter"
+                android:src="@drawable/soundcloud" />
+            
+            <View
+                android:id="@+id/view_liveradio_social_hspace3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+            
+            <ImageButton
                 android:id="@+id/button_liveradio_twitter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -273,7 +289,7 @@
                 android:src="@drawable/twitter" />
 
             <View
-                android:id="@+id/view_liveradio_social_hspace3"
+                android:id="@+id/view_liveradio_social_hspace4"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:visibility="invisible" >

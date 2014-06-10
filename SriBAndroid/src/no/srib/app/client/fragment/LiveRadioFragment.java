@@ -106,9 +106,9 @@ public class LiveRadioFragment extends Fragment {
 		}
 
 	}
-	
-	public CharSequence getProgramNameText(){
-		
+
+	public CharSequence getProgramNameText() {
+
 		return programNameTextView.getText();
 	}
 
@@ -182,10 +182,12 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_stop);
 		ImageButton infoButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_info);
-		ImageButton twitterButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_twitter);
 		ImageButton instagramButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_instagram);
+		ImageButton soundcloudButton = (ImageButton) rootView
+				.findViewById(R.id.button_liveradio_soundcloud);
+		ImageButton twitterButton = (ImageButton) rootView
+				.findViewById(R.id.button_liveradio_twitter);
 
 		playButton.setOnClickListener(new PlayPauseButtonListener());
 		stopButton.setOnClickListener(new StopButtonListener());
@@ -259,7 +261,7 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, stopSpacing);
 
 		// Horizontal LinearLayout for social media buttons
-		final float socialSpacing = (horizontalWeightSum - 3 * smallButtonWeight) / 2;
+		final float socialSpacing = (horizontalWeightSum - 5 * smallButtonWeight) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_social);
 		layout.setWeightSum(horizontalWeightSum);
@@ -267,8 +269,11 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(instagramButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace2,
 				smallButtonWeight);
+		viewUtil.setWeight(soundcloudButton, smallButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace3,
+				smallButtonWeight);
 		viewUtil.setWeight(twitterButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, socialSpacing);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace4, socialSpacing);
 
 		if (liveRadioReadyListener != null) {
 			liveRadioReadyListener.onLiveRadioFragmentReady();

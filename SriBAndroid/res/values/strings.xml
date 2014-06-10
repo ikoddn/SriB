@@ -12,6 +12,7 @@
     <string name="imagebutton_liveradio_play_desc">Play/pause</string>
     <string name="imagebutton_liveradio_stop_desc">Stop</string>
     <string name="imagebutton_liveradio_instagram_desc">Instagram</string>
+    <string name="imagebutton_liveradio_soundcloud_desc">SoundCloud</string>
     <string name="imagebutton_liveradio_twitter_desc">Twitter</string>
 
     <!-- Articles fragment -->
