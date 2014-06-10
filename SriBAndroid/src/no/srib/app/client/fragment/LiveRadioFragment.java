@@ -184,16 +184,17 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_info);
 		ImageButton instagramButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_instagram);
-		ImageButton soundcloudButton = (ImageButton) rootView
+		ImageButton soundCloudButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_soundcloud);
 		ImageButton twitterButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_twitter);
 
 		playButton.setOnClickListener(new PlayPauseButtonListener());
 		stopButton.setOnClickListener(new StopButtonListener());
-		twitterButton.setOnClickListener(new TwitterButtonListener());
-		instagramButton.setOnClickListener(new InstagramButtonListener());
 		infoButton.setOnClickListener(infoClickListener);
+		instagramButton.setOnClickListener(new InstagramButtonListener());
+		soundCloudButton.setOnClickListener(new SoundCloudButtonListener());
+		twitterButton.setOnClickListener(new TwitterButtonListener());
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
 		if (observer.isAlive()) {
@@ -269,7 +270,7 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(instagramButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace2,
 				smallButtonWeight);
-		viewUtil.setWeight(soundcloudButton, smallButtonWeight);
+		viewUtil.setWeight(soundCloudButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace3,
 				smallButtonWeight);
 		viewUtil.setWeight(twitterButton, smallButtonWeight);
@@ -349,7 +350,6 @@ public class LiveRadioFragment extends Fragment {
 
 		@Override
 		public void onClick(View button) {
-
 			liveRadioClickListener.onPlayPauseClicked();
 		}
 	}
@@ -367,6 +367,14 @@ public class LiveRadioFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			liveRadioClickListener.onInstagramClicked();
+		}
+	}
+
+	private class SoundCloudButtonListener implements OnClickListener {
+
+		@Override
+		public void onClick(View arg0) {
+			liveRadioClickListener.onSoundCloudClicked();
 		}
 	}
 
@@ -424,6 +432,8 @@ public class LiveRadioFragment extends Fragment {
 		void onInstagramClicked();
 
 		void onPlayPauseClicked();
+
+		void onSoundCloudClicked();
 
 		void onStopClicked();
 

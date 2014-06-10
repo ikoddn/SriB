@@ -360,16 +360,24 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 		@Override
-		public void onTwitterClicked() {
-			String url = getResources().getString(R.string.url_twitter);
+		public void onInstagramClicked() {
+			String url = getResources().getString(R.string.url_instagram);
 			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
 					.parse(url));
 			startActivity(intent);
 		}
 
 		@Override
-		public void onInstagramClicked() {
-			String url = getResources().getString(R.string.url_instagram);
+		public void onSoundCloudClicked() {
+			String url = getResources().getString(R.string.url_soundcloud);
+			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
+					.parse(url));
+			startActivity(intent);
+		}
+
+		@Override
+		public void onTwitterClicked() {
+			String url = getResources().getString(R.string.url_twitter);
 			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
 					.parse(url));
 			startActivity(intent);
