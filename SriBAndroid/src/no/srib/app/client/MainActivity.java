@@ -361,26 +361,17 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onInstagramClicked() {
-			String url = getResources().getString(R.string.url_instagram);
-			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
-					.parse(url));
-			startActivity(intent);
+			openURL(R.string.url_instagram);
 		}
 
 		@Override
 		public void onSoundCloudClicked() {
-			String url = getResources().getString(R.string.url_soundcloud);
-			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
-					.parse(url));
-			startActivity(intent);
+			openURL(R.string.url_soundcloud);
 		}
 
 		@Override
 		public void onTwitterClicked() {
-			String url = getResources().getString(R.string.url_twitter);
-			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
-					.parse(url));
-			startActivity(intent);
+			openURL(R.string.url_twitter);
 		}
 	}
 
@@ -607,7 +598,13 @@ public class MainActivity extends FragmentActivity implements
 				.getChildFragmentManager().getFragments().get(0);
 		liveFrag.setSeekBarOnChangeListener(new SeekBarListener());
 		liveFrag.setSeekBarListener(new SeekBarImpl());
+	}
 
+	private void openURL(int resId) {
+		String url = getResources().getString(resId);
+		final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri
+				.parse(url));
+		startActivity(intent);
 	}
 
 	private class SeekBarListener implements OnSeekBarChangeListener {
