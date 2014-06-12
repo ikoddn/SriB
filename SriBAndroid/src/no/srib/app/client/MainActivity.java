@@ -49,6 +49,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -97,6 +98,10 @@ public class MainActivity extends FragmentActivity implements
 	private Runnable run;
 	private int updateTimeTextIntervall = 1000;
 	private AsyncTaskCompleted asyncTaskCompleted;
+	
+	
+	//TODO Put this in SharedPrefrence.
+	private String oldDataSource;
 
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
@@ -248,10 +253,12 @@ public class MainActivity extends FragmentActivity implements
 					throw new AudioPlayerException();
 				}
 
+				
 				AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
 						.getService();
 				audioPlayer.setDataSource(url);
-
+				audioPlayer.setIsPodcast(false);
+				fragment.setLiveRadioMode();
 				if (autoPlayAfterConnect) {
 					audioPlayer.start();
 				}
@@ -266,8 +273,9 @@ public class MainActivity extends FragmentActivity implements
 			}
 		}
 	}
+	
 
-	private class AudioPlayerStateListener implements AudioPlayer.StateListener {
+	public class AudioPlayerStateListener implements AudioPlayer.StateListener {
 
 		@Override
 		public void onStateChanged(AudioPlayer.State state) {
@@ -373,6 +381,32 @@ public class MainActivity extends FragmentActivity implements
 		public void onTwitterClicked() {
 			openURL(R.string.url_twitter);
 		}
+
+		@Override
+		public void onSwitchPodcastSelected(boolean value) {
+			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+					.getService();
+			StreamUpdaterService streamUpdater = (StreamUpdaterService) streamUpdaterService.getService();
+			HttpAsyncTask programTaskTemp = new HttpAsyncTask(new GetCurrentProgramName());
+			
+			audioPlayer.setIsPodcast(value);
+			if(value){
+			Log.i("Debug","Pod");
+			
+			
+			}else{
+				Log.i("Debug","Live");
+				oldDataSource = audioPlayer.getDataSource();
+				programTaskTemp.execute(getResources().getString(
+						R.string.currentProgram));
+				streamUpdater.update();
+				audioPlayer.start();
+				
+				
+				
+			}
+			
+		}
 	}
 
 	private class ListViewItemClickListener implements OnItemSelectedListener {
@@ -443,7 +477,8 @@ public class MainActivity extends FragmentActivity implements
 			// TODO Info screen may be in focus, should show live radio screen
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-
+			audioPlayer.setIsPodcast(true);
+			fragment.setPodcastMode();
 			audioPlayer.start();
 
 		}

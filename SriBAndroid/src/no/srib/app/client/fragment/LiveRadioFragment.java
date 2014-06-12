@@ -22,6 +22,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -42,6 +45,7 @@ public class LiveRadioFragment extends Fragment {
 	private TextView programNameTextView;
 	private TextView timeTextView;
 	private ImageButton playButton;
+	private CheckBox switchButton;
 
 	private SribSeekBar seekbar;
 	private SeekBarInterface seekBarListener;
@@ -180,6 +184,8 @@ public class LiveRadioFragment extends Fragment {
 				.findViewById(R.id.button_liveradio_play);
 		ImageButton stopButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_stop);
+		switchButton = (CheckBox) rootView
+				.findViewById(R.id.button_liveradiopodcastswitch);
 		ImageButton infoButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_info);
 		ImageButton instagramButton = (ImageButton) rootView
@@ -191,10 +197,14 @@ public class LiveRadioFragment extends Fragment {
 
 		playButton.setOnClickListener(new PlayPauseButtonListener());
 		stopButton.setOnClickListener(new StopButtonListener());
-		infoButton.setOnClickListener(infoClickListener);
-		instagramButton.setOnClickListener(new InstagramButtonListener());
-		soundCloudButton.setOnClickListener(new SoundCloudButtonListener());
+
 		twitterButton.setOnClickListener(new TwitterButtonListener());
+		switchButton.setOnCheckedChangeListener(new SwitchButtonListener());
+		instagramButton.setOnClickListener(new InstagramButtonListener());
+
+		infoButton.setOnClickListener(infoClickListener);
+		soundCloudButton.setOnClickListener(new SoundCloudButtonListener());
+		
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
 		if (observer.isAlive()) {
@@ -220,10 +230,15 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.linearlayout_liveradio_play, playButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace4, 68.0f);
 		viewUtil.setWeight(R.id.linearlayout_liveradio_stop, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_vspace5, 251.0f);
+
+		viewUtil.setWeight(R.id.view_liveradio_vspace5, 115.0f);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_livePodSwitch,
+				smallButtonWeight);
+
+		viewUtil.setWeight(R.id.view_liveradio_vspace6, 69.0f);
 		viewUtil.setWeight(R.id.linearlayout_liveradio_social,
 				smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_vspace6, 50.0f);
+		viewUtil.setWeight(R.id.view_liveradio_vspace7, 50.0f);
 
 		// Horizontal LinearLayout for info button
 		layout = (LinearLayout) rootView
@@ -260,6 +275,16 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace1, stopSpacing);
 		viewUtil.setWeight(stopButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, stopSpacing);
+
+		// Horixontal LineaLayout for Liveradio/Podcast switch
+		final float switchspacing = (horizontalWeightSum - smallButtonWeight) / 2; 
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.linearlayout_liveradio_livePodSwitch);
+		layout.setWeightSum(horizontalWeightSum);
+		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1, switchspacing);
+		viewUtil.setWeight(switchButton, smallButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2, switchspacing);
+		
 
 		// Horizontal LinearLayout for social media buttons
 		final float socialSpacing = (horizontalWeightSum - 5 * smallButtonWeight) / 2;
@@ -345,6 +370,15 @@ public class LiveRadioFragment extends Fragment {
 		playButton.setImageDrawable(icon);
 		playing = false;
 	}
+	
+	public void setPodcastMode(){
+		switchButton.setChecked(true);
+	}
+	
+	public void setLiveRadioMode(){
+		switchButton.setChecked(false);
+		
+	}
 
 	private class PlayPauseButtonListener implements OnClickListener {
 
@@ -385,6 +419,16 @@ public class LiveRadioFragment extends Fragment {
 			liveRadioClickListener.onTwitterClicked();
 		}
 	}
+	
+	private class SwitchButtonListener implements OnCheckedChangeListener{
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView,
+				boolean isChecked) {
+			liveRadioClickListener.onSwitchPodcastSelected(isChecked);	
+		}
+	}
+	
 
 	private class LayoutReadyListener implements OnGlobalLayoutListener {
 
@@ -438,6 +482,8 @@ public class LiveRadioFragment extends Fragment {
 		void onStopClicked();
 
 		void onTwitterClicked();
+		
+		void onSwitchPodcastSelected(boolean value);
 	}
 
 	public interface SeekBarInterface {

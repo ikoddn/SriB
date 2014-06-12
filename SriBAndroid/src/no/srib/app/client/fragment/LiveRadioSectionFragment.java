@@ -32,9 +32,9 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 		setRetainInstance(true);
 
-		TextView textView = (TextView) rootView
-				.findViewById(R.id.textview_liveradiosection);
-		textView.setText("LiveRadioSectionFragment");
+		//TextView textView = (TextView) rootView
+			//	.findViewById(R.id.textview_liveradiosection);
+		//textView.setText("LiveRadioSectionFragment");
 
 		if (liveRadioFragment == null) {
 			liveRadioFragment = LiveRadioFragment

@@ -17,8 +17,10 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 	private String dataSource;
 	private StateHandler stateHandler;
 	private MediaPlayer mediaPlayer;
+	private boolean isPodcast;
 
 	public AudioPlayerService() {
+		isPodcast = false;
 		streaming = false;
 		dataSource = null;
 		stateHandler = new StateHandler();
@@ -223,5 +225,21 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 
 			return false;
 		}
+	}
+
+	@Override
+	public void setIsPodcast(boolean value) {
+		
+		this.isPodcast = value;
+	}
+	
+	public boolean isPodcast(){
+		return isPodcast;
+	}
+
+	@Override
+	public String getDataSource() {
+		
+		return dataSource;
 	}
 }

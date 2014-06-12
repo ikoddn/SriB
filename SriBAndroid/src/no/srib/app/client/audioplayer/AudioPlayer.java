@@ -26,6 +26,13 @@ public interface AudioPlayer {
 	void setStateListener(StateListener stateListener);
 
 	/**
+	 * Returns the current datasource, {@code null} if not set.
+	 * @return The current datasource.
+	 */
+	
+	String getDataSource();
+	
+	/**
 	 * Sets the data source URI for the audio player.
 	 * 
 	 * @param dataSource
@@ -34,6 +41,13 @@ public interface AudioPlayer {
 	 */
 	void setDataSource(String dataSource) throws AudioPlayerException;
 
+	/**
+	 * Sets the type on content.
+	 * @param value - true if podcast
+	 */
+	
+	void setIsPodcast(boolean value);
+	
 	/**
 	 * Starts the audio player.
 	 */

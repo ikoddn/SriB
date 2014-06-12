@@ -226,9 +226,45 @@
                 android:visibility="invisible" >
             </View>
         </LinearLayout>
-
+        
+       <!-- Live radio / Podcast Switch -->
         <View
             android:id="@+id/view_liveradio_vspace5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="invisible" >
+        </View>
+
+        <LinearLayout
+            android:id="@+id/linearlayout_liveradio_livePodSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal" >
+
+            <View
+                android:id="@+id/view_liveradio_switch_hspace1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+
+         <CheckBox
+            android:id="@+id/button_liveradiopodcastswitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@null" />
+
+            <View
+                android:id="@+id/view_liveradio_switch_hspace2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+            </View>
+        </LinearLayout>
+
+      
+        <View
+            android:id="@+id/view_liveradio_vspace6"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="invisible" >
@@ -297,11 +333,14 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/view_liveradio_vspace6"
+            android:id="@+id/view_liveradio_vspace7"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="invisible" >
         </View>
+
+       
+
     </LinearLayout>
 
 </RelativeLayout>
