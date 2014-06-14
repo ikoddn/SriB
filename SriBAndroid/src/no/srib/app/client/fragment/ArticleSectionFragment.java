@@ -13,6 +13,12 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ArticleSectionFragment extends SectionFragment {
 
+	private ArticleListFragment articleListFragment;
+
+	public ArticleSectionFragment() {
+		articleListFragment = null;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -21,6 +27,11 @@ public class ArticleSectionFragment extends SectionFragment {
 				container, false);
 
 		setRetainInstance(true);
+
+		if (articleListFragment == null) {
+			articleListFragment = ArticleListFragment
+					.newInstance(new ArticleClickedListener());
+		}
 
 		return rootView;
 	}
@@ -32,7 +43,7 @@ public class ArticleSectionFragment extends SectionFragment {
 
 	@Override
 	public Fragment getBaseFragment() {
-		return ArticleListFragment.newInstance(new ArticleClickedListener());
+		return articleListFragment;
 	}
 
 	@Override

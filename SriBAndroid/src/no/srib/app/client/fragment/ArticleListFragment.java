@@ -52,6 +52,13 @@ public class ArticleListFragment extends Fragment {
 		}
 	}
 
+	public void resetSearchView() {
+		if (searchView != null) {
+			searchView.setQuery("", false);
+			searchView.clearFocus();
+		}
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
