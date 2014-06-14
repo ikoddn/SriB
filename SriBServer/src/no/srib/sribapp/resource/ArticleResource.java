@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,21 +22,18 @@ import no.srib.sribapp.model.json.Article;
 @ManagedBean
 public class ArticleResource {
 
-    private static final int DEFAULT_ARTICLE_COUNT = 10;
-
     @EJB
     private ArticleDAO articleDAO;
 
     @GET
-    public List<Article> getArticles(@QueryParam("c") final int paramCount,
+    public List<Article> getArticles(
+            @DefaultValue("10") @QueryParam("c") final int paramCount,
             @QueryParam("s") final String searchString) {
 
         int count;
 
         if (paramCount > 0) {
             count = paramCount;
-        } else if (paramCount == 0) {
-            count = DEFAULT_ARTICLE_COUNT;
         } else {
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
