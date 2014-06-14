@@ -14,7 +14,7 @@
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>no.srib.sribapp.resource</param-value>
+			<param-value>no.srib.app.server.resource</param-value>
 		</init-param>
 	</servlet>
 
