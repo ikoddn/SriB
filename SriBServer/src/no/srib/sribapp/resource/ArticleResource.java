@@ -28,7 +28,8 @@ public class ArticleResource {
     @GET
     public List<Article> getArticles(
             @DefaultValue("10") @QueryParam("c") final int paramCount,
-            @QueryParam("s") final String searchString) {
+            @DefaultValue("false") @QueryParam("content") final boolean content,
+            @QueryParam("q") final String query) {
 
         int count;
 
@@ -41,10 +42,10 @@ public class ArticleResource {
         List<Article> list = null;
 
         try {
-            if (searchString == null || searchString.isEmpty()) {
+            if (query == null || query.isEmpty()) {
                 list = articleDAO.getRecentArticles(count);
             } else {
-                list = articleDAO.search(searchString, count);
+                list = articleDAO.search(query, count);
             }
         } catch (DAOException e) {
             e.printStackTrace();
@@ -53,6 +54,10 @@ public class ArticleResource {
 
         if (list == null || list.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
+        } else if (!content) {
+            for (Article article : list) {
+                article.setContentDisplay(null);
+            }
         }
 
         return list;
