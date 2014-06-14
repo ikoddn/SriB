@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.listener.OnFragmentReadyListener;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ public class PodcastFragment extends Fragment {
 
 	private Spinner spinner = null;
 	private GridView podcastGridView = null;
-	private OnPodcastFragmentReadyListener readyListener = null;
+	private OnFragmentReadyListener readyListener = null;
 	private OnItemClickListener podcastClickedListener = null;
 	private OnItemSelectedListener spinnerSelectedListener = null;
 
@@ -26,7 +27,6 @@ public class PodcastFragment extends Fragment {
 	}
 
 	public GridView getGridView() {
-
 		return podcastGridView;
 	}
 
@@ -58,7 +58,7 @@ public class PodcastFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			readyListener = (OnPodcastFragmentReadyListener) getActivity();
+			readyListener = (OnFragmentReadyListener) getActivity();
 		} catch (ClassCastException e) {
 			readyListener = null;
 		}
@@ -76,7 +76,7 @@ public class PodcastFragment extends Fragment {
 				.findViewById(R.id.gridView_podcastList);
 
 		if (readyListener != null) {
-			readyListener.onPodcastFragmentReady();
+			readyListener.onFragmentReady(this);
 		}
 
 		spinner.setOnItemSelectedListener(spinnerSelectedListener);
@@ -95,9 +95,4 @@ public class PodcastFragment extends Fragment {
 				a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
 		}
 	}
-
-	public interface OnPodcastFragmentReadyListener {
-		void onPodcastFragmentReady();
-	}
-
 }

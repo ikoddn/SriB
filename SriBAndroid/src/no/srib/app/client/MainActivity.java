@@ -14,17 +14,14 @@ import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
-import no.srib.app.client.fragment.ArticleListFragment.OnArticlesFragmentReadyListener;
 import no.srib.app.client.fragment.ArticleListFragment.OnSearchListener;
-import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
-import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioFragmentReadyListener;
 import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
-import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
 import no.srib.app.client.fragment.SectionFragment;
+import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.model.Article;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
@@ -66,9 +63,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MainActivity extends FragmentActivity implements
-		OnArticlesFragmentReadyListener, OnPodcastFragmentReadyListener,
-		OnLiveRadioFragmentReadyListener {
+public class MainActivity extends FragmentActivity implements OnFragmentReadyListener {
 
 	private final ObjectMapper MAPPER;
 	private ArticleListAdapter articleListAdapter;
@@ -98,9 +93,8 @@ public class MainActivity extends FragmentActivity implements
 	private Runnable run;
 	private int updateTimeTextIntervall = 1000;
 	private AsyncTaskCompleted asyncTaskCompleted;
-	
-	
-	//TODO Put this in SharedPrefrence.
+
+	// TODO Put this in SharedPrefrence.
 	private String oldDataSource;
 
 	public MainActivity() {
@@ -253,7 +247,6 @@ public class MainActivity extends FragmentActivity implements
 					throw new AudioPlayerException();
 				}
 
-				
 				AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
 						.getService();
 				audioPlayer.setDataSource(url);
@@ -273,7 +266,6 @@ public class MainActivity extends FragmentActivity implements
 			}
 		}
 	}
-	
 
 	public class AudioPlayerStateListener implements AudioPlayer.StateListener {
 
@@ -386,26 +378,25 @@ public class MainActivity extends FragmentActivity implements
 		public void onSwitchPodcastSelected(boolean value) {
 			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
 					.getService();
-			StreamUpdaterService streamUpdater = (StreamUpdaterService) streamUpdaterService.getService();
-			HttpAsyncTask programTaskTemp = new HttpAsyncTask(new GetCurrentProgramName());
-			
+			StreamUpdaterService streamUpdater = (StreamUpdaterService) streamUpdaterService
+					.getService();
+			HttpAsyncTask programTaskTemp = new HttpAsyncTask(
+					new GetCurrentProgramName());
+
 			audioPlayer.setIsPodcast(value);
-			if(value){
-			Log.i("Debug","Pod");
-			
-			
-			}else{
-				Log.i("Debug","Live");
+			if (value) {
+				Log.i("Debug", "Pod");
+
+			} else {
+				Log.i("Debug", "Live");
 				oldDataSource = audioPlayer.getDataSource();
 				programTaskTemp.execute(getResources().getString(
 						R.string.currentProgram));
 				streamUpdater.update();
 				audioPlayer.start();
-				
-				
-				
+
 			}
-			
+
 		}
 	}
 
@@ -608,31 +599,25 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onArticlesFragmentReady() {
-		ArticleSectionFragment fragment = (ArticleSectionFragment) getFragment(SectionsPagerAdapter.ARTICLE_SECTION_FRAGMENT);
-		ArticleListFragment listFragment = (ArticleListFragment) fragment
-				.getChildFragmentManager().getFragments().get(0);
-		listFragment.setArticleListAdapter(articleListAdapter);
-		listFragment.setSearchListener(new ArticleSearch());
-	}
+	public void onFragmentReady(final Fragment fragment) {
+		if (fragment instanceof LiveRadioFragment) {
+			LiveRadioFragment liveRadio = (LiveRadioFragment) fragment;
 
-	@Override
-	public void onPodcastFragmentReady() {
-		PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
-		fragment.setGridArrayAdapter(gridViewAdapter);
-		fragment.setPodCastClickedListener(new GridViewItemClickListener());
-		fragment.setSpinnerListAdapter(spinnerListAdapter);
-		fragment.setSpinnerListSelectedListener(new ListViewItemClickListener());
+			liveRadio.setSeekBarOnChangeListener(new SeekBarListener());
+			liveRadio.setSeekBarListener(new SeekBarImpl());
+		} else if (fragment instanceof PodcastFragment) {
+			PodcastFragment podcast = (PodcastFragment) fragment;
 
-	}
+			podcast.setGridArrayAdapter(gridViewAdapter);
+			podcast.setPodCastClickedListener(new GridViewItemClickListener());
+			podcast.setSpinnerListAdapter(spinnerListAdapter);
+			podcast.setSpinnerListSelectedListener(new ListViewItemClickListener());
+		} else if (fragment instanceof ArticleListFragment) {
+			ArticleListFragment articleList = (ArticleListFragment) fragment;
 
-	@Override
-	public void onLiveRadioFragmentReady() {
-		LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-		LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
-				.getChildFragmentManager().getFragments().get(0);
-		liveFrag.setSeekBarOnChangeListener(new SeekBarListener());
-		liveFrag.setSeekBarListener(new SeekBarImpl());
+			articleList.setArticleListAdapter(articleListAdapter);
+			articleList.setSearchListener(new ArticleSearch());
+		}
 	}
 
 	private void openURL(int resId) {
@@ -792,5 +777,4 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 	}
-
 }

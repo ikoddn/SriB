@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.util.DTImageView;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
@@ -49,7 +50,7 @@ public class LiveRadioFragment extends Fragment {
 
 	private SribSeekBar seekbar;
 	private SeekBarInterface seekBarListener;
-	private OnLiveRadioFragmentReadyListener liveRadioReadyListener;
+	private OnFragmentReadyListener readyListener;
 
 	private DTImageView background;
 	private View rootView;
@@ -70,6 +71,7 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public LiveRadioFragment() {
+
 		playing = false;
 		statusTextView = null;
 		streamTextView = null;
@@ -138,9 +140,9 @@ public class LiveRadioFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			liveRadioReadyListener = (OnLiveRadioFragmentReadyListener) getActivity();
+			readyListener = (OnFragmentReadyListener) getActivity();
 		} catch (ClassCastException e) {
-			liveRadioReadyListener = null;
+			readyListener = null;
 		}
 	}
 
@@ -204,7 +206,6 @@ public class LiveRadioFragment extends Fragment {
 
 		infoButton.setOnClickListener(infoClickListener);
 		soundCloudButton.setOnClickListener(new SoundCloudButtonListener());
-		
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
 		if (observer.isAlive()) {
@@ -277,14 +278,13 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, stopSpacing);
 
 		// Horixontal LineaLayout for Liveradio/Podcast switch
-		final float switchspacing = (horizontalWeightSum - smallButtonWeight) / 2; 
+		final float switchspacing = (horizontalWeightSum - smallButtonWeight) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_livePodSwitch);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1, switchspacing);
 		viewUtil.setWeight(switchButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2, switchspacing);
-		
 
 		// Horizontal LinearLayout for social media buttons
 		final float socialSpacing = (horizontalWeightSum - 5 * smallButtonWeight) / 2;
@@ -301,8 +301,8 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(twitterButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace4, socialSpacing);
 
-		if (liveRadioReadyListener != null) {
-			liveRadioReadyListener.onLiveRadioFragmentReady();
+		if (readyListener != null) {
+			readyListener.onFragmentReady(this);
 		}
 
 		return rootView;
@@ -370,14 +370,14 @@ public class LiveRadioFragment extends Fragment {
 		playButton.setImageDrawable(icon);
 		playing = false;
 	}
-	
-	public void setPodcastMode(){
+
+	public void setPodcastMode() {
 		switchButton.setChecked(true);
 	}
-	
-	public void setLiveRadioMode(){
+
+	public void setLiveRadioMode() {
 		switchButton.setChecked(false);
-		
+
 	}
 
 	private class PlayPauseButtonListener implements OnClickListener {
@@ -419,16 +419,15 @@ public class LiveRadioFragment extends Fragment {
 			liveRadioClickListener.onTwitterClicked();
 		}
 	}
-	
-	private class SwitchButtonListener implements OnCheckedChangeListener{
+
+	private class SwitchButtonListener implements OnCheckedChangeListener {
 
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
-			liveRadioClickListener.onSwitchPodcastSelected(isChecked);	
+			liveRadioClickListener.onSwitchPodcastSelected(isChecked);
 		}
 	}
-	
 
 	private class LayoutReadyListener implements OnGlobalLayoutListener {
 
@@ -468,10 +467,6 @@ public class LiveRadioFragment extends Fragment {
 		}
 	}
 
-	public interface OnLiveRadioFragmentReadyListener {
-		void onLiveRadioFragmentReady();
-	}
-
 	public interface OnLiveRadioClickListener {
 		void onInstagramClicked();
 
@@ -482,7 +477,7 @@ public class LiveRadioFragment extends Fragment {
 		void onStopClicked();
 
 		void onTwitterClicked();
-		
+
 		void onSwitchPodcastSelected(boolean value);
 	}
 

@@ -2,6 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
 import no.srib.app.client.adapter.ArticleListAdapter;
+import no.srib.app.client.listener.OnFragmentReadyListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,7 @@ public class ArticleListFragment extends Fragment {
 
 	private SearchView searchView;
 	private ListView listView;
-	private OnArticlesFragmentReadyListener readyListener;
+	private OnFragmentReadyListener readyListener;
 	private OnItemClickListener articleClickedListener;
 	private OnSearchListener searchListener;
 
@@ -74,7 +75,7 @@ public class ArticleListFragment extends Fragment {
 		listView.setOnItemClickListener(articleClickedListener);
 
 		if (readyListener != null) {
-			readyListener.onArticlesFragmentReady();
+			readyListener.onFragmentReady(this);
 		}
 
 		return rootView;
@@ -85,14 +86,10 @@ public class ArticleListFragment extends Fragment {
 		super.onAttach(activity);
 
 		try {
-			readyListener = (OnArticlesFragmentReadyListener) getActivity();
+			readyListener = (OnFragmentReadyListener) getActivity();
 		} catch (ClassCastException e) {
 			readyListener = null;
 		}
-	}
-
-	public interface OnArticlesFragmentReadyListener {
-		void onArticlesFragmentReady();
 	}
 
 	public interface OnSearchListener {
