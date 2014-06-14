@@ -3,7 +3,7 @@ package no.srib.app.client.model;
 import java.io.Serializable;
 import java.util.List;
 
-public class NewsArticle implements Serializable {
+public class Article implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -13,16 +13,16 @@ public class NewsArticle implements Serializable {
 	private String permalink;
 	private String excerptDisplay;
 	private String contentDisplay;
-	private List<NewsArticleMedia> media;
+	private List<ArticleMedia> media;
 
-	public NewsArticle() {
+	public Article() {
 	}
 
-	public List<NewsArticleMedia> getMedia() {
+	public List<ArticleMedia> getMedia() {
 		return media;
 	}
 
-	public void setMedia(List<NewsArticleMedia> media) {
+	public void setMedia(List<ArticleMedia> media) {
 		this.media = media;
 	}
 

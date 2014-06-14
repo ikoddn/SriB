@@ -3,15 +3,15 @@ package no.srib.app.client.model;
 import java.io.Serializable;
 import java.util.List;
 
-public class NewsArticleMedia implements Serializable {
+public class ArticleMedia implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private int id;
 	private String altText;
-	private List<NewsArticleImage> sizes;
+	private List<ArticleImage> sizes;
 
-	public NewsArticleMedia() {
+	public ArticleMedia() {
 	}
 
 	public int getId() {
@@ -30,11 +30,11 @@ public class NewsArticleMedia implements Serializable {
 		this.altText = altText;
 	}
 
-	public List<NewsArticleImage> getSizes() {
+	public List<ArticleImage> getSizes() {
 		return sizes;
 	}
 
-	public void setSizes(List<NewsArticleImage> sizes) {
+	public void setSizes(List<ArticleImage> sizes) {
 		this.sizes = sizes;
 	}
 

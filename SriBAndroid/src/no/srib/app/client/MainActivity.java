@@ -25,7 +25,7 @@ import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.PodcastFragment.OnPodcastFragmentReadyListener;
 import no.srib.app.client.fragment.SectionFragment;
-import no.srib.app.client.model.NewsArticle;
+import no.srib.app.client.model.Article;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.Schedule;
@@ -581,8 +581,8 @@ public class MainActivity extends FragmentActivity implements
 			switch (statusCode) {
 			case HttpStatus.SC_OK:
 				try {
-					List<NewsArticle> list = MAPPER.readValue(response,
-							new TypeReference<List<NewsArticle>>() {
+					List<Article> list = MAPPER.readValue(response,
+							new TypeReference<List<Article>>() {
 							});
 					articleListAdapter.setList(list);
 					articleListAdapter.notifyDataSetChanged();

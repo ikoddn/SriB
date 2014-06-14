@@ -3,7 +3,7 @@ package no.srib.app.client.adapter;
 import java.util.List;
 
 import no.srib.app.client.R;
-import no.srib.app.client.model.NewsArticle;
+import no.srib.app.client.model.Article;
 import no.srib.app.client.util.URLUtil;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +21,18 @@ public class ArticleListAdapter extends BaseAdapter {
 			R.drawable.list_divider_04, R.drawable.list_divider_05 };
 
 	private LayoutInflater inflater;
-	private List<NewsArticle> list;
+	private List<Article> list;
 
 	public ArticleListAdapter(final LayoutInflater inflater) {
 		this.inflater = inflater;
 		list = null;
 	}
 
-	public final void setList(final List<NewsArticle> list) {
+	public final void setList(final List<Article> list) {
 		this.list = list;
 	}
 
-	private NewsArticle getItemInPosition(final int position) {
+	private Article getItemInPosition(final int position) {
 		return list.get(position / 2);
 	}
 
@@ -50,7 +50,7 @@ public class ArticleListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public final NewsArticle getItem(final int position) {
+	public final Article getItem(final int position) {
 		if (list == null || isDivider(position)) {
 			return null;
 		}
@@ -112,7 +112,7 @@ public class ArticleListAdapter extends BaseAdapter {
 			TextView excerpt = (TextView) view
 					.findViewById(R.id.textview_articleitem_excerpt);
 
-			NewsArticle newsArticle = getItemInPosition(position);
+			Article newsArticle = getItemInPosition(position);
 
 			String url = newsArticle.getMedia().get(0).getSizes().get(1)
 					.getUrl();

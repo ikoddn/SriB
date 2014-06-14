@@ -2,7 +2,7 @@ package no.srib.app.client.model;
 
 import java.io.Serializable;
 
-public class NewsArticleImage implements Serializable {
+public class ArticleImage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -11,7 +11,7 @@ public class NewsArticleImage implements Serializable {
 	private String name;
 	private String url;
 
-	public NewsArticleImage() {
+	public ArticleImage() {
 	}
 
 	public int getHeight() {
