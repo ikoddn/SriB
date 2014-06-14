@@ -1,9 +1,7 @@
 package no.srib.app.client.adapter;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
@@ -15,41 +13,22 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-public class GridArrayAdapter extends BaseAdapter {
+public class GridArrayAdapter extends BaseListAdapter<Podcast> {
 
-	private List<Podcast> podcastList = new ArrayList<Podcast>();
 	private LayoutInflater inflater;
 
 	public GridArrayAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
 	}
 
-	public void setList(List<Podcast> list) {
-		this.podcastList = list;
-	}
-
-	@Override
-	public int getCount() {
-
-		return podcastList.size();
-	}
-
-	@Override
-	public Podcast getItem(int position) {
-
-		return podcastList.get(position);
-	}
-
 	@Override
 	public long getItemId(int position) {
-
-		return podcastList.get(position).getRefnr();
+		return getItem(position).getRefnr();
 	}
 
 	@Override
@@ -62,7 +41,7 @@ public class GridArrayAdapter extends BaseAdapter {
 
 		Typeface appFont = Typeface.createFromAsset(view.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
-		Podcast podcast = podcastList.get(position);
+		Podcast podcast = getItem(position);
 		TextView programNameTextView = (TextView) view
 				.findViewById(R.id.label_gridViewItem_programname);
 		programNameTextView.setTypeface(appFont);
@@ -88,16 +67,11 @@ public class GridArrayAdapter extends BaseAdapter {
 
 		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
 
-
-		
 		view.setTag(R.id.podcast_url, podcast.getFilename());
 
-		view.setTag(R.id.podcast_name,podcast.getProgram());
-		view.setTag(R.id.podcast_date,podcast.getCreatedate());
-
+		view.setTag(R.id.podcast_name, podcast.getProgram());
+		view.setTag(R.id.podcast_date, podcast.getCreatedate());
 
 		return view;
-
 	}
-
 }

@@ -1,39 +1,30 @@
 package no.srib.app.client.adapter;
 
-import java.util.List;
-
 import no.srib.app.client.R;
 import no.srib.app.client.model.Article;
 import no.srib.app.client.util.URLUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-public class ArticleListAdapter extends BaseAdapter {
+public class ArticleListAdapter extends BaseListAdapter<Article> {
 
 	private static final int[] LIST_DIVIDERS = { R.drawable.list_divider_01,
 			R.drawable.list_divider_02, R.drawable.list_divider_03,
 			R.drawable.list_divider_04, R.drawable.list_divider_05 };
 
 	private LayoutInflater inflater;
-	private List<Article> list;
 
 	public ArticleListAdapter(final LayoutInflater inflater) {
 		this.inflater = inflater;
-		list = null;
-	}
-
-	public final void setList(final List<Article> list) {
-		this.list = list;
 	}
 
 	private Article getItemInPosition(final int position) {
-		return list.get(position / 2);
+		return super.getItem(position / 2);
 	}
 
 	private boolean isDivider(final int position) {
@@ -42,16 +33,13 @@ public class ArticleListAdapter extends BaseAdapter {
 
 	@Override
 	public final int getCount() {
-		if (list == null) {
-			return 0;
-		}
-
-		return list.size() * 2 - 1;
+		int listSize = super.getCount();
+		return listSize == 0 ? 0 : listSize * 2 - 1;
 	}
 
 	@Override
 	public final Article getItem(final int position) {
-		if (list == null || isDivider(position)) {
+		if (isDivider(position)) {
 			return null;
 		}
 
@@ -60,7 +48,7 @@ public class ArticleListAdapter extends BaseAdapter {
 
 	@Override
 	public final long getItemId(final int position) {
-		if (list == null || isDivider(position)) {
+		if (isDivider(position)) {
 			return 0;
 		}
 
