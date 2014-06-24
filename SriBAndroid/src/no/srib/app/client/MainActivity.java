@@ -1,5 +1,6 @@
 package no.srib.app.client;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
@@ -163,9 +164,6 @@ public class MainActivity extends FragmentActivity implements
 
 		podcastTask.execute(podcastTaskUrl);
 		programTask.execute(programTaskUrl);
-
-		// ProgramName
-
 	}
 
 	private class StreamUpdaterServiceReadyListener implements
@@ -611,10 +609,11 @@ public class MainActivity extends FragmentActivity implements
 			long seconds = TimeUnit.MILLISECONDS.toSeconds(ms)
 					- TimeUnit.MINUTES.toSeconds(minutes);
 
+			Locale locale = Locale.getDefault();
 			if (hours == 0) {
-				time = String.format("%02d:%02d", minutes, seconds);
+				time = String.format(locale, "%02d:%02d", minutes, seconds);
 			} else {
-				time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+				time = String.format(locale, "%02d:%02d:%02d", hours, minutes, seconds);
 			}
 
 			return time;

@@ -2,6 +2,7 @@ package no.srib.app.client.adapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
@@ -61,7 +62,7 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 		int date = podcast.getCreatedate();
 		Calendar cal = TimeUtil.parseIntDate(date);
 		String format = "dd-MM-yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
 		programNameDate.setText(sdf.format(cal.getTime()));
 
 		final ImageView image = (ImageView) view.findViewById(R.id.imageView1);

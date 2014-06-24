@@ -35,7 +35,6 @@
         android:layout_height="180dp"
         android:contentDescription="@string/imageview_podcastitem_desc"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:src="@drawable/imgres" />
+        android:focusableInTouchMode="false" />
 
 </LinearLayout>
