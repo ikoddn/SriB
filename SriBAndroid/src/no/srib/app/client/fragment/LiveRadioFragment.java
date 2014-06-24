@@ -15,8 +15,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -105,7 +103,7 @@ public class LiveRadioFragment extends Fragment {
 		String textString = text.toString();
 
 		if (textString != null) {
-			//Spanned safeText = Html.fromHtml(textString);
+			// Spanned safeText = Html.fromHtml(textString);
 			programNameTextView.setText(text);
 		} else {
 			programNameTextView.setText("");

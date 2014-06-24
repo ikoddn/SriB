@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class LiveRadioSectionFragment extends SectionFragment {
 
@@ -32,9 +31,9 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 		setRetainInstance(true);
 
-		//TextView textView = (TextView) rootView
-			//	.findViewById(R.id.textview_liveradiosection);
-		//textView.setText("LiveRadioSectionFragment");
+		// TextView textView = (TextView) rootView
+		// .findViewById(R.id.textview_liveradiosection);
+		// textView.setText("LiveRadioSectionFragment");
 
 		if (liveRadioFragment == null) {
 			liveRadioFragment = LiveRadioFragment
@@ -55,15 +54,15 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 	@Override
 	public Fragment getBaseFragment() {
-	//	if (firstStartUp) {
-		//	return loadingFragment;
-	//	} else {
+		// if (firstStartUp) {
+		// return loadingFragment;
+		// } else {
 
-			return liveRadioFragment;
-		//}
+		return liveRadioFragment;
+		// }
 	}
-	
-	public void startedUp(){
+
+	public void startedUp() {
 		firstStartUp = false;
 		replaceFragment(liveRadioFragment);
 	}

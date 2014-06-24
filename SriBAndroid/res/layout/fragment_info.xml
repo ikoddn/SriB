@@ -5,6 +5,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="25dp"
+        android:weightSum="780" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="222.5"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/button_info_facebook"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="67.0"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:contentDescription="@string/imagebutton_info_facebook_desc"
+            android:scaleType="fitCenter"
+            android:src="@drawable/facebook" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="67.0"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/button_info_spotify"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="67.0"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:contentDescription="@string/imagebutton_info_spotify_desc"
+            android:scaleType="fitCenter"
+            android:src="@drawable/spotify" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="67.0"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/button_info_www"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="67.0"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:contentDescription="@string/imagebutton_info_www_desc"
+            android:scaleType="fitCenter"
+            android:src="@drawable/sribwww" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="222.5"
+            android:visibility="invisible" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/textview_info1"
         android:layout_width="wrap_content"
