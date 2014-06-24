@@ -188,20 +188,6 @@ public class MainActivity extends FragmentActivity implements
 		public void onServiceReady(BaseService baseService) {
 			AudioPlayerService audioPlayer = (AudioPlayerService) baseService;
 			audioPlayer.setStateListener(new AudioPlayerStateListener());
-
-			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment liveRadioFragment = null;
-
-			if (liveRadioSectionFragment != null) {
-				liveRadioFragment = (LiveRadioFragment) liveRadioSectionFragment
-						.getBaseFragment();
-			}
-
-			if (liveRadioFragment != null) {
-				liveRadioFragment
-						.setOnLiveRadioClickListener(new LiveRadioClickListener());
-			}
-
 		}
 	}
 
@@ -399,6 +385,12 @@ public class MainActivity extends FragmentActivity implements
 			}
 
 		}
+
+		@Override
+		public void onInfoClicked() {
+			SectionFragment fragment = (SectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			fragment.pushFragment(new InfoFragment());
+		}
 	}
 
 	private class InfoClickListener implements OnInfoClickListener {
@@ -499,6 +491,7 @@ public class MainActivity extends FragmentActivity implements
 		if (fragment instanceof LiveRadioFragment) {
 			LiveRadioFragment liveRadio = (LiveRadioFragment) fragment;
 
+			liveRadio.setOnLiveRadioClickListener(new LiveRadioClickListener());
 			liveRadio.setSeekBarOnChangeListener(new SeekBarListener());
 			liveRadio.setSeekBarListener(new SeekBarImpl());
 
@@ -674,6 +667,5 @@ public class MainActivity extends FragmentActivity implements
 			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			fragment.startedUp();
 		}
-
 	}
 }

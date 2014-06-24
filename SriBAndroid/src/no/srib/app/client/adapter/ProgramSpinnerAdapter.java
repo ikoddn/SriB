@@ -4,8 +4,6 @@ import no.srib.app.client.R;
 import no.srib.app.client.model.ProgramName;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +37,9 @@ public class ProgramSpinnerAdapter extends BaseListAdapter<ProgramName> {
 		text.setTypeface(appFont);
 		ProgramName prog = getItem(position);
 		String name = prog.getName();
+
 		if (name != null) {
-			Spanned safeName = Html.fromHtml(name);
-			text.setText(safeName);
+			text.setText(name);
 		}
 
 		return view;

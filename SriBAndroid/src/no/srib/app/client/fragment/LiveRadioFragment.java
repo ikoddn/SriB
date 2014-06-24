@@ -37,7 +37,6 @@ public class LiveRadioFragment extends Fragment {
 	private static final String KEY_STREAM = "stream";
 
 	private boolean playing;
-	private OnClickListener infoClickListener;
 	private OnLiveRadioClickListener liveRadioClickListener;
 	private TextView statusTextView;
 	private TextView streamTextView;
@@ -53,23 +52,7 @@ public class LiveRadioFragment extends Fragment {
 	private DTImageView background;
 	private View rootView;
 
-	public static LiveRadioFragment newInstance(
-			OnClickListener infoClickListener) {
-
-		LiveRadioFragment fragment = new LiveRadioFragment();
-		fragment.setOnInfoClickListener(infoClickListener);
-
-		return fragment;
-	}
-
-	public void setSeekBarProgress(int value) {
-		if (seekbar != null) {
-			seekbar.setProgress(value);
-		}
-	}
-
 	public LiveRadioFragment() {
-
 		playing = false;
 		statusTextView = null;
 		streamTextView = null;
@@ -85,8 +68,10 @@ public class LiveRadioFragment extends Fragment {
 		}
 	}
 
-	private void setOnInfoClickListener(OnClickListener infoClickListener) {
-		this.infoClickListener = infoClickListener;
+	public void setSeekBarProgress(int value) {
+		if (seekbar != null) {
+			seekbar.setProgress(value);
+		}
 	}
 
 	public void setOnLiveRadioClickListener(
@@ -99,11 +84,7 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public void setProgramNameText(CharSequence text) {
-
-		String textString = text.toString();
-
-		if (textString != null) {
-			// Spanned safeText = Html.fromHtml(textString);
+		if (text != null) {
 			programNameTextView.setText(text);
 		} else {
 			programNameTextView.setText("");
@@ -140,7 +121,7 @@ public class LiveRadioFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
+
 		try {
 			readyListener = (OnFragmentReadyListener) getActivity();
 		} catch (ClassCastException e) {
@@ -206,7 +187,7 @@ public class LiveRadioFragment extends Fragment {
 		switchButton.setOnCheckedChangeListener(new SwitchButtonListener());
 		instagramButton.setOnClickListener(new InstagramButtonListener());
 
-		infoButton.setOnClickListener(infoClickListener);
+		infoButton.setOnClickListener(new InfoButtonListener());
 		soundCloudButton.setOnClickListener(new SoundCloudButtonListener());
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
@@ -382,6 +363,14 @@ public class LiveRadioFragment extends Fragment {
 
 	}
 
+	private class InfoButtonListener implements OnClickListener {
+
+		@Override
+		public void onClick(View button) {
+			liveRadioClickListener.onInfoClicked();
+		}
+	}
+
 	private class PlayPauseButtonListener implements OnClickListener {
 
 		@Override
@@ -470,6 +459,8 @@ public class LiveRadioFragment extends Fragment {
 	}
 
 	public interface OnLiveRadioClickListener {
+		void onInfoClicked();
+
 		void onInstagramClicked();
 
 		void onPlayPauseClicked();

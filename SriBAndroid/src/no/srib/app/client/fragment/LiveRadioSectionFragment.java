@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 public class LiveRadioSectionFragment extends SectionFragment {
@@ -31,13 +30,8 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 		setRetainInstance(true);
 
-		// TextView textView = (TextView) rootView
-		// .findViewById(R.id.textview_liveradiosection);
-		// textView.setText("LiveRadioSectionFragment");
-
 		if (liveRadioFragment == null) {
-			liveRadioFragment = LiveRadioFragment
-					.newInstance(new InfoClickedListener());
+			liveRadioFragment = new LiveRadioFragment();
 		}
 
 		if (loadingFragment == null) {
@@ -54,12 +48,7 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 	@Override
 	public Fragment getBaseFragment() {
-		// if (firstStartUp) {
-		// return loadingFragment;
-		// } else {
-
 		return liveRadioFragment;
-		// }
 	}
 
 	public void startedUp() {
@@ -76,14 +65,6 @@ public class LiveRadioSectionFragment extends SectionFragment {
 			if (a != null) {
 				a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
-		}
-	}
-
-	private class InfoClickedListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			pushFragment(new InfoFragment());
 		}
 	}
 }

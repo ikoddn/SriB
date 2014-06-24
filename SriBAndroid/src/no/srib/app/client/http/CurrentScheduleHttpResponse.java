@@ -29,7 +29,6 @@ public class CurrentScheduleHttpResponse implements HttpResponseListener {
 		case HttpStatus.SC_OK:
 			try {
 				Schedule schedule = MAPPER.readValue(response, Schedule.class);
-				// TODO Spanned text = Html.fromHtml(schedule.getProgram());
 				textView.setText(schedule.getProgram());
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

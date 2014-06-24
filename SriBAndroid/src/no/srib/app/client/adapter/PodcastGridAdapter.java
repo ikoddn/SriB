@@ -9,9 +9,6 @@ import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.TimeUtil;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.text.Html;
-import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +40,6 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 
 		Typeface appFont = Typeface.createFromAsset(view.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
-		Log.d("SriB", "size: " + getCount());
 		Podcast podcast = getItem(position);
 		TextView programNameTextView = (TextView) view
 				.findViewById(R.id.label_gridViewItem_programname);
@@ -51,11 +47,11 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 		String programName = podcast.getProgram();
 
 		if (programName != null) {
-			Spanned safeText = Html.fromHtml(programName);
-			programNameTextView.setText(safeText);
+			programNameTextView.setText(programName);
 		} else {
 			programNameTextView.setText("");
 		}
+
 		TextView programNameDate = (TextView) view
 				.findViewById(R.id.label_gridViewItem_date);
 		programNameDate.setTypeface(appFont);

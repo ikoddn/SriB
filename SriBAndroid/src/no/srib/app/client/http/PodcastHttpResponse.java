@@ -2,6 +2,7 @@ package no.srib.app.client.http;
 
 import org.apache.http.HttpStatus;
 
+import android.text.Html;
 import no.srib.app.client.adapter.BaseListAdapter;
 import no.srib.app.client.adapter.updater.AdapterUpdater;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
@@ -20,7 +21,8 @@ public class PodcastHttpResponse implements HttpResponseListener {
 	public void onResponse(final int statusCode, final String response) {
 		switch (statusCode) {
 		case HttpStatus.SC_OK:
-			updater.updateFrom(response);
+			String decodedHtml = Html.fromHtml(response).toString();
+			updater.updateFrom(decodedHtml);
 			break;
 		default:
 			break;

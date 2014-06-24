@@ -3,6 +3,7 @@ package no.srib.app.client.http;
 import org.apache.http.HttpStatus;
 
 import android.content.Context;
+import android.text.Html;
 import no.srib.app.client.R;
 import no.srib.app.client.adapter.BaseListAdapter;
 import no.srib.app.client.adapter.updater.AdapterUpdater;
@@ -27,10 +28,12 @@ public class ProgramNameHttpResponse implements HttpResponseListener {
 	public void onResponse(int statusCode, String response) {
 		switch (statusCode) {
 		case HttpStatus.SC_OK:
+			String decodedHtml = Html.fromHtml(response).toString();
 			String defaultValue = context.getResources().getString(
 					R.string.spinner_podcast_default);
+
 			updater.setDefaultValue(new ProgramName(0, defaultValue));
-			updater.updateFrom(response);
+			updater.updateFrom(decodedHtml);
 			break;
 		default:
 			break;
