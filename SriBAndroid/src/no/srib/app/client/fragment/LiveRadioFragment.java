@@ -105,12 +105,15 @@ public class LiveRadioFragment extends Fragment {
 		String textString = text.toString();
 
 		if (textString != null) {
-			Spanned safeText = Html.fromHtml(textString);
-			programNameTextView.setText(safeText);
+			//Spanned safeText = Html.fromHtml(textString);
+			programNameTextView.setText(text);
 		} else {
 			programNameTextView.setText("");
 		}
+	}
 
+	public TextView getProgramNameTextView() {
+		return programNameTextView;
 	}
 
 	public CharSequence getProgramNameText() {

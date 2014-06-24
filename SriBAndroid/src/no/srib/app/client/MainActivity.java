@@ -1,12 +1,11 @@
 package no.srib.app.client;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
-import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
+import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
@@ -22,11 +21,11 @@ import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.http.ArticleHttpResponse;
+import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.http.PodcastHttpResponse;
-import no.srib.app.client.http.AllProgramsHttpResponse;
+import no.srib.app.client.http.ProgramNameHttpResponse;
 import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.model.ProgramName;
-import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.BaseService;
@@ -55,16 +54,14 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements
 		OnFragmentReadyListener {
 
-	private final ObjectMapper MAPPER;
 	private ArticleListAdapter articleListAdapter;
+
+	private HttpResponseListener currentProgramResponse;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -96,9 +93,9 @@ public class MainActivity extends FragmentActivity implements
 	private String oldDataSource;
 
 	public MainActivity() {
-		MAPPER = new ObjectMapper();
 		articleListAdapter = null;
 		viewPager = null;
+		currentProgramResponse = null;
 	}
 
 	@Override
@@ -153,8 +150,8 @@ public class MainActivity extends FragmentActivity implements
 		programNameUpdater.setDefaultValue(new ProgramName(0, res
 				.getString(R.string.spinner_podcast_default)));
 
-		HttpResponseListener programResponse = new AllProgramsHttpResponse(
-				programSpinnerAdapter);
+		HttpResponseListener programResponse = new ProgramNameHttpResponse(
+				MainActivity.this, programSpinnerAdapter);
 		HttpResponseListener podcastResponse = new PodcastHttpResponse(
 				podcastGridAdapter);
 
@@ -168,12 +165,6 @@ public class MainActivity extends FragmentActivity implements
 		programTask.execute(programTaskUrl);
 
 		// ProgramName
-		HttpAsyncTask programName = new HttpAsyncTask(
-				new GetCurrentProgramName());
-
-		String programNameURL = res.getString(R.string.currentProgram);
-
-		programName.execute(programNameURL);
 
 	}
 
@@ -256,7 +247,7 @@ public class MainActivity extends FragmentActivity implements
 					throw new AudioPlayerException();
 				}
 
-				AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+				AudioPlayerService audioPlayer = audioPlayerService
 						.getService();
 				audioPlayer.setDataSource(url);
 				audioPlayer.setIsPodcast(false);
@@ -282,8 +273,7 @@ public class MainActivity extends FragmentActivity implements
 		public void onStateChanged(AudioPlayer.State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
-			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
-					.getService();
+			AudioPlayerService audioservice = audioPlayerService.getService();
 
 			if (liveRadioSectionFragment != null) {
 				fragment = (LiveRadioFragment) liveRadioSectionFragment
@@ -332,8 +322,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onPlayPauseClicked() {
-			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
-					.getService();
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
 
 			switch (audioPlayer.getState()) {
 			case PAUSED:
@@ -350,7 +339,7 @@ public class MainActivity extends FragmentActivity implements
 			case COMPLETED:
 				autoPlayAfterConnect = true;
 
-				StreamUpdaterService streamUpdater = (StreamUpdaterService) streamUpdaterService
+				StreamUpdaterService streamUpdater = streamUpdaterService
 						.getService();
 
 				if (!streamUpdater.isUpdating()) {
@@ -363,8 +352,7 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onStopClicked() {
 			autoPlayAfterConnect = false;
-			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
-					.getService();
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
 			audioPlayer.stop();
 		}
 
@@ -385,12 +373,9 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onSwitchPodcastSelected(boolean value) {
-			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
+			StreamUpdaterService streamUpdater = streamUpdaterService
 					.getService();
-			StreamUpdaterService streamUpdater = (StreamUpdaterService) streamUpdaterService
-					.getService();
-			HttpAsyncTask programTaskTemp = new HttpAsyncTask(
-					new GetCurrentProgramName());
 
 			audioPlayer.setIsPodcast(value);
 			if (value) {
@@ -399,8 +384,14 @@ public class MainActivity extends FragmentActivity implements
 			} else {
 				Log.i("Debug", "Live");
 				oldDataSource = audioPlayer.getDataSource();
-				programTaskTemp.execute(getResources().getString(
-						R.string.currentProgram));
+
+				if (currentProgramResponse != null) {
+					HttpAsyncTask programTask = new HttpAsyncTask(
+							currentProgramResponse);
+					programTask.execute(getResources().getString(
+							R.string.currentProgram));
+				}
+
 				streamUpdater.update();
 				audioPlayer.start();
 
@@ -443,8 +434,7 @@ public class MainActivity extends FragmentActivity implements
 		public void onItemClick(AdapterView<?> adapter, View view,
 				int position, long id) {
 
-			AudioPlayerService audioPlayer = (AudioPlayerService) audioPlayerService
-					.getService();
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
 			String url = (String) view.getTag(R.id.podcast_url);
 			String podcastName = (String) view.getTag(R.id.podcast_name);
 			String correctUrl = url.substring(3, url.length());
@@ -476,40 +466,6 @@ public class MainActivity extends FragmentActivity implements
 			audioPlayer.setIsPodcast(true);
 			fragment.setPodcastMode();
 			audioPlayer.start();
-
-		}
-
-	}
-
-	private class GetCurrentProgramName implements HttpResponseListener {
-
-		@Override
-		public void onResponse(int statusCode, String response) {
-			Schedule schedule = null;
-
-			if (response != null) {
-				try {
-					schedule = MAPPER.readValue(response, Schedule.class);
-					LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-					LiveRadioFragment fragment = null;
-
-					if (liveRadioSectionFragment != null) {
-						fragment = (LiveRadioFragment) liveRadioSectionFragment
-								.getBaseFragment();
-					}
-
-					if (fragment != null) {
-						fragment.setProgramNameText(schedule.getProgram());
-					}
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				asyncTaskCompleted.increaseCount();
-			}
 		}
 	}
 
@@ -520,6 +476,16 @@ public class MainActivity extends FragmentActivity implements
 
 			liveRadio.setSeekBarOnChangeListener(new SeekBarListener());
 			liveRadio.setSeekBarListener(new SeekBarImpl());
+
+			TextView textView = liveRadio.getProgramNameTextView();
+			currentProgramResponse = new CurrentScheduleHttpResponse(textView);
+
+			HttpAsyncTask programName = new HttpAsyncTask(
+					currentProgramResponse);
+			String programNameURL = getResources().getString(
+					R.string.currentProgram);
+
+			programName.execute(programNameURL);
 		} else if (fragment instanceof PodcastFragment) {
 			PodcastFragment podcast = (PodcastFragment) fragment;
 
@@ -547,8 +513,7 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int progress,
 				boolean fromUser) {
-			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
-					.getService();
+			AudioPlayerService audioservice = audioPlayerService.getService();
 			State currentState = audioservice.getState();
 			if (fromUser && currentState == State.STARTED
 					|| currentState == State.PAUSED) {
@@ -626,8 +591,7 @@ public class MainActivity extends FragmentActivity implements
 			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
 					.getChildFragmentManager().getFragments().get(0);
-			AudioPlayerService audioservice = (AudioPlayerService) audioPlayerService
-					.getService();
+			AudioPlayerService audioservice = audioPlayerService.getService();
 
 			int progress = audioservice.getProgress();
 			int max = audioservice.getDuration();

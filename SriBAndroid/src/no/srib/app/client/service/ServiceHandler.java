@@ -12,7 +12,7 @@ public class ServiceHandler<T extends BaseService> {
 	private final Class<T> TYPECLASS;
 
 	private boolean serviceBound;
-	private BaseService service;
+	private T service;
 	private ServiceConnection connection;
 	private OnServiceReadyListener onServiceReadyListener;
 
@@ -27,7 +27,7 @@ public class ServiceHandler<T extends BaseService> {
 		onServiceReadyListener = listener;
 	}
 
-	public BaseService getService() {
+	public T getService() {
 		return service;
 	}
 
@@ -53,7 +53,7 @@ public class ServiceHandler<T extends BaseService> {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder binder) {
 			BaseBinder customBinder = (BaseService.BaseBinder) binder;
-			service = customBinder.getService();
+			service = TYPECLASS.cast(customBinder.getService());
 
 			onServiceReadyListener.onServiceReady(service);
 		}

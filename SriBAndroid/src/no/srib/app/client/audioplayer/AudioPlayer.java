@@ -27,11 +27,12 @@ public interface AudioPlayer {
 
 	/**
 	 * Returns the current datasource, {@code null} if not set.
+	 * 
 	 * @return The current datasource.
 	 */
-	
+
 	String getDataSource();
-	
+
 	/**
 	 * Sets the data source URI for the audio player.
 	 * 
@@ -43,11 +44,13 @@ public interface AudioPlayer {
 
 	/**
 	 * Sets the type on content.
-	 * @param value - true if podcast
+	 * 
+	 * @param value
+	 *            - true if podcast
 	 */
-	
+
 	void setIsPodcast(boolean value);
-	
+
 	/**
 	 * Starts the audio player.
 	 */
@@ -77,13 +80,6 @@ public interface AudioPlayer {
 		PAUSED,
 		COMPLETED
 	}
-	
-	/**
-	 * The drifferent modes for the audio player.
-	 * @author Richard
-	 *
-	 */
-	
 
 	/**
 	 * The audio player's state listener.
