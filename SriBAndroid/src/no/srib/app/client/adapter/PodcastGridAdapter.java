@@ -19,11 +19,11 @@ import android.widget.TextView;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-public class GridArrayAdapter extends BaseListAdapter<Podcast> {
+public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 
 	private LayoutInflater inflater;
 
-	public GridArrayAdapter(Context context) {
+	public PodcastGridAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
 	}
 

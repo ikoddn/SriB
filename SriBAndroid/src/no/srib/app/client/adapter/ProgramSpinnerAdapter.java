@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class SpinnerAdapter extends BaseListAdapter<ProgramName> {
+public class ProgramSpinnerAdapter extends BaseListAdapter<ProgramName> {
 
 	private LayoutInflater inflater;
 
-	public SpinnerAdapter(Context context) {
+	public ProgramSpinnerAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
 	}
 

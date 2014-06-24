@@ -41,14 +41,14 @@ public class PodcastFragment extends Fragment {
 	}
 
 	public void setSpinnerListAdapter(
-			no.srib.app.client.adapter.SpinnerAdapter spinnerListAdapter) {
+			no.srib.app.client.adapter.ProgramSpinnerAdapter spinnerListAdapter) {
 		if (spinner != null) {
 			spinner.setAdapter(spinnerListAdapter);
 		}
 	}
 
 	public void setGridArrayAdapter(
-			no.srib.app.client.adapter.GridArrayAdapter gridViewAdapter2) {
+			no.srib.app.client.adapter.PodcastGridAdapter gridViewAdapter2) {
 		if (podcastGridView != null) {
 			podcastGridView.setAdapter(gridViewAdapter2);
 		}

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
-import no.srib.app.client.adapter.GridArrayAdapter;
+import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
-import no.srib.app.client.adapter.SpinnerAdapter;
+import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
@@ -85,8 +85,8 @@ public class MainActivity extends FragmentActivity implements
 	private ServiceHandler<AudioPlayerService> audioPlayerService;
 	private ServiceHandler<StreamUpdaterService> streamUpdaterService;
 
-	private GridArrayAdapter gridViewAdapter = null;
-	private SpinnerAdapter spinnerListAdapter = null;
+	private PodcastGridAdapter podcastGridAdapter;
+	private ProgramSpinnerAdapter programSpinnerAdapter;
 	private Handler seekHandler = new Handler();
 	private Runnable run;
 	private int updateTimeTextIntervall = 1000;
@@ -145,18 +145,18 @@ public class MainActivity extends FragmentActivity implements
 		httpAsyncTask.execute(url);
 
 		// Podcast Part
-		gridViewAdapter = new GridArrayAdapter(MainActivity.this);
-		spinnerListAdapter = new SpinnerAdapter(MainActivity.this);
+		podcastGridAdapter = new PodcastGridAdapter(MainActivity.this);
+		programSpinnerAdapter = new ProgramSpinnerAdapter(MainActivity.this);
 
 		JsonAdapterUpdater<ProgramName> programNameUpdater = new JsonAdapterUpdater<ProgramName>(
-				ProgramName.class, spinnerListAdapter);
+				ProgramName.class, programSpinnerAdapter);
 		programNameUpdater.setDefaultValue(new ProgramName(0, res
 				.getString(R.string.spinner_podcast_default)));
 
 		HttpResponseListener programResponse = new AllProgramsHttpResponse(
-				spinnerListAdapter);
+				programSpinnerAdapter);
 		HttpResponseListener podcastResponse = new PodcastHttpResponse(
-				gridViewAdapter);
+				podcastGridAdapter);
 
 		HttpAsyncTask programTask = new HttpAsyncTask(programResponse);
 		HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
@@ -418,7 +418,7 @@ public class MainActivity extends FragmentActivity implements
 			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
 
 			HttpResponseListener podcastResponse = new PodcastHttpResponse(
-					gridViewAdapter);
+					podcastGridAdapter);
 			HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
 			String url = getResources().getString(R.string.getAllPodcast);
 
@@ -523,9 +523,9 @@ public class MainActivity extends FragmentActivity implements
 		} else if (fragment instanceof PodcastFragment) {
 			PodcastFragment podcast = (PodcastFragment) fragment;
 
-			podcast.setGridArrayAdapter(gridViewAdapter);
+			podcast.setGridArrayAdapter(podcastGridAdapter);
 			podcast.setPodCastClickedListener(new GridViewItemClickListener());
-			podcast.setSpinnerListAdapter(spinnerListAdapter);
+			podcast.setSpinnerListAdapter(programSpinnerAdapter);
 			podcast.setSpinnerListSelectedListener(new ListViewItemClickListener());
 		} else if (fragment instanceof ArticleListFragment) {
 			ArticleListFragment articleList = (ArticleListFragment) fragment;
