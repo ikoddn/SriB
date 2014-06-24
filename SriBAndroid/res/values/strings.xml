@@ -20,29 +20,32 @@
     <string name="imageview_articleitem_desc">Image</string>
     <string name="searchView_articleList_hint">Søk etter artikkel…</string>
     <string name="toast_noContent">Fant ingen artikler :(</string>
-    
+
     <!-- Podcast fragment -->
+    <string name="spinner_podcast_default">Velg program</string>
     <string name="imageview_podcastitem_desc">Podcast art</string>
-    
+
     <!-- Loading fragment -->
     <string name="imageview_startupscreen">Startup Screen</string>
-    
-    
+
     <!-- Info fragment -->
     <string name="imageview_infofragment">Studentradioen i Bergen logo</string>
-    <string name="textView_info1"><![CDATA[
+    <string name="textView_info1">
+<![CDATA[
 <h1>Om Studentradioen i Bergen</h1>
 <p>Studentradioen i Bergen formidler studentjournalistikk og girstudentene et reklamefritt, lokalt forankret innhold som reflekterer studiehverdagen.</p>
 
 <p>SriB er Bergens eldste lokalradio og ble startet i 1982. I dag drives radiokanalen av 170 frivillige medarbeidere, som lager morgenprogram, musikk-, samfunns-, humor-, nyhets- og kulturprogrammer. Hver uke sender vi 119 timer reklamefri radio, på FM 96,4, 106,1 og 107,8, og nettradio. Hør oss hver dag mellom kl. 07.00 og 14.00, og igjen fra kl. 21.00.</p>
-]]></string>
-
-        <string name="textView_info2"><![CDATA[
+]]>
+    </string>
+    <string name="textView_info2">
+<![CDATA[
 <p>Utviklet av: Richard Olsen og Sveinung Fossås</p>
 
 <p>Grafisk design: Johanne Karlsrud</p>
 
 <p>Prosjektleder: Vegard Sørhus</p>
-]]></string>
+]]>
+    </string>
 
 </resources>

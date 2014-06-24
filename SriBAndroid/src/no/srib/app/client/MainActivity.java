@@ -1,13 +1,13 @@
 package no.srib.app.client;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.GridArrayAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.adapter.SpinnerAdapter;
+import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.audioplayer.AudioPlayer;
@@ -21,9 +21,10 @@ import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
+import no.srib.app.client.http.ArticleHttpResponse;
+import no.srib.app.client.http.PodcastHttpResponse;
+import no.srib.app.client.http.AllProgramsHttpResponse;
 import no.srib.app.client.listener.OnFragmentReadyListener;
-import no.srib.app.client.model.Article;
-import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
@@ -35,10 +36,8 @@ import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.util.AsyncTaskCompleted;
 import no.srib.app.client.util.AsyncTaskCompleted.AsyncTaskFinished;
-
-import org.apache.http.HttpStatus;
-
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,14 +55,13 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MainActivity extends FragmentActivity implements OnFragmentReadyListener {
+public class MainActivity extends FragmentActivity implements
+		OnFragmentReadyListener {
 
 	private final ObjectMapper MAPPER;
 	private ArticleListAdapter articleListAdapter;
@@ -106,6 +104,9 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Resources res = getResources();
+
 		asyncTaskCompleted = new AsyncTaskCompleted(new FragmentsReady(), 4);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -137,8 +138,9 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 		articleListAdapter = new ArticleListAdapter(
 				LayoutInflater.from(MainActivity.this));
 
-		HttpAsyncTask httpAsyncTask = new HttpAsyncTask(
-				new ArticleHttpResponseListener());
+		HttpResponseListener articleResponse = new ArticleHttpResponse(
+				MainActivity.this, articleListAdapter);
+		HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
 		String url = getResources().getString(R.string.url_articles);
 		httpAsyncTask.execute(url);
 
@@ -146,13 +148,21 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 		gridViewAdapter = new GridArrayAdapter(MainActivity.this);
 		spinnerListAdapter = new SpinnerAdapter(MainActivity.this);
 
-		HttpAsyncTask programTask = new HttpAsyncTask(new GetProgramNames());
-		HttpAsyncTask podcastTask = new HttpAsyncTask(new GetAllPodcast());
+		JsonAdapterUpdater<ProgramName> programNameUpdater = new JsonAdapterUpdater<ProgramName>(
+				ProgramName.class, spinnerListAdapter);
+		programNameUpdater.setDefaultValue(new ProgramName(0, res
+				.getString(R.string.spinner_podcast_default)));
 
-		String programTaskUrl = getResources().getString(
-				R.string.getAllProgramNames);
-		String podcastTaskUrl = getResources()
-				.getString(R.string.getAllPodcast);
+		HttpResponseListener programResponse = new AllProgramsHttpResponse(
+				spinnerListAdapter);
+		HttpResponseListener podcastResponse = new PodcastHttpResponse(
+				gridViewAdapter);
+
+		HttpAsyncTask programTask = new HttpAsyncTask(programResponse);
+		HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
+
+		String programTaskUrl = res.getString(R.string.getAllProgramNames);
+		String podcastTaskUrl = res.getString(R.string.getAllPodcast);
 
 		podcastTask.execute(podcastTaskUrl);
 		programTask.execute(programTaskUrl);
@@ -161,8 +171,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 		HttpAsyncTask programName = new HttpAsyncTask(
 				new GetCurrentProgramName());
 
-		String programNameURL = getResources().getString(
-				R.string.currentProgram);
+		String programNameURL = res.getString(R.string.currentProgram);
 
 		programName.execute(programNameURL);
 
@@ -408,28 +417,24 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 
 			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
 
-			if (position == 0) {
+			HttpResponseListener podcastResponse = new PodcastHttpResponse(
+					gridViewAdapter);
+			HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
+			String url = getResources().getString(R.string.getAllPodcast);
 
-				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
-				String url = getResources().getString(R.string.getAllPodcast);
-				podcast.execute(url);
-
-			} else {
-				HttpAsyncTask podcast = new HttpAsyncTask(new GetAllPodcast());
-				String url = getResources().getString(R.string.getAllPodcast);
-				podcast.execute(url + "/"
-						+ parent.getItemIdAtPosition(position));
-
+			if (position != 0) {
+				url += "/" + parent.getItemIdAtPosition(position);
 			}
+
+			podcastTask.execute(url);
+
 			GridView grid = fragment.getGridView();
 			grid.smoothScrollToPosition(0);
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
-
 		}
-
 	}
 
 	private class GridViewItemClickListener implements OnItemClickListener {
@@ -476,36 +481,6 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 
 	}
 
-	private class GetProgramNames implements HttpResponseListener {
-
-		@Override
-		public void onResponse(int statusCode, String response) {
-
-			List<ProgramName> list = null;
-
-			if (response != null) {
-				try {
-					list = MAPPER.readValue(response,
-							new TypeReference<List<ProgramName>>() {
-							});
-
-					list.add(0, new ProgramName(0, "Velg program"));
-					spinnerListAdapter.setList(list);
-					spinnerListAdapter.notifyDataSetChanged();
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				asyncTaskCompleted.increaseCount();
-			}
-
-		}
-
-	}
-
 	private class GetCurrentProgramName implements HttpResponseListener {
 
 		@Override
@@ -534,66 +509,6 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 					e.printStackTrace();
 				}
 				asyncTaskCompleted.increaseCount();
-			}
-		}
-	}
-
-	private class GetAllPodcast implements HttpResponseListener {
-
-		@Override
-		public void onResponse(int statusCode, String response) {
-			List<Podcast> podcastList = null;
-
-			if (response != null) {
-				try {
-					podcastList = MAPPER.readValue(response,
-							new TypeReference<List<Podcast>>() {
-							});
-					gridViewAdapter.setList(podcastList);
-					gridViewAdapter.notifyDataSetChanged();
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				asyncTaskCompleted.increaseCount();
-			}
-
-		}
-
-	}
-
-	private class ArticleHttpResponseListener implements HttpResponseListener {
-
-		@Override
-		public void onResponse(final int statusCode, String response) {
-			switch (statusCode) {
-			case HttpStatus.SC_OK:
-				try {
-					List<Article> list = MAPPER.readValue(response,
-							new TypeReference<List<Article>>() {
-							});
-					articleListAdapter.setList(list);
-					articleListAdapter.notifyDataSetChanged();
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				asyncTaskCompleted.increaseCount();
-
-				break;
-			case HttpStatus.SC_NO_CONTENT:
-				Toast.makeText(MainActivity.this, R.string.toast_noContent,
-						Toast.LENGTH_SHORT).show();
-				break;
-			default:
-				break;
 			}
 		}
 	}
@@ -747,8 +662,9 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 
 		@Override
 		public void onSearch(String query) {
-			HttpAsyncTask httpAsyncTask = new HttpAsyncTask(
-					new ArticleHttpResponseListener());
+			HttpResponseListener articleResponse = new ArticleHttpResponse(
+					MainActivity.this, articleListAdapter);
+			HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
 			StringBuilder sb = new StringBuilder();
 			sb.append(getResources().getString(R.string.url_articles));
 			sb.append("?s=" + query);
@@ -760,20 +676,8 @@ public class MainActivity extends FragmentActivity implements OnFragmentReadyLis
 
 		@Override
 		public void onFinished() {
-
 			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			fragment.startedUp();
-
-			/*
-			 * String text = liveFrag.getProgramNameText().toString();
-			 * liveFrag.setProgramNameText(text + " * ");
-			 * 
-			 * //Vibrator v = (Vibrator)
-			 * getApplicationContext().getSystemService
-			 * (Context.VIBRATOR_SERVICE); // Vibrate for 500 milliseconds
-			 * //v.vibrate(500);
-			 */
-
 		}
 
 	}

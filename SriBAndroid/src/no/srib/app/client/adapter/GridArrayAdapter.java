@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class GridArrayAdapter extends BaseListAdapter<Podcast> {
 
 		Typeface appFont = Typeface.createFromAsset(view.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
+		Log.d("SriB", "size: " + getCount());
 		Podcast podcast = getItem(position);
 		TextView programNameTextView = (TextView) view
 				.findViewById(R.id.label_gridViewItem_programname);
