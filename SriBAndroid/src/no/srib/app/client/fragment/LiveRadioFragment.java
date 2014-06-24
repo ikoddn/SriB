@@ -140,6 +140,7 @@ public class LiveRadioFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		
 		try {
 			readyListener = (OnFragmentReadyListener) getActivity();
 		} catch (ClassCastException e) {

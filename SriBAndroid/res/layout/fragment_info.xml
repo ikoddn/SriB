@@ -54,13 +54,13 @@
             android:visibility="invisible" />
 
         <ImageButton
-            android:id="@+id/button_info_www"
+            android:id="@+id/button_info_sribwww"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="67.0"
             android:adjustViewBounds="true"
             android:background="@null"
-            android:contentDescription="@string/imagebutton_info_www_desc"
+            android:contentDescription="@string/imagebutton_info_sribwww_desc"
             android:scaleType="fitCenter"
             android:src="@drawable/sribwww" />
 

@@ -15,6 +15,8 @@ import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.ArticleListFragment.OnSearchListener;
+import no.srib.app.client.fragment.InfoFragment;
+import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
@@ -36,6 +38,7 @@ import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.util.AsyncTaskCompleted;
 import no.srib.app.client.util.AsyncTaskCompleted.AsyncTaskFinished;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -398,6 +401,30 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	private class InfoClickListener implements OnInfoClickListener {
+
+		@Override
+		public void onFacebookClicked() {
+			openURL(R.string.url_facebook);
+		}
+
+		@Override
+		public void onSpotifyClicked() {
+			try {
+				// Try to open Spotify app
+				openURL(R.string.scheme_uri_spotify);
+			} catch (ActivityNotFoundException e) {
+				// Spotify app not installed, fall back to profile web site
+				openURL(R.string.url_spotify);
+			}
+		}
+
+		@Override
+		public void onSribwwwClicked() {
+			openURL(R.string.url_sribwww);
+		}
+	}
+
 	private class ListViewItemClickListener implements OnItemSelectedListener {
 
 		@Override
@@ -496,6 +523,10 @@ public class MainActivity extends FragmentActivity implements
 
 			articleList.setArticleListAdapter(articleListAdapter);
 			articleList.setSearchListener(new ArticleSearch());
+		} else if (fragment instanceof InfoFragment) {
+			InfoFragment info = (InfoFragment) fragment;
+
+			info.setInfoClickListener(new InfoClickListener());
 		}
 	}
 
@@ -613,7 +644,8 @@ public class MainActivity extends FragmentActivity implements
 			if (hours == 0) {
 				time = String.format(locale, "%02d:%02d", minutes, seconds);
 			} else {
-				time = String.format(locale, "%02d:%02d:%02d", hours, minutes, seconds);
+				time = String.format(locale, "%02d:%02d:%02d", hours, minutes,
+						seconds);
 			}
 
 			return time;
