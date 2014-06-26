@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <no.srib.app.client.util.DTImageView
+    <no.srib.app.client.view.DTImageView
         android:id="@+id/dtImageView_loading_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

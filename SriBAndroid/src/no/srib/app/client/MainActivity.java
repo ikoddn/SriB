@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
-import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
@@ -21,7 +20,6 @@ import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
-import no.srib.app.client.fragment.LoadingFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.http.ArticleHttpResponse;
@@ -37,9 +35,10 @@ import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
+import no.srib.app.client.viewpager.PageChangeListener;
+import no.srib.app.client.viewpager.SectionsPagerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -120,6 +119,9 @@ public class MainActivity extends FragmentActivity implements
 		viewPager.setAdapter(sectionsPagerAdapter);
 		viewPager
 				.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+
+		viewPager.setOnPageChangeListener(new PageChangeListener(
+				MainActivity.this, viewPager));
 
 		autoPlayAfterConnect = false;
 
@@ -497,9 +499,9 @@ public class MainActivity extends FragmentActivity implements
 					R.string.currentProgram);
 
 			programName.execute(programNameURL);
-			
+
 			AudioPlayerService audioPlayer = audioPlayerService.getService();
-			
+
 			switch (audioPlayer.getState()) {
 			case PREPARING:
 			case STARTED:

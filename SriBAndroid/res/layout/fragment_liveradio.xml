@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
 
-    <no.srib.app.client.util.DTImageView
+    <no.srib.app.client.view.DTImageView
         android:id="@+id/dtImageView_liveradio_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -1,9 +1,9 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
-import no.srib.app.client.util.DTImageView;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
+import no.srib.app.client.view.DTImageView;
 import no.srib.app.client.view.SribSeekBar;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;

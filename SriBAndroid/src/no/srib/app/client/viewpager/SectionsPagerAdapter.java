@@ -1,4 +1,4 @@
-package no.srib.app.client.adapter;
+package no.srib.app.client.viewpager;
 
 import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;

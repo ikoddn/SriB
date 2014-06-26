@@ -1,4 +1,4 @@
-package no.srib.app.client.util;
+package no.srib.app.client.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
