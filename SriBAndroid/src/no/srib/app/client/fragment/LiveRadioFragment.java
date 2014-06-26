@@ -29,11 +29,9 @@ import android.widget.TextView;
 public class LiveRadioFragment extends BaseFragment {
 
 	private static final String PREFS_NAME = "prefsLiveRadio";
-	private static final String KEY_IS_PLAYING = "isPlaying";
 	private static final String KEY_STATUS = "status";
 	private static final String KEY_STREAM = "stream";
 
-	private boolean playing;
 	private OnLiveRadioClickListener liveRadioClickListener;
 	private TextView statusTextView;
 	private TextView streamTextView;
@@ -49,7 +47,6 @@ public class LiveRadioFragment extends BaseFragment {
 	private View rootView;
 
 	public LiveRadioFragment() {
-		playing = false;
 		statusTextView = null;
 		streamTextView = null;
 		programNameTextView = null;
@@ -281,7 +278,6 @@ public class LiveRadioFragment extends BaseFragment {
 
 		String status = prefs.getString(KEY_STATUS, null);
 		String stream = prefs.getString(KEY_STREAM, null);
-		playing = prefs.getBoolean(KEY_IS_PLAYING, false);
 
 		if (status != null) {
 			setStatusText(status);
@@ -290,11 +286,6 @@ public class LiveRadioFragment extends BaseFragment {
 		if (stream != null) {
 			setStreamText(stream);
 		}
-
-		if (playing) {
-			setPauseIcon();
-		}
-
 	}
 
 	@Override
@@ -308,7 +299,6 @@ public class LiveRadioFragment extends BaseFragment {
 
 			editor.putString(KEY_STATUS, statusTextView.getText().toString());
 			editor.putString(KEY_STREAM, streamTextView.getText().toString());
-			editor.putBoolean(KEY_IS_PLAYING, playing);
 
 			editor.commit();
 		}
@@ -326,13 +316,11 @@ public class LiveRadioFragment extends BaseFragment {
 	public void setPauseIcon() {
 		Drawable icon = getResources().getDrawable(R.drawable.pause);
 		playButton.setImageDrawable(icon);
-		playing = true;
 	}
 
 	public void setPlayIcon() {
 		Drawable icon = getResources().getDrawable(R.drawable.play);
 		playButton.setImageDrawable(icon);
-		playing = false;
 	}
 
 	public void setPodcastMode() {

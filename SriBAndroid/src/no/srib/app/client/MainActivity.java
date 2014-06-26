@@ -39,6 +39,7 @@ import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -220,10 +221,10 @@ public class MainActivity extends FragmentActivity implements
 
 			LiveRadioFragment liveRadio = liveRadioSectionFragment
 					.getLiveRadioFragment();
-			
+
 			try {
 				liveRadioSectionFragment.replaceLoadingFragment();
-				
+
 				String url = streamSchedule.getUrl();
 
 				if (url == null) {
@@ -496,6 +497,20 @@ public class MainActivity extends FragmentActivity implements
 					R.string.currentProgram);
 
 			programName.execute(programNameURL);
+			
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
+			
+			switch (audioPlayer.getState()) {
+			case PREPARING:
+			case STARTED:
+				liveRadio.setPauseIcon();
+				break;
+			case COMPLETED:
+			case PAUSED:
+			case STOPPED:
+			case UNINITIALIZED:
+				break;
+			}
 		} else if (fragment instanceof PodcastFragment) {
 			PodcastFragment podcast = (PodcastFragment) fragment;
 
@@ -606,10 +621,10 @@ public class MainActivity extends FragmentActivity implements
 			AudioPlayerService audioservice = audioPlayerService.getService();
 
 			int progress = audioservice.getProgress();
-			int max = audioservice.getDuration();
 			String time = fromMsToTime(progress);
 			liveFrag.setTimeText(time);
-			System.out.println(progress + "/" + max);
+			// int max = audioservice.getDuration();
+			// System.out.println(progress + "/" + max);
 			liveFrag.setSeekBarProgress(progress);
 			seekHandler.postDelayed(run, updateTimeTextIntervall);
 
