@@ -10,6 +10,7 @@
         android:id="@+id/searchView_articleList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="false"
         srib:iconifiedByDefault="false"
         srib:queryHint="@string/searchView_articleList_hint" />
 

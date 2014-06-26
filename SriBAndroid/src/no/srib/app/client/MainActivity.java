@@ -655,7 +655,7 @@ public class MainActivity extends FragmentActivity implements
 			HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
 			StringBuilder sb = new StringBuilder();
 			sb.append(getResources().getString(R.string.url_articles));
-			sb.append("?s=" + query);
+			sb.append("?q=" + query);
 			httpAsyncTask.execute(sb.toString());
 		}
 	}
