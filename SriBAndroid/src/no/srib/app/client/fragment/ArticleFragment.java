@@ -3,13 +3,12 @@ package no.srib.app.client.fragment;
 import no.srib.app.client.R;
 import no.srib.app.client.util.EmbeddedWebViewClient;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-public class ArticleFragment extends Fragment {
+public class ArticleFragment extends BaseFragment {
 
 	private String url;
 

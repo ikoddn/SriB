@@ -13,12 +13,12 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 	private LiveRadioFragment liveRadioFragment;
 	private LoadingFragment loadingFragment;
-	private boolean firstStartUp;
+	private boolean loading;
 
 	public LiveRadioSectionFragment() {
 		liveRadioFragment = null;
 		loadingFragment = null;
-		firstStartUp = true;
+		loading = true;
 	}
 
 	@Override
@@ -48,11 +48,23 @@ public class LiveRadioSectionFragment extends SectionFragment {
 
 	@Override
 	public Fragment getBaseFragment() {
+		if (loading) {
+			return loadingFragment;
+		} else {
+			return liveRadioFragment;
+		}
+	}
+
+	public LoadingFragment getLoadingFragment() {
+		return loadingFragment;
+	}
+
+	public LiveRadioFragment getLiveRadioFragment() {
 		return liveRadioFragment;
 	}
 
-	public void startedUp() {
-		firstStartUp = false;
+	public void replaceLoadingFragment() {
+		loading = false;
 		replaceFragment(liveRadioFragment);
 	}
 

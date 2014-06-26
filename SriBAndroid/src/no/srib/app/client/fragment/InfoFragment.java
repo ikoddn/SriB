@@ -1,11 +1,8 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
-import no.srib.app.client.listener.OnFragmentReadyListener;
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,29 +12,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class InfoFragment extends Fragment {
+public class InfoFragment extends BaseFragment {
 
 	private OnInfoClickListener infoClickListener;
-	private OnFragmentReadyListener readyListener;
 
 	public InfoFragment() {
 		infoClickListener = null;
-		readyListener = null;
 	}
 
 	public void setInfoClickListener(final OnInfoClickListener listener) {
 		infoClickListener = listener;
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		try {
-			readyListener = (OnFragmentReadyListener) getActivity();
-		} catch (ClassCastException e) {
-			readyListener = null;
-		}
 	}
 
 	@Override
@@ -77,10 +61,6 @@ public class InfoFragment extends Fragment {
 				.findViewById(R.id.textview_info2);
 
 		textView2.setText(Html.fromHtml(getString(R.string.textView_info2)));
-
-		if (readyListener != null) {
-			readyListener.onFragmentReady(this);
-		}
 
 		return rootView;
 	}

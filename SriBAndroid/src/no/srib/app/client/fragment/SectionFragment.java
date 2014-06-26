@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-public abstract class SectionFragment extends Fragment {
+public abstract class SectionFragment extends BaseFragment {
 
 	public abstract int getFrameLayoutID();
 
@@ -30,14 +30,13 @@ public abstract class SectionFragment extends Fragment {
 
 		return false;
 	}
-	
-	public void replaceFragment(Fragment frag){
+
+	public void replaceFragment(Fragment frag) {
 		FragmentManager manager = getChildFragmentManager();
 
 		FragmentTransaction transaction = manager.beginTransaction();
 		transaction.replace(getFrameLayoutID(), frag);
-		transaction.commit();
-		
+		transaction.commitAllowingStateLoss();
 	}
 
 	@Override

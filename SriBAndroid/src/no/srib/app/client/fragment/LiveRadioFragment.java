@@ -1,12 +1,10 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
-import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.util.DTImageView;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.SribSeekBar;
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -14,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class LiveRadioFragment extends Fragment {
+public class LiveRadioFragment extends BaseFragment {
 
 	private static final String PREFS_NAME = "prefsLiveRadio";
 	private static final String KEY_IS_PLAYING = "isPlaying";
@@ -47,7 +44,6 @@ public class LiveRadioFragment extends Fragment {
 
 	private SribSeekBar seekbar;
 	private SeekBarInterface seekBarListener;
-	private OnFragmentReadyListener readyListener;
 
 	private DTImageView background;
 	private View rootView;
@@ -115,17 +111,6 @@ public class LiveRadioFragment extends Fragment {
 	public void setTimeText(CharSequence text) {
 		if (timeTextView != null) {
 			timeTextView.setText(text);
-		}
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		try {
-			readyListener = (OnFragmentReadyListener) getActivity();
-		} catch (ClassCastException e) {
-			readyListener = null;
 		}
 	}
 
@@ -284,10 +269,6 @@ public class LiveRadioFragment extends Fragment {
 		viewUtil.setWeight(twitterButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace4, socialSpacing);
 
-		if (readyListener != null) {
-			readyListener.onFragmentReady(this);
-		}
-
 		return rootView;
 	}
 
@@ -360,7 +341,6 @@ public class LiveRadioFragment extends Fragment {
 
 	public void setLiveRadioMode() {
 		switchButton.setChecked(false);
-
 	}
 
 	private class InfoButtonListener implements OnClickListener {

@@ -1,11 +1,9 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
-import no.srib.app.client.listener.OnFragmentReadyListener;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +12,12 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.Spinner;
 
-public class PodcastFragment extends Fragment {
+public class PodcastFragment extends BaseFragment {
 
 	private Spinner spinner = null;
 	private GridView podcastGridView = null;
-	private OnFragmentReadyListener readyListener = null;
 	private OnItemClickListener podcastClickedListener = null;
 	private OnItemSelectedListener spinnerSelectedListener = null;
-
-	public PodcastFragment() {
-
-	}
 
 	public GridView getGridView() {
 		return podcastGridView;
@@ -55,16 +48,6 @@ public class PodcastFragment extends Fragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			readyListener = (OnFragmentReadyListener) getActivity();
-		} catch (ClassCastException e) {
-			readyListener = null;
-		}
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_podcast, container,
@@ -74,10 +57,6 @@ public class PodcastFragment extends Fragment {
 		spinner = (Spinner) rootView.findViewById(R.id.spinner1);
 		podcastGridView = (GridView) rootView
 				.findViewById(R.id.gridView_podcastList);
-
-		if (readyListener != null) {
-			readyListener.onFragmentReady(this);
-		}
 
 		spinner.setOnItemSelectedListener(spinnerSelectedListener);
 		podcastGridView.setOnItemClickListener(podcastClickedListener);

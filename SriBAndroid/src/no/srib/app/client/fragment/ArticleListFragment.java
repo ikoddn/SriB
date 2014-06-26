@@ -2,10 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
 import no.srib.app.client.adapter.ArticleListAdapter;
-import no.srib.app.client.listener.OnFragmentReadyListener;
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.LayoutInflater;
@@ -14,11 +11,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class ArticleListFragment extends Fragment {
+public class ArticleListFragment extends BaseFragment {
 
 	private SearchView searchView;
 	private ListView listView;
-	private OnFragmentReadyListener readyListener;
 	private OnItemClickListener articleClickedListener;
 	private OnSearchListener searchListener;
 
@@ -34,7 +30,6 @@ public class ArticleListFragment extends Fragment {
 	public ArticleListFragment() {
 		searchView = null;
 		listView = null;
-		readyListener = null;
 		articleClickedListener = null;
 	}
 
@@ -74,22 +69,7 @@ public class ArticleListFragment extends Fragment {
 		listView = (ListView) rootView.findViewById(R.id.listView_articleList);
 		listView.setOnItemClickListener(articleClickedListener);
 
-		if (readyListener != null) {
-			readyListener.onFragmentReady(this);
-		}
-
 		return rootView;
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		try {
-			readyListener = (OnFragmentReadyListener) getActivity();
-		} catch (ClassCastException e) {
-			readyListener = null;
-		}
 	}
 
 	public interface OnSearchListener {

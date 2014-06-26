@@ -21,6 +21,7 @@ import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
+import no.srib.app.client.fragment.LoadingFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.http.ArticleHttpResponse;
@@ -36,8 +37,6 @@ import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
-import no.srib.app.client.util.AsyncTaskCompleted;
-import no.srib.app.client.util.AsyncTaskCompleted.AsyncTaskFinished;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -91,7 +90,6 @@ public class MainActivity extends FragmentActivity implements
 	private Handler seekHandler = new Handler();
 	private Runnable run;
 	private int updateTimeTextIntervall = 1000;
-	private AsyncTaskCompleted asyncTaskCompleted;
 
 	// TODO Put this in SharedPrefrence.
 	private String oldDataSource;
@@ -107,8 +105,6 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 
 		Resources res = getResources();
-
-		asyncTaskCompleted = new AsyncTaskCompleted(new FragmentsReady(), 4);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
@@ -196,22 +192,23 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onStatus(Status status) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = (LiveRadioFragment) liveRadioSectionFragment
-					.getBaseFragment();
 
-			if (fragment != null) {
+			LiveRadioFragment liveRadio = liveRadioSectionFragment
+					.getLiveRadioFragment();
+
+			if (liveRadio != null) {
 				switch (status) {
 				case NO_INTERNET:
-					fragment.setStreamText("No internet connection");
+					liveRadio.setStreamText("No internet connection");
 					break;
 				case SERVER_UNREACHABLE:
-					fragment.setStreamText("Could not connect to server");
+					liveRadio.setStreamText("Could not connect to server");
 					break;
 				case INVALID_RESPONSE:
-					fragment.setStreamText("Invalid response from server");
+					liveRadio.setStreamText("Invalid response from server");
 					break;
 				case CONNECTING:
-					fragment.setStreamText("Connecting...");
+					liveRadio.setStreamText("Connecting...");
 					break;
 				}
 			}
@@ -220,14 +217,13 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = null;
 
-			if (liveRadioSectionFragment != null) {
-				fragment = (LiveRadioFragment) liveRadioSectionFragment
-						.getBaseFragment();
-			}
-
+			LiveRadioFragment liveRadio = liveRadioSectionFragment
+					.getLiveRadioFragment();
+			
 			try {
+				liveRadioSectionFragment.replaceLoadingFragment();
+				
 				String url = streamSchedule.getUrl();
 
 				if (url == null) {
@@ -238,18 +234,15 @@ public class MainActivity extends FragmentActivity implements
 						.getService();
 				audioPlayer.setDataSource(url);
 				audioPlayer.setIsPodcast(false);
-				fragment.setLiveRadioMode();
+				liveRadio.setLiveRadioMode();
 				if (autoPlayAfterConnect) {
 					audioPlayer.start();
 				}
 
-				if (fragment != null) {
-					fragment.setStreamText(streamSchedule.getName());
-				}
+				liveRadio.setStreamText(streamSchedule.getName());
 			} catch (AudioPlayerException e) {
-				if (fragment != null) {
-					fragment.setStreamText("Playback error");
-				}
+				e.printStackTrace();
+				liveRadio.setStreamText("Playback error");
 			}
 		}
 	}
@@ -263,8 +256,7 @@ public class MainActivity extends FragmentActivity implements
 			AudioPlayerService audioservice = audioPlayerService.getService();
 
 			if (liveRadioSectionFragment != null) {
-				fragment = (LiveRadioFragment) liveRadioSectionFragment
-						.getBaseFragment();
+				fragment = liveRadioSectionFragment.getLiveRadioFragment();
 			}
 
 			switch (state) {
@@ -602,10 +594,8 @@ public class MainActivity extends FragmentActivity implements
 				public void run() {
 					SeekBarInterface sek = new SeekBarImpl();
 					sek.updateSeekBar();
-
 				}
 			};
-
 		}
 
 		@Override
@@ -657,15 +647,6 @@ public class MainActivity extends FragmentActivity implements
 			sb.append(getResources().getString(R.string.url_articles));
 			sb.append("?q=" + query);
 			httpAsyncTask.execute(sb.toString());
-		}
-	}
-
-	private class FragmentsReady implements AsyncTaskFinished {
-
-		@Override
-		public void onFinished() {
-			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			fragment.startedUp();
 		}
 	}
 }
