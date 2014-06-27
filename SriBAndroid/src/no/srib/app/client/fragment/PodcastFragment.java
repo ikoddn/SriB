@@ -1,6 +1,8 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.adapter.PodcastGridAdapter;
+import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -14,36 +16,41 @@ import android.widget.Spinner;
 
 public class PodcastFragment extends BaseFragment {
 
-	private Spinner spinner = null;
-	private GridView podcastGridView = null;
-	private OnItemClickListener podcastClickedListener = null;
-	private OnItemSelectedListener spinnerSelectedListener = null;
+	private GridView podcastGridView;
+	private Spinner programSpinner;
+
+	public PodcastFragment() {
+		podcastGridView = null;
+		programSpinner = null;
+	}
 
 	public GridView getGridView() {
 		return podcastGridView;
 	}
 
-	public void setPodCastClickedListener(
-			OnItemClickListener podcastClickListener) {
-		this.podcastClickedListener = podcastClickListener;
-	}
-
-	public void setSpinnerListSelectedListener(
-			OnItemSelectedListener spinnerListClickListener) {
-		this.spinnerSelectedListener = spinnerListClickListener;
-	}
-
-	public void setSpinnerListAdapter(
-			no.srib.app.client.adapter.ProgramSpinnerAdapter spinnerListAdapter) {
-		if (spinner != null) {
-			spinner.setAdapter(spinnerListAdapter);
+	public void setPodcastClickedListener(final OnItemClickListener listener) {
+		if (podcastGridView != null) {
+			podcastGridView.setOnItemClickListener(listener);
 		}
 	}
 
-	public void setGridArrayAdapter(
-			no.srib.app.client.adapter.PodcastGridAdapter gridViewAdapter2) {
+	public void setSpinnerListSelectedListener(
+			final OnItemSelectedListener listener) {
+
+		if (programSpinner != null) {
+			programSpinner.setOnItemSelectedListener(listener);
+		}
+	}
+
+	public void setSpinnerListAdapter(final ProgramSpinnerAdapter adapter) {
+		if (programSpinner != null) {
+			programSpinner.setAdapter(adapter);
+		}
+	}
+
+	public void setGridArrayAdapter(final PodcastGridAdapter adapter) {
 		if (podcastGridView != null) {
-			podcastGridView.setAdapter(gridViewAdapter2);
+			podcastGridView.setAdapter(adapter);
 		}
 	}
 
@@ -54,12 +61,10 @@ public class PodcastFragment extends BaseFragment {
 				false);
 		setRetainInstance(true);
 
-		spinner = (Spinner) rootView.findViewById(R.id.spinner1);
+		programSpinner = (Spinner) rootView
+				.findViewById(R.id.spinner_podcast_program);
 		podcastGridView = (GridView) rootView
-				.findViewById(R.id.gridView_podcastList);
-
-		spinner.setOnItemSelectedListener(spinnerSelectedListener);
-		podcastGridView.setOnItemClickListener(podcastClickedListener);
+				.findViewById(R.id.gridView_podcast_list);
 
 		return rootView;
 
@@ -68,10 +73,13 @@ public class PodcastFragment extends BaseFragment {
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
+
 		if (isVisibleToUser) {
-			Activity a = getActivity();
-			if (a != null)
-				a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+			Activity activity = getActivity();
+
+			if (activity != null) {
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+			}
 		}
 	}
 }

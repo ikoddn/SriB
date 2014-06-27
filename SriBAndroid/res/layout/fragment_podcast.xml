@@ -10,18 +10,17 @@
     tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/spinner_podcast_program"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:labelFor="@+id/label_program_name"
         android:padding="0dp" />
 
     <GridView
-        android:id="@+id/gridView_podcastList"
+        android:id="@+id/gridView_podcast_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/spinner1"
+        android:layout_below="@id/spinner_podcast_program"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp"
         android:gravity="center"

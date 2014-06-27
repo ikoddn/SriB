@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/button_podcastitem_download_delete"
             android:layout_width="20dp"
             android:layout_height="match_parent"

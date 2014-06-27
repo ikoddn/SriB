@@ -517,7 +517,7 @@ public class MainActivity extends FragmentActivity implements
 			PodcastFragment podcast = (PodcastFragment) fragment;
 
 			podcast.setGridArrayAdapter(podcastGridAdapter);
-			podcast.setPodCastClickedListener(new GridViewItemClickListener());
+			podcast.setPodcastClickedListener(new GridViewItemClickListener());
 			podcast.setSpinnerListAdapter(programSpinnerAdapter);
 			podcast.setSpinnerListSelectedListener(new ListViewItemClickListener());
 		} else if (fragment instanceof ArticleListFragment) {
