@@ -54,7 +54,7 @@
                 android:background="@null"
                 android:contentDescription="@string/imagebutton_liveradio_info_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/info" />
+                android:src="@drawable/liveradio_info" />
 
             <View
                 android:id="@+id/view_liveradio_info_hspace2"
@@ -167,7 +167,7 @@
                 android:background="@null"
                 android:contentDescription="@string/imagebutton_liveradio_play_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/play" />
+                android:src="@drawable/liveradio_play" />
 
             <View
                 android:id="@+id/view_liveradio_play_hspace2"
@@ -201,7 +201,7 @@
                 android:background="@null"
                 android:contentDescription="@string/imagebutton_liveradio_stop_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/stop" />
+                android:src="@drawable/liveradio_stop" />
 
             <View
                 android:id="@+id/view_liveradio_stop_hspace2"
@@ -268,7 +268,7 @@
                 android:background="@null"
                 android:contentDescription="@string/imagebutton_liveradio_instagram_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/instagram" />
+                android:src="@drawable/link_instagram" />
 
             <View
                 android:id="@+id/view_liveradio_social_hspace2"
@@ -283,7 +283,7 @@
                 android:background="@null"
                 android:contentDescription="@string/imagebutton_liveradio_soundcloud_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/soundcloud" />
+                android:src="@drawable/link_soundcloud" />
 
             <View
                 android:id="@+id/view_liveradio_social_hspace3"
@@ -298,7 +298,7 @@
                 android:background="@null"
                 android:contentDescription="@string/imagebutton_liveradio_twitter_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/twitter" />
+                android:src="@drawable/link_twitter" />
 
             <View
                 android:id="@+id/view_liveradio_social_hspace4"

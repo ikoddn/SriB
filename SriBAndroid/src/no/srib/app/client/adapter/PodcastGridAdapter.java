@@ -64,7 +64,8 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 		final ImageView image = (ImageView) view.findViewById(R.id.imageView1);
 		final String url = podcast.getImageUrl();
 
-		UrlImageViewHelper.setUrlDrawable(image, url, R.drawable.frank);
+		UrlImageViewHelper.setUrlDrawable(image, url,
+				R.drawable.podcast_default_art);
 
 		view.setTag(R.id.podcast_url, podcast.getFilename());
 

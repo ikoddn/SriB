@@ -55,7 +55,7 @@ public class InfoFragment extends BaseFragment {
 
 		ImageView image = (ImageView) rootView
 				.findViewById(R.id.imageView_infofragment);
-		image.setImageDrawable(getResources().getDrawable(R.drawable.appikon));
+		image.setImageDrawable(getResources().getDrawable(R.drawable.app_icon));
 
 		TextView textView2 = (TextView) rootView
 				.findViewById(R.id.textview_info2);

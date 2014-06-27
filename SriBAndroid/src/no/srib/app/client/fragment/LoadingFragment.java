@@ -62,7 +62,7 @@ public class LoadingFragment extends BaseFragment {
 			Resources res = getResources();
 
 			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
-					R.drawable.startscreen, width, height);
+					R.drawable.loading_splash, width, height);
 			background = (DTImageView) rootView
 					.findViewById(R.id.dtImageView_loading_background);
 			background.setBitmap(Bitmap.createScaledBitmap(bitmap, width,

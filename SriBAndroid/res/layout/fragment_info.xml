@@ -28,7 +28,7 @@
             android:background="@null"
             android:contentDescription="@string/imagebutton_info_facebook_desc"
             android:scaleType="fitCenter"
-            android:src="@drawable/facebook" />
+            android:src="@drawable/link_facebook" />
 
         <View
             android:layout_width="0dp"
@@ -45,7 +45,7 @@
             android:background="@null"
             android:contentDescription="@string/imagebutton_info_spotify_desc"
             android:scaleType="fitCenter"
-            android:src="@drawable/spotify" />
+            android:src="@drawable/link_spotify" />
 
         <View
             android:layout_width="0dp"
@@ -62,7 +62,7 @@
             android:background="@null"
             android:contentDescription="@string/imagebutton_info_sribwww_desc"
             android:scaleType="fitCenter"
-            android:src="@drawable/sribwww" />
+            android:src="@drawable/link_sribwww" />
 
         <View
             android:layout_width="0dp"

@@ -314,12 +314,12 @@ public class LiveRadioFragment extends BaseFragment {
 	}
 
 	public void setPauseIcon() {
-		Drawable icon = getResources().getDrawable(R.drawable.pause);
+		Drawable icon = getResources().getDrawable(R.drawable.liveradio_pause);
 		playButton.setImageDrawable(icon);
 	}
 
 	public void setPlayIcon() {
-		Drawable icon = getResources().getDrawable(R.drawable.play);
+		Drawable icon = getResources().getDrawable(R.drawable.liveradio_play);
 		playButton.setImageDrawable(icon);
 	}
 
@@ -400,7 +400,7 @@ public class LiveRadioFragment extends BaseFragment {
 			Resources res = getResources();
 
 			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
-					R.drawable.layout, width, height);
+					R.drawable.liveradio_background, width, height);
 			background = (DTImageView) rootView
 					.findViewById(R.id.dtImageView_liveradio_background);
 			background.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
@@ -411,7 +411,7 @@ public class LiveRadioFragment extends BaseFragment {
 			final float seekbarWidthFactor = 0.023f;
 			int seekbarWidth = (int) (seekbarWidthFactor * width);
 
-			Drawable thumb = res.getDrawable(R.drawable.spoleslider);
+			Drawable thumb = res.getDrawable(R.drawable.liveradio_spoleslider);
 			Drawable thumbScaled = ImageUtil.resize(thumb, seekbarWidth,
 					textFieldLayout.getHeight(), res);
 			seekbar.setThumb(thumbScaled);

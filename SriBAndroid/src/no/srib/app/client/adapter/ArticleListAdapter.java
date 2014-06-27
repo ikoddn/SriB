@@ -13,9 +13,12 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class ArticleListAdapter extends BaseListAdapter<Article> {
 
-	private static final int[] LIST_DIVIDERS = { R.drawable.list_divider_01,
-			R.drawable.list_divider_02, R.drawable.list_divider_03,
-			R.drawable.list_divider_04, R.drawable.list_divider_05 };
+	private static final int[] LIST_DIVIDERS = {
+			R.drawable.article_list_divider_01,
+			R.drawable.article_list_divider_02,
+			R.drawable.article_list_divider_03,
+			R.drawable.article_list_divider_04,
+			R.drawable.article_list_divider_05 };
 
 	private LayoutInflater inflater;
 
