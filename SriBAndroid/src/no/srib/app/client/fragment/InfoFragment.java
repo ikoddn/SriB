@@ -51,7 +51,7 @@ public class InfoFragment extends BaseFragment {
 		TextView textView1 = (TextView) rootView
 				.findViewById(R.id.textview_info1);
 
-		textView1.setText(Html.fromHtml(getString(R.string.textView_info1)));
+		textView1.setText(Html.fromHtml(getString(R.string.textView_info_1)));
 
 		ImageView image = (ImageView) rootView
 				.findViewById(R.id.imageView_infofragment);
@@ -60,7 +60,7 @@ public class InfoFragment extends BaseFragment {
 		TextView textView2 = (TextView) rootView
 				.findViewById(R.id.textview_info2);
 
-		textView2.setText(Html.fromHtml(getString(R.string.textView_info2)));
+		textView2.setText(Html.fromHtml(getString(R.string.textView_info_2)));
 
 		return rootView;
 	}

@@ -35,14 +35,14 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 		View view = convertView;
 
 		if (view == null) {
-			view = inflater.inflate(R.layout.podcast_grid_item, null);
+			view = inflater.inflate(R.layout.griditem_podcast, null);
 		}
 
 		Typeface appFont = Typeface.createFromAsset(view.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
 		Podcast podcast = getItem(position);
 		TextView programNameTextView = (TextView) view
-				.findViewById(R.id.label_gridViewItem_programname);
+				.findViewById(R.id.textView_podcastItem_programname);
 		programNameTextView.setTypeface(appFont);
 		String programName = podcast.getProgram();
 
@@ -53,7 +53,7 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 		}
 
 		TextView programNameDate = (TextView) view
-				.findViewById(R.id.label_gridViewItem_date);
+				.findViewById(R.id.textView_podcastItem_date);
 		programNameDate.setTypeface(appFont);
 		int date = podcast.getCreatedate();
 		Calendar cal = TimeUtil.parseIntDate(date);
@@ -61,7 +61,8 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
 		programNameDate.setText(sdf.format(cal.getTime()));
 
-		final ImageView image = (ImageView) view.findViewById(R.id.imageView1);
+		final ImageView image = (ImageView) view
+				.findViewById(R.id.imageView_podcastItem_art);
 		final String url = podcast.getImageUrl();
 
 		UrlImageViewHelper.setUrlDrawable(image, url,

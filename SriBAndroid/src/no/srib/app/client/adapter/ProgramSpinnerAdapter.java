@@ -27,13 +27,12 @@ public class ProgramSpinnerAdapter extends BaseListAdapter<ProgramName> {
 		View view = convertView;
 
 		if (view == null) {
-			view = inflater.inflate(R.layout.podcastlist, null);
+			view = inflater.inflate(R.layout.spinneritem_podcast_program, null);
 		}
 
 		Typeface appFont = Typeface.createFromAsset(view.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
-		TextView text = (TextView) view
-				.findViewById(R.id.label_spinnerItem_name);
+		TextView text = (TextView) view.findViewById(R.id.textView_programItem);
 		text.setTypeface(appFont);
 		ProgramName prog = getItem(position);
 		String name = prog.getName();

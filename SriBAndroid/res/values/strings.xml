@@ -29,7 +29,7 @@
     <string name="imagebutton_info_facebook_desc">Facebook</string>
     <string name="imagebutton_info_spotify_desc">Spotify</string>
     <string name="imagebutton_info_sribwww_desc">www</string>
-    <string name="textView_info1">
+    <string name="textView_info_1">
 <![CDATA[
 <h1>Om Studentradioen i Bergen</h1>
 <p>Studentradioen i Bergen formidler studentjournalistikk og girstudentene et reklamefritt, lokalt forankret innhold som reflekterer studiehverdagen.</p>
@@ -37,7 +37,7 @@
 <p>SriB er Bergens eldste lokalradio og ble startet i 1982. I dag drives radiokanalen av 170 frivillige medarbeidere, som lager morgenprogram, musikk-, samfunns-, humor-, nyhets- og kulturprogrammer. Hver uke sender vi 119 timer reklamefri radio, på FM 96,4, 106,1 og 107,8, og nettradio. Hør oss hver dag mellom kl. 07.00 og 14.00, og igjen fra kl. 21.00.</p>
 ]]>
     </string>
-    <string name="textView_info2">
+    <string name="textView_info_2">
 <![CDATA[
 <p>Utviklet av: Richard Olsen og Sveinung Fossås</p>
 

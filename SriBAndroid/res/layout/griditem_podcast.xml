@@ -19,18 +19,18 @@
             android:paddingRight="20dp" >
 
             <TextView
-                android:id="@+id/label_gridViewItem_date"
+                android:id="@+id/textView_podcastItem_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/label_gridViewItem_programname"
+                android:id="@+id/textView_podcastItem_programname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/button_podcastitem_download_delete"
+            android:id="@+id/button_podcastItem_download_delete"
             android:layout_width="20dp"
             android:layout_height="match_parent"
             android:layout_alignBottom="@id/linearLayout_podcastItem_text"
@@ -43,7 +43,7 @@
     </RelativeLayout>
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/imageView_podcastItem_art"
         android:layout_width="fill_parent"
         android:layout_height="180dp"
         android:contentDescription="@string/imageView_podcastItem_art_desc"
