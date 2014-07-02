@@ -1,4 +1,4 @@
-package no.srib.app.client.audioplayer;
+package no.srib.app.client.service.audioplayer;
 
 public class AudioPlayerException extends Exception {
 

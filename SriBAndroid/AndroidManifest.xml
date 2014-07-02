@@ -30,7 +30,7 @@
         </activity>
 
         <service
-            android:name="no.srib.app.client.service.AudioPlayerService"
+            android:name="no.srib.app.client.service.audioplayer.AudioPlayerService"
             android:exported="false" />
         <service
             android:name="no.srib.app.client.service.StreamUpdaterService"

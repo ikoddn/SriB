@@ -1,7 +1,4 @@
-package no.srib.app.client.audioplayer;
-
-import no.srib.app.client.audioplayer.AudioPlayer.State;
-import no.srib.app.client.audioplayer.AudioPlayer.StateListener;
+package no.srib.app.client.service.audioplayer.state;
 
 /**
  * This class prevents the assignment of {@code state} without calling the
@@ -11,7 +8,7 @@ import no.srib.app.client.audioplayer.AudioPlayer.StateListener;
  * 
  */
 public class StateHandler {
-	
+
 	private State state;
 	private StateListener stateListener;
 

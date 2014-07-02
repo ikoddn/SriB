@@ -10,9 +10,6 @@ import no.srib.app.client.adapter.updater.AdapterUpdater;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
-import no.srib.app.client.audioplayer.AudioPlayer;
-import no.srib.app.client.audioplayer.AudioPlayer.State;
-import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
@@ -31,12 +28,15 @@ import no.srib.app.client.listener.OnSearchListener;
 import no.srib.app.client.model.Article;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
-import no.srib.app.client.service.AudioPlayerService;
 import no.srib.app.client.service.BaseService;
 import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
+import no.srib.app.client.service.audioplayer.AudioPlayerException;
+import no.srib.app.client.service.audioplayer.AudioPlayerService;
+import no.srib.app.client.service.audioplayer.state.State;
+import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.viewpager.PageChangeListener;
 import no.srib.app.client.viewpager.SectionsPagerAdapter;
 import android.content.ActivityNotFoundException;
@@ -256,10 +256,10 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public class AudioPlayerStateListener implements AudioPlayer.StateListener {
+	public class AudioPlayerStateListener implements StateListener {
 
 		@Override
-		public void onStateChanged(AudioPlayer.State state) {
+		public void onStateChanged(State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			LiveRadioFragment fragment = null;
 			AudioPlayerService audioservice = audioPlayerService.getService();

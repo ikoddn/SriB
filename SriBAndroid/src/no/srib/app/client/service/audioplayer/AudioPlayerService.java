@@ -1,8 +1,9 @@
-package no.srib.app.client.service;
+package no.srib.app.client.service.audioplayer;
 
-import no.srib.app.client.audioplayer.AudioPlayer;
-import no.srib.app.client.audioplayer.AudioPlayerException;
-import no.srib.app.client.audioplayer.StateHandler;
+import no.srib.app.client.service.BaseService;
+import no.srib.app.client.service.audioplayer.state.State;
+import no.srib.app.client.service.audioplayer.state.StateHandler;
+import no.srib.app.client.service.audioplayer.state.StateListener;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -11,7 +12,13 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.util.Log;
 
-public class AudioPlayerService extends BaseService implements AudioPlayer {
+/**
+ * An audio player service based on Android's {@code MediaPlayer} class.
+ * 
+ * @author Sveinung
+ * 
+ */
+public class AudioPlayerService extends BaseService {
 
 	private boolean streaming;
 	private String dataSource;
@@ -55,7 +62,13 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
-	@Override
+	/**
+	 * Sets the data source URI for the audio player.
+	 * 
+	 * @param dataSource
+	 *            - The URI
+	 * @throws AudioPlayerException
+	 */
 	public void setDataSource(String dataSource) throws AudioPlayerException {
 		this.dataSource = dataSource;
 
@@ -76,7 +89,9 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
-	@Override
+	/**
+	 * Starts the audio player.
+	 */
 	public void start() {
 		switch (stateHandler.getState()) {
 		case STOPPED:
@@ -92,7 +107,9 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
-	@Override
+	/**
+	 * Pauses the audio player.
+	 */
 	public void pause() {
 		switch (stateHandler.getState()) {
 		case STARTED:
@@ -104,7 +121,9 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
-	@Override
+	/**
+	 * Stops the audio player.
+	 */
 	public void stop() {
 		switch (stateHandler.getState()) {
 		case COMPLETED:
@@ -118,12 +137,22 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
-	@Override
+	/**
+	 * Gets the current state of the audio player.
+	 * 
+	 * @return The current state
+	 */
 	public State getState() {
 		return stateHandler.getState();
 	}
 
-	@Override
+	/**
+	 * Sets the state listener for the audio player. When the audio player
+	 * changes state, {@code onStateChanged} on the listener will be called.
+	 * 
+	 * @param stateListener
+	 *            - The {@code StateListener} implementation
+	 */
 	public void setStateListener(StateListener stateListener) {
 		stateHandler.setStateListener(stateListener);
 	}
@@ -226,7 +255,12 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		}
 	}
 
-	@Override
+	/**
+	 * Sets the type of content.
+	 * 
+	 * @param value
+	 *            - true if podcast
+	 */
 	public void setIsPodcast(boolean value) {
 		this.isPodcast = value;
 	}
@@ -235,7 +269,11 @@ public class AudioPlayerService extends BaseService implements AudioPlayer {
 		return isPodcast;
 	}
 
-	@Override
+	/**
+	 * Returns the current data source, or {@code null} if not set.
+	 * 
+	 * @return The current data source.
+	 */
 	public String getDataSource() {
 		return dataSource;
 	}
