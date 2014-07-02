@@ -2,6 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
 import no.srib.app.client.adapter.ArticleListAdapter;
+import no.srib.app.client.listener.OnSearchListener;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
@@ -72,21 +73,21 @@ public class ArticleListFragment extends BaseFragment {
 		return rootView;
 	}
 
-	public interface OnSearchListener {
-		void onSearch(String query);
-	}
-
 	private class SearchTextListener implements OnQueryTextListener {
 
 		@Override
-		public boolean onQueryTextSubmit(String query) {
+		public boolean onQueryTextSubmit(final String query) {
 			searchListener.onSearch(query);
 			searchView.clearFocus();
 			return true;
 		}
 
 		@Override
-		public boolean onQueryTextChange(String newText) {
+		public boolean onQueryTextChange(final String newText) {
+			if (newText.isEmpty()) {
+				searchListener.restorePreSearchData();
+			}
+
 			return false;
 		}
 	}

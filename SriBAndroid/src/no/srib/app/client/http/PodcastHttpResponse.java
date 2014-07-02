@@ -22,7 +22,7 @@ public class PodcastHttpResponse implements HttpResponseListener {
 		switch (statusCode) {
 		case HttpStatus.SC_OK:
 			String decodedHtml = Html.fromHtml(response).toString();
-			updater.updateFrom(decodedHtml);
+			updater.updateFrom(decodedHtml, true);
 			break;
 		default:
 			break;

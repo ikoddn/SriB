@@ -33,7 +33,7 @@ public class ProgramNameHttpResponse implements HttpResponseListener {
 					R.string.spinner_podcast_default);
 
 			updater.setDefaultValue(new ProgramName(0, defaultValue));
-			updater.updateFrom(decodedHtml);
+			updater.updateFrom(decodedHtml, true);
 			break;
 		default:
 			break;

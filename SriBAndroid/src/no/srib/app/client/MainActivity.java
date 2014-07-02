@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
+import no.srib.app.client.adapter.updater.AdapterUpdater;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
@@ -13,7 +14,6 @@ import no.srib.app.client.audioplayer.AudioPlayer;
 import no.srib.app.client.audioplayer.AudioPlayer.State;
 import no.srib.app.client.audioplayer.AudioPlayerException;
 import no.srib.app.client.fragment.ArticleListFragment;
-import no.srib.app.client.fragment.ArticleListFragment.OnSearchListener;
 import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
@@ -27,6 +27,8 @@ import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.http.PodcastHttpResponse;
 import no.srib.app.client.http.ProgramNameHttpResponse;
 import no.srib.app.client.listener.OnFragmentReadyListener;
+import no.srib.app.client.listener.OnSearchListener;
+import no.srib.app.client.model.Article;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.AudioPlayerService;
@@ -65,6 +67,8 @@ public class MainActivity extends FragmentActivity implements
 	private ArticleListAdapter articleListAdapter;
 
 	private HttpResponseListener currentProgramResponse;
+
+	private AdapterUpdater<Article, String> articleAdapterUpdater;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -138,8 +142,10 @@ public class MainActivity extends FragmentActivity implements
 		articleListAdapter = new ArticleListAdapter(
 				LayoutInflater.from(MainActivity.this));
 
+		articleAdapterUpdater = new JsonAdapterUpdater<Article>(Article.class,
+				articleListAdapter);
 		HttpResponseListener articleResponse = new ArticleHttpResponse(
-				MainActivity.this, articleListAdapter);
+				MainActivity.this, articleAdapterUpdater, false);
 		HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
 		String url = getResources().getString(R.string.url_articles);
 		httpAsyncTask.execute(url);
@@ -658,12 +664,17 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onSearch(String query) {
 			HttpResponseListener articleResponse = new ArticleHttpResponse(
-					MainActivity.this, articleListAdapter);
+					MainActivity.this, articleAdapterUpdater, true);
 			HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
 			StringBuilder sb = new StringBuilder();
 			sb.append(getResources().getString(R.string.url_articles));
 			sb.append("?q=" + query);
 			httpAsyncTask.execute(sb.toString());
+		}
+
+		@Override
+		public void restorePreSearchData() {
+			articleAdapterUpdater.restoreStoredData();
 		}
 	}
 }
