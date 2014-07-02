@@ -27,15 +27,11 @@ public class ArticleResource {
 
     @GET
     public List<Article> getArticles(
-            @DefaultValue("10") @QueryParam("c") final int paramCount,
+            @DefaultValue("10") @QueryParam("c") final int count,
             @DefaultValue("false") @QueryParam("content") final boolean content,
             @QueryParam("q") final String query) {
 
-        int count;
-
-        if (paramCount > 0) {
-            count = paramCount;
-        } else {
+        if (count < 0) {
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
