@@ -23,4 +23,12 @@ public interface PodcastDAO extends AbstractModelDAO<Podcast> {
      */
     List<Podcast> getPodcasts(final int programID) throws DAOException;
 
+    /**
+     * Returns a list of the single latest {@link Podcast} from each program.
+     * Programs that has no podcasts are ignored.
+     * 
+     * @return The list.
+     * @throws DAOException
+     */
+    List<Podcast> getLatestPodcastOfEachProgram() throws DAOException;
 }

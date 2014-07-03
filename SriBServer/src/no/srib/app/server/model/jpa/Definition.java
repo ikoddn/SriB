@@ -26,6 +26,11 @@ public class Definition extends AbstractModel {
     public Definition() {
     }
 
+    public Definition(final int defnr, final String name) {
+        this.defnr = defnr;
+        this.name = name;
+    }
+
     @Id
     @Column(insertable = false, unique = true, nullable = false)
     public int getDefnr() {
@@ -44,5 +49,4 @@ public class Definition extends AbstractModel {
     public void setName(String name) {
         this.name = name;
     }
-
 }
