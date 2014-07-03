@@ -1,39 +1,54 @@
 package no.srib.app.client.http;
 
+import java.io.IOException;
+
+import no.srib.app.client.adapter.updater.AdapterUpdater;
+import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
+import no.srib.app.client.model.PodcastPrograms;
+import no.srib.app.client.model.ProgramName;
+
 import org.apache.http.HttpStatus;
 
-import android.content.Context;
 import android.text.Html;
-import no.srib.app.client.R;
-import no.srib.app.client.adapter.BaseListAdapter;
-import no.srib.app.client.adapter.updater.AdapterUpdater;
-import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
-import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
-import no.srib.app.client.model.ProgramName;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ProgramNameHttpResponse implements HttpResponseListener {
 
-	private AdapterUpdater<ProgramName, String> updater;
-	private Context context;
+	private final ObjectMapper MAPPER;
+	private AdapterUpdater<ProgramName, PodcastPrograms> updater;
 
-	public ProgramNameHttpResponse(final Context context,
-			final BaseListAdapter<ProgramName> adapter) {
+	public ProgramNameHttpResponse(
+			final AdapterUpdater<ProgramName, PodcastPrograms> updater) {
 
-		this.context = context;
-		updater = new JsonAdapterUpdater<ProgramName>(ProgramName.class,
-				adapter);
+		MAPPER = new ObjectMapper();
+		this.updater = updater;
 	}
 
 	@Override
 	public void onResponse(int statusCode, String response) {
 		switch (statusCode) {
 		case HttpStatus.SC_OK:
-			String decodedHtml = Html.fromHtml(response).toString();
-			String defaultValue = context.getResources().getString(
-					R.string.spinner_podcast_default);
+			try {
+				String decodedHtml = Html.fromHtml(response).toString();
 
-			updater.setDefaultValue(new ProgramName(0, defaultValue));
-			updater.updateFrom(decodedHtml, true);
+				PodcastPrograms programs = MAPPER.readValue(decodedHtml,
+						PodcastPrograms.class);
+
+				updater.updateFrom(programs, true);
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			break;
 		default:
 			break;

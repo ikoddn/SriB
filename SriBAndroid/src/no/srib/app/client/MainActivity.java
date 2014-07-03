@@ -8,6 +8,7 @@ import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.updater.AdapterUpdater;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
+import no.srib.app.client.adapter.updater.ProgramNameAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.fragment.ArticleListFragment;
@@ -26,6 +27,7 @@ import no.srib.app.client.http.ProgramNameHttpResponse;
 import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.listener.OnSearchListener;
 import no.srib.app.client.model.Article;
+import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.BaseService;
@@ -159,15 +161,20 @@ public class MainActivity extends FragmentActivity implements
 		programNameUpdater.setDefaultValue(new ProgramName(0, res
 				.getString(R.string.spinner_podcast_default)));
 
+		AdapterUpdater<ProgramName, PodcastPrograms> programNameAdapterUpdater = new ProgramNameAdapterUpdater(
+				programSpinnerAdapter);
+		programNameAdapterUpdater.setDefaultValue(new ProgramName(0,
+				getResources().getString(R.string.spinner_podcast_default)));
+
 		HttpResponseListener programResponse = new ProgramNameHttpResponse(
-				MainActivity.this, programSpinnerAdapter);
+				programNameAdapterUpdater);
 		HttpResponseListener podcastResponse = new PodcastHttpResponse(
 				podcastGridAdapter);
 
 		HttpAsyncTask programTask = new HttpAsyncTask(programResponse);
 		HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
 
-		String programTaskUrl = res.getString(R.string.getAllProgramNames);
+		String programTaskUrl = res.getString(R.string.url_podcastprograms);
 		String podcastTaskUrl = res.getString(R.string.getAllPodcast);
 
 		podcastTask.execute(podcastTaskUrl);
