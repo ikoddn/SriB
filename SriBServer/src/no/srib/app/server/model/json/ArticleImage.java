@@ -10,8 +10,8 @@ public class ArticleImage extends AbstractModel {
     private int width;
     private String name;
     private String url;
-    
-    public ArticleImage() {
+
+    protected ArticleImage() {
     }
 
     public int getHeight() {

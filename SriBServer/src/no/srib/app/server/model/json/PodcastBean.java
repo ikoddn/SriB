@@ -1,40 +1,38 @@
-package no.srib.app.server.resource.helper;
+package no.srib.app.server.model.json;
 
 public class PodcastBean {
-
 
     private int refnr;
     private int createdate;
     private int createtime;
     private int duration;
-    private String filename;
-    private String program;
     private int programId;
+    private String filename;
     private String remark;
     private String title;
+    private String program;
     private String imageUrl;
 
-    public PodcastBean(){
-        
+    protected PodcastBean() {
     }
-    
-    public PodcastBean(int refnr, int createdate, int createtime, int duration,
-            String filename, String program, int programId, String remark,
-            String title, String imageUrl) {
-        super();
+
+    public PodcastBean(final int refnr, final int createdate,
+            final int createtime, final int duration, final int programId,
+            final String filename, final String remark, final String title) {
+
         this.refnr = refnr;
         this.createdate = createdate;
         this.createtime = createtime;
         this.duration = duration;
-        this.filename = filename;
-        this.program = program;
         this.programId = programId;
+        this.filename = filename;
         this.remark = remark;
         this.title = title;
-        this.imageUrl = imageUrl;
+
+        program = null;
+        imageUrl = null;
     }
-    
-    
+
     public String getImageUrl() {
         return imageUrl;
     }
@@ -42,8 +40,6 @@ public class PodcastBean {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
-    
 
     public int getRefnr() {
         return refnr;
@@ -116,5 +112,4 @@ public class PodcastBean {
     public void setTitle(String title) {
         this.title = title;
     }
-
 }

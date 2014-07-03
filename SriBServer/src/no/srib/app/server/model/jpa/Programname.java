@@ -20,7 +20,11 @@ public class Programname extends AbstractModel {
 
     private String name;
 
-    public Programname() {
+    protected Programname() {
+    }
+    
+    public Programname(final String name) {
+        this.name = name;
     }
 
     public int getId() {

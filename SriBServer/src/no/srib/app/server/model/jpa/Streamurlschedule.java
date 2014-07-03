@@ -14,13 +14,22 @@ import java.sql.Time;
 @Table(name = "app_streamurlschedule")
 @NamedQuery(name = "Streamurlschedule.findAll", query = "SELECT s FROM Streamurlschedule s")
 public class Streamurlschedule extends AbstractModel {
+
     private static final long serialVersionUID = 1L;
+
     private int id;
     private byte day;
     private Time fromtime;
     private Time totime;
 
-    public Streamurlschedule() {
+    protected Streamurlschedule() {
+    }
+
+    public Streamurlschedule(final byte day, final Time fromtime,
+            final Time totime) {
+        this.day = day;
+        this.fromtime = fromtime;
+        this.totime = totime;
     }
 
     @Id

@@ -23,7 +23,7 @@ public class Definition extends AbstractModel {
     private int defnr;
     private String name;
 
-    public Definition() {
+    protected Definition() {
     }
 
     public Definition(final int defnr, final String name) {

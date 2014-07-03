@@ -73,10 +73,9 @@ public class AddUrlSchedule extends HttpServlet {
                     response.sendRedirect("/SriBServer/SetSource");
                     return;
                 }
-                Streamurlschedule streamurlschedule = new Streamurlschedule();
-                streamurlschedule.setDay((byte) day);
-                streamurlschedule.setFromtime(fromTime);
-                streamurlschedule.setTotime(toTime);
+
+                Streamurlschedule streamurlschedule = new Streamurlschedule(
+                        (byte) day, fromTime, toTime);
 
                 try {
                     streamUrlScheduleDAO.add(streamurlschedule);

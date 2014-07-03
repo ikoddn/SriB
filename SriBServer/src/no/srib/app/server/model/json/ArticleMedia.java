@@ -18,7 +18,7 @@ public class ArticleMedia extends AbstractModel {
     private String altText;
     private List<ArticleImage> sizes;
 
-    public ArticleMedia() {
+    protected ArticleMedia() {
     }
 
     public int getId() {

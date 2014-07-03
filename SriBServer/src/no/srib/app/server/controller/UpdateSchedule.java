@@ -73,12 +73,9 @@ public class UpdateSchedule extends HttpServlet {
                     return;
                 }
 
-                Schedule sch = new Schedule();
-                sch.setDay((byte) day);
-                sch.setFromtime(fromTime);
-                sch.setTotime(toTime);
+                Schedule sch = new Schedule((byte) day, fromTime, toTime,
+                        program);
 
-                sch.setProgram(program);
                 if (request.getParameter("add") != null) {
                     System.out.println("legger til");
 

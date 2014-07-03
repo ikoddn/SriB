@@ -70,11 +70,11 @@ public class UpdateUrlSchedule extends HttpServlet {
                 }
 
             }
-            Streamurlschedule sus = new Streamurlschedule();
-            sus.setDay((byte) day);
+
+            Streamurlschedule sus = new Streamurlschedule((byte) day, fromTime,
+                    toTime);
             sus.setId(id);
-            sus.setTotime(toTime);
-            sus.setFromtime(fromTime);
+
             if (request.getParameter("edit") != null) {
                 try {
                     streamUrlScheduleDAO.update(sus);

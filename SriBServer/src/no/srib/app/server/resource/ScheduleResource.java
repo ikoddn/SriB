@@ -17,7 +17,8 @@ import no.srib.app.server.dao.interfaces.ProgramnameDAO;
 import no.srib.app.server.dao.interfaces.ScheduleDAO;
 import no.srib.app.server.model.jpa.Programname;
 import no.srib.app.server.model.jpa.Schedule;
-import no.srib.app.server.resource.helper.ScheduleBean;
+import no.srib.app.server.model.json.ScheduleBean;
+import no.srib.app.server.util.ModelUtil;
 
 @Path("/schedule")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -56,17 +57,12 @@ public class ScheduleResource {
                     .getInstance());
 
             if (schedule != null) {
-                result = new ScheduleBean();
-                
+                result = ModelUtil.toScheduleBean(schedule);
+
                 int id = schedule.getProgram();
                 Programname programName = programNameDAO.getById(id);
                 String program = programName.getName();
-
-                result.setDay(schedule.getDay());
                 result.setProgram(program);
-                result.setFromTime(schedule.getFromtime());
-                result.setToTime(schedule.getTotime());
-                result.setId(schedule.getId());
             }
         } catch (DAOException e) {
             e.printStackTrace();

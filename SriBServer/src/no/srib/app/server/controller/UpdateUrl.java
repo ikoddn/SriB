@@ -54,10 +54,8 @@ public class UpdateUrl extends HttpServlet {
 
                 if (url != null && name != null && idString != null) {
                     int id = Integer.valueOf(idString);
-                    Streamurl streamUrl = new Streamurl();
+                    Streamurl streamUrl = new Streamurl(name, url);
                     streamUrl.setId(id);
-                    streamUrl.setName(name);
-                    streamUrl.setUrl(url);
 
                     try {
                         streamurldao.update(streamUrl);

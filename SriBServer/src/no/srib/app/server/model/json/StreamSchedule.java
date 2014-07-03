@@ -1,23 +1,23 @@
-package no.srib.app.server.resource.helper;
+package no.srib.app.server.model.json;
 
 import java.io.Serializable;
 
 public class StreamSchedule implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     private String name;
     private String url;
 
     private long time;
 
-    public StreamSchedule() {
+    protected StreamSchedule() {
     }
 
     public StreamSchedule(final String name, final String url, final long time) {
         this.name = name;
         this.url = url;
         this.time = time;
-
     }
 
     public String getName() {

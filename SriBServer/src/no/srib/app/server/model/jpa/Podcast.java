@@ -33,7 +33,7 @@ public class Podcast extends AbstractModel {
     private String title;
     private int softdel;
 
-    public Podcast() {
+    protected Podcast() {
     }
 
     @Id

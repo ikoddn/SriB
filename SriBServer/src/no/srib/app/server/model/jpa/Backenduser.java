@@ -23,7 +23,7 @@ public class Backenduser extends AbstractModel {
     private String password;
     private String username;
 
-    public Backenduser() {
+    protected Backenduser() {
     }
 
     @Id

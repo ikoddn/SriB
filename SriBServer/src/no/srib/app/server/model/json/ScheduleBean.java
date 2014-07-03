@@ -1,4 +1,4 @@
-package no.srib.app.server.resource.helper;
+package no.srib.app.server.model.json;
 
 import java.io.Serializable;
 import java.sql.Time;
@@ -6,23 +6,25 @@ import java.sql.Time;
 public class ScheduleBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     private int id;
     private int day;
     private Time fromTime;
     private Time toTime;
     private String program;
 
-    public ScheduleBean() {
+    protected ScheduleBean() {
     }
 
-    public ScheduleBean(int id, int day, Time fromTime, Time toTime,
-            String program) {
-        super();
+    public ScheduleBean(final int id, final int day, final Time fromTime,
+            final Time toTime) {
+
         this.id = id;
         this.day = day;
         this.fromTime = fromTime;
         this.toTime = toTime;
-        this.program = program;
+
+        program = null;
     }
 
     public int getId() {

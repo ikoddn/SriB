@@ -29,9 +29,10 @@ import no.srib.app.server.dao.interfaces.PrograminfoDAO;
 import no.srib.app.server.model.jpa.Definition;
 import no.srib.app.server.model.jpa.Podcast;
 import no.srib.app.server.model.jpa.Programinfo;
+import no.srib.app.server.model.json.PodcastBean;
 import no.srib.app.server.model.json.PodcastPrograms;
-import no.srib.app.server.resource.helper.PodcastBean;
 import no.srib.app.server.util.DefinitionNameComparator;
+import no.srib.app.server.util.ModelUtil;
 
 @Path("podcast")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -90,18 +91,13 @@ public class PodcastResource {
             programPictureUrl.put(pi.getProgram(), pi.getImglink());
         }
 
-        for (Podcast pod : list) {
-            PodcastBean podBean = new PodcastBean();
-            podBean.setCreatedate(pod.getCreatedate());
-            podBean.setCreatetime(pod.getCreatetime());
-            podBean.setDuration(pod.getDuration());
-            podBean.setFilename(pod.getFilename());
-            podBean.setProgram(programName.get(pod.getProgram()));
-            podBean.setRefnr(pod.getRefnr());
-            podBean.setRemark(pod.getRemark());
-            podBean.setTitle(pod.getTitle());
-            podBean.setProgramId(pod.getProgram());
-            podBean.setImageUrl(programPictureUrl.get(pod.getProgram()));
+        for (Podcast podcast : list) {
+            int programId = podcast.getProgram();
+
+            PodcastBean podBean = ModelUtil.toPodcastBean(podcast);
+            podBean.setProgram(programName.get(programId));
+            podBean.setImageUrl(programPictureUrl.get(programId));
+
             podcastList.add(podBean);
         }
 
@@ -141,24 +137,17 @@ public class PodcastResource {
             programName.put(pi.getProgram(), pi.getTitle());
         }
 
-        for (Podcast pod : list) {
-            PodcastBean podBean = new PodcastBean();
-            podBean.setCreatedate(pod.getCreatedate());
-            podBean.setCreatetime(pod.getCreatetime());
-            podBean.setDuration(pod.getDuration());
-            podBean.setFilename(pod.getFilename());
-            podBean.setProgram(programName.get(pod.getProgram()));
-            podBean.setRefnr(pod.getRefnr());
-            podBean.setRemark(pod.getRemark());
-            podBean.setTitle(pod.getTitle());
-            podBean.setProgramId(pod.getProgram());
-            podBean.setImageUrl(programPictureUrl.get(pod.getProgram()));
-            podList.add(podBean);
+        for (Podcast podcast : list) {
+            int programId = podcast.getProgram();
 
+            PodcastBean podBean = ModelUtil.toPodcastBean(podcast);
+            podBean.setProgram(programName.get(programId));
+            podBean.setImageUrl(programPictureUrl.get(programId));
+
+            podList.add(podBean);
         }
 
         return podList;
-
     }
 
     // Get all names
@@ -189,11 +178,8 @@ public class PodcastResource {
         }
 
         for (Programinfo prog : programInfoListNew) {
-            Definition def = new Definition();
-            def.setDefnr(prog.getProgram());
-            def.setName(prog.getTitle());
+            Definition def = new Definition(prog.getProgram(), prog.getTitle());
             defList.add(def);
-
         }
 
         return defList;

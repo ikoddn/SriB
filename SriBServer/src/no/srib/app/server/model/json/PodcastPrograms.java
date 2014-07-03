@@ -9,7 +9,7 @@ public class PodcastPrograms {
     private SortedSet<Definition> newer;
     private SortedSet<Definition> older;
 
-    PodcastPrograms() {
+    protected PodcastPrograms() {
     }
 
     public PodcastPrograms(final SortedSet<Definition> newer,

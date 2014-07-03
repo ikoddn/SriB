@@ -78,8 +78,9 @@ public class AddProgram extends HttpServlet {
                 response.sendRedirect("/SriBServer/AddProgram");
                 return;
             }
-            Programname pName = new Programname();
-            pName.setName(name);
+
+            Programname pName = new Programname(name);
+
             if (request.getParameter("add") != null) {
 
                 try {

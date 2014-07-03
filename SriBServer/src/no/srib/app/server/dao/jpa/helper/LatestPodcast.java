@@ -6,7 +6,7 @@ public class LatestPodcast {
     private int program;
     private int createdate;
 
-    LatestPodcast() {
+    protected LatestPodcast() {
     }
 
     public LatestPodcast(final int refnr, final int program,

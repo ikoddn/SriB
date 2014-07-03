@@ -115,8 +115,7 @@ public class SetSchedule extends HttpServlet {
             list.add(sundayList);
 
             // Default program when program is not set.
-            Programname def = new Programname();
-            def.setName("Velg program");
+            Programname def = new Programname("Velg program");
             progList.add(0, def);
 
             request.setAttribute("dbList", list);

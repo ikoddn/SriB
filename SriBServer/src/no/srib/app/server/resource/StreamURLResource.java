@@ -18,7 +18,7 @@ import no.srib.app.server.dao.interfaces.StreamUrlScheduleDAO;
 import no.srib.app.server.dao.interfaces.StreamurlDAO;
 import no.srib.app.server.model.jpa.Streamurl;
 import no.srib.app.server.model.jpa.Streamurlschedule;
-import no.srib.app.server.resource.helper.StreamSchedule;
+import no.srib.app.server.model.json.StreamSchedule;
 
 @Path("radiourl")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")

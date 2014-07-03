@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@XmlType(name = "") // Remove "@type" from the marshalled JSON
+@XmlType(name = "")
+// Remove "@type" from the marshalled JSON
 public class Article extends AbstractModel {
 
     private static final long serialVersionUID = 1L;
@@ -28,7 +29,7 @@ public class Article extends AbstractModel {
 
     private List<ArticleMedia> media;
 
-    public Article() {
+    protected Article() {
     }
 
     public List<ArticleMedia> getMedia() {
