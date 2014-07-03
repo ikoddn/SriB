@@ -31,7 +31,7 @@ public class ArticleResource {
             @DefaultValue("false") @QueryParam("content") final boolean content,
             @QueryParam("q") final String query) {
 
-        if (count < 0) {
+        if (count <= 0) {
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
 

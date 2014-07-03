@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,7 +39,6 @@ import no.srib.app.server.util.DefinitionNameComparator;
 public class PodcastResource {
 
     private static final int DEFAULT_NEWER_MONTH_LIMIT = 6;
-    private static final int DEFAULT_PODCAST_COUNT = 16;
 
     @EJB
     private PodcastDAO podcastDAO;
@@ -49,11 +49,16 @@ public class PodcastResource {
 
     /**
      * 
-     * 
      * @return A list with all recent podcasts.
      */
     @GET
-    public final List<PodcastBean> getAllPodcast() {
+    public final List<PodcastBean> getPodcasts(
+            @DefaultValue("16") @QueryParam("c") final int count) {
+
+        if (count <= 0) {
+            throw new WebApplicationException(Status.BAD_REQUEST);
+        }
+
         List<Podcast> list = null;
         List<PodcastBean> podcastList = new ArrayList<PodcastBean>();
         Map<Integer, String> programName = new HashMap<Integer, String>();
@@ -100,8 +105,8 @@ public class PodcastResource {
             podcastList.add(podBean);
         }
 
-        if (podcastList.size() > DEFAULT_PODCAST_COUNT) {
-            podcastList = podcastList.subList(0, DEFAULT_PODCAST_COUNT);
+        if (podcastList.size() > count) {
+            podcastList = podcastList.subList(0, count);
         }
 
         return podcastList;
