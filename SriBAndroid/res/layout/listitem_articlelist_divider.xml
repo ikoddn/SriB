@@ -8,8 +8,8 @@
         android:id="@+id/imageView_articleItem_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/imageview_articleitem_desc" />
+        android:contentDescription="@string/imageView_articleItem_divider_desc"
+        android:scaleType="fitCenter" />
 
 </LinearLayout>

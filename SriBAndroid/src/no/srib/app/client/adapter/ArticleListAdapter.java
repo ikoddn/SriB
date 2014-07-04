@@ -13,12 +13,9 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class ArticleListAdapter extends BaseListAdapter<Article> {
 
-	private static final int[] LIST_DIVIDERS = {
-			R.drawable.article_list_divider_01,
-			R.drawable.article_list_divider_02,
-			R.drawable.article_list_divider_03,
-			R.drawable.article_list_divider_04,
-			R.drawable.article_list_divider_05 };
+	private static final int[] DIVIDERS = { R.drawable.list_divider_1,
+			R.drawable.list_divider_2, R.drawable.list_divider_3,
+			R.drawable.list_divider_4, R.drawable.list_divider_5 };
 
 	private LayoutInflater inflater;
 
@@ -86,7 +83,7 @@ public class ArticleListAdapter extends BaseListAdapter<Article> {
 						null);
 			}
 
-			int divider = LIST_DIVIDERS[position / 2 % LIST_DIVIDERS.length];
+			int divider = DIVIDERS[position / 2 % DIVIDERS.length];
 
 			ImageView imageView = (ImageView) view
 					.findViewById(R.id.imageView_articleItem_divider);

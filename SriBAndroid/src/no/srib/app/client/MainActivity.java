@@ -44,6 +44,7 @@ import no.srib.app.client.viewpager.SectionsPagerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -141,8 +142,11 @@ public class MainActivity extends FragmentActivity implements
 		audioPlayerService.bind(MainActivity.this);
 		streamUpdaterService.bind(MainActivity.this);
 
-		articleListAdapter = new ArticleListAdapter(
-				LayoutInflater.from(MainActivity.this));
+		LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+		Typeface font = Typeface.createFromAsset(getAssets(),
+				"fonts/clairehandbold.ttf");
+
+		articleListAdapter = new ArticleListAdapter(inflater);
 
 		articleAdapterUpdater = new JsonAdapterUpdater<Article>(Article.class,
 				articleListAdapter);
@@ -154,7 +158,7 @@ public class MainActivity extends FragmentActivity implements
 
 		// Podcast Part
 		podcastGridAdapter = new PodcastGridAdapter(MainActivity.this);
-		programSpinnerAdapter = new ProgramSpinnerAdapter(MainActivity.this);
+		programSpinnerAdapter = new ProgramSpinnerAdapter(inflater, font);
 
 		JsonAdapterUpdater<ProgramName> programNameUpdater = new JsonAdapterUpdater<ProgramName>(
 				ProgramName.class, programSpinnerAdapter);

@@ -15,11 +15,15 @@
     <string name="imageview_articleitem_desc">Image</string>
     <string name="searchView_articleList_hint">Søk etter artikkel…</string>
     <string name="toast_noContent">Fant ingen artikler :(</string>
+    <string name="imageView_articleItem_divider_desc">Divider</string>
 
     <!-- Podcast fragment -->
     <string name="spinner_podcast_default">Velg program</string>
+    <string name="spinner_podcast_newer">Aktuelle program</string>
+    <string name="spinner_podcast_older">Eldre program</string>
     <string name="imageView_podcastItem_art_desc">Podcast art</string>
     <string name="imageView_podcastItem_download_delete_desc">Download/delete</string>
+    <string name="imageView_programItem_divider_desc">Divider</string>
 
     <!-- Loading fragment -->
     <string name="textView_loading_connecting" tools:ignore="TypographyEllipsis">Kobler til...</string>

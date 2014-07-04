@@ -3,19 +3,19 @@ package no.srib.app.client.adapter.updater;
 import java.util.LinkedList;
 import java.util.List;
 
-import no.srib.app.client.adapter.BaseListAdapter;
+import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
 
 public class ProgramNameAdapterUpdater implements
 		AdapterUpdater<ProgramName, PodcastPrograms> {
 
-	private final BaseListAdapter<ProgramName> ADAPTER;
+	private final ProgramSpinnerAdapter ADAPTER;
 	private boolean didStoreData;
 	private List<ProgramName> storedData;
 	private ProgramName defaultValue;
 
-	public ProgramNameAdapterUpdater(final BaseListAdapter<ProgramName> adapter) {
+	public ProgramNameAdapterUpdater(final ProgramSpinnerAdapter adapter) {
 		this.ADAPTER = adapter;
 		didStoreData = false;
 		storedData = null;
@@ -44,7 +44,9 @@ public class ProgramNameAdapterUpdater implements
 			result.add(defaultValue);
 		}
 
-		result.addAll(source.getNewer());
+		List<ProgramName> newer = source.getNewer();
+		
+		result.addAll(newer);
 		result.addAll(source.getOlder());
 
 		if (store) {
@@ -54,6 +56,7 @@ public class ProgramNameAdapterUpdater implements
 		didStoreData = store;
 
 		ADAPTER.setList(result);
+		ADAPTER.setNewerCount(newer.size());
 		ADAPTER.notifyDataSetChanged();
 	}
 }
