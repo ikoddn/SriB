@@ -7,7 +7,6 @@ import java.util.Locale;
 import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.TimeUtil;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +19,11 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 
 	private LayoutInflater inflater;
+	private Typeface font;
 
-	public PodcastGridAdapter(Context context) {
-		inflater = LayoutInflater.from(context);
+	public PodcastGridAdapter(final LayoutInflater inflater, final Typeface font) {
+		this.inflater = inflater;
+		this.font = font;
 	}
 
 	@Override
@@ -38,12 +39,10 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 			view = inflater.inflate(R.layout.griditem_podcast, null);
 		}
 
-		Typeface appFont = Typeface.createFromAsset(view.getContext()
-				.getAssets(), "fonts/clairehandbold.ttf");
 		Podcast podcast = getItem(position);
 		TextView programNameTextView = (TextView) view
 				.findViewById(R.id.textView_podcastItem_programname);
-		programNameTextView.setTypeface(appFont);
+		programNameTextView.setTypeface(font);
 		String programName = podcast.getProgram();
 
 		if (programName != null) {
@@ -54,7 +53,7 @@ public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
 
 		TextView programNameDate = (TextView) view
 				.findViewById(R.id.textView_podcastItem_date);
-		programNameDate.setTypeface(appFont);
+		programNameDate.setTypeface(font);
 		int date = podcast.getCreatedate();
 		Calendar cal = TimeUtil.parseIntDate(date);
 		String format = "dd-MM-yyyy";

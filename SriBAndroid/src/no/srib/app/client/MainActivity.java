@@ -157,7 +157,7 @@ public class MainActivity extends FragmentActivity implements
 		httpAsyncTask.execute(url);
 
 		// Podcast Part
-		podcastGridAdapter = new PodcastGridAdapter(MainActivity.this);
+		podcastGridAdapter = new PodcastGridAdapter(inflater, font);
 		programSpinnerAdapter = new ProgramSpinnerAdapter(inflater, font);
 
 		JsonAdapterUpdater<ProgramName> programNameUpdater = new JsonAdapterUpdater<ProgramName>(
