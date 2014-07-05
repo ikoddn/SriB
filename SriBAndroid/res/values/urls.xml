@@ -11,7 +11,7 @@
     <string name="podcast_nas_URL">http://podcast.srib.no:8080/podcast/</string>
 
     <!-- Articles -->
-    <string name="url_articles">http://app.srib.no:8080/SriBServer/rest/news</string>
+    <string name="url_articles">http://app.srib.no:8080/SriBServer/rest/articles</string>
 
     <!-- Social media -->
     <string name="url_facebook">https://www.facebook.com/studentradioen</string>

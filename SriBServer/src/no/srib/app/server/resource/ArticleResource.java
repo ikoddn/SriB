@@ -17,7 +17,7 @@ import no.srib.app.server.dao.exception.DAOException;
 import no.srib.app.server.dao.interfaces.ArticleDAO;
 import no.srib.app.server.model.json.Article;
 
-@Path("news")
+@Path("articles")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 @ManagedBean
 public class ArticleResource {
