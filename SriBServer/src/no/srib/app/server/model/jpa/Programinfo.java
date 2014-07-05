@@ -2,6 +2,8 @@ package no.srib.app.server.model.jpa;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import no.srib.app.server.model.AbstractModel;
 
 /**
@@ -50,7 +52,7 @@ public class Programinfo extends AbstractModel {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = StringEscapeUtils.unescapeHtml4(description);
     }
 
     @Column(insertable = false, updatable = false, length = 50)
@@ -69,7 +71,7 @@ public class Programinfo extends AbstractModel {
     }
 
     public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
+        this.subtitle = StringEscapeUtils.unescapeHtml4(subtitle);
     }
 
     @Lob
@@ -79,7 +81,7 @@ public class Programinfo extends AbstractModel {
     }
 
     public void setSummary(String summary) {
-        this.summary = summary;
+        this.summary = StringEscapeUtils.unescapeHtml4(summary);
     }
 
     @Column(insertable = false, updatable = false, length = 50)
@@ -88,7 +90,6 @@ public class Programinfo extends AbstractModel {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = StringEscapeUtils.unescapeHtml4(title);
     }
-
 }
