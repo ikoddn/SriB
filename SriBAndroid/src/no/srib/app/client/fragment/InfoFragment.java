@@ -1,7 +1,12 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.util.ImageUtil;
+import no.srib.app.client.util.ViewUtil;
+import no.srib.app.client.view.DTImageView;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -9,11 +14,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class InfoFragment extends BaseFragment {
 
+	private DTImageView image;
 	private OnInfoClickListener infoClickListener;
 
 	public InfoFragment() {
@@ -28,8 +33,9 @@ public class InfoFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		Configuration conf = getParentFragment().getResources()
-				.getConfiguration();
+		Resources res = getParentFragment().getResources();
+
+		Configuration conf = res.getConfiguration();
 		if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			return null;
 		}
@@ -53,16 +59,31 @@ public class InfoFragment extends BaseFragment {
 
 		textView1.setText(Html.fromHtml(getString(R.string.textView_info_1)));
 
-		ImageView image = (ImageView) rootView
-				.findViewById(R.id.imageView_infofragment);
-		image.setImageDrawable(getResources().getDrawable(R.drawable.app_icon));
-
 		TextView textView2 = (TextView) rootView
 				.findViewById(R.id.textview_info2);
 
 		textView2.setText(Html.fromHtml(getString(R.string.textView_info_2)));
 
+		DTImageView image = (DTImageView) rootView
+				.findViewById(R.id.dtImageView_info);
+		final int imageSizeDPI = 200;
+		int imageSizePixels = ViewUtil.dpiToPixels(res, imageSizeDPI);
+
+		Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
+				R.drawable.app_icon, imageSizePixels, imageSizePixels);
+		image.setBitmap(Bitmap.createScaledBitmap(bitmap, imageSizePixels,
+				imageSizePixels, true));
+
 		return rootView;
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		if (image != null) {
+			image.cleanup();
+		}
 	}
 
 	private class FacebookButtonListener implements OnClickListener {

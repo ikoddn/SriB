@@ -71,22 +71,36 @@
             android:visibility="invisible" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textview_info1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-    <ImageView
-        android:id="@+id/imageView_infofragment"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="@string/imageview_startupscreen" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/textview_info2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp" />
+            <TextView
+                android:id="@+id/textview_info1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp" />
+
+            <no.srib.app.client.view.DTImageView
+                android:id="@+id/dtImageView_info"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_below="@id/textview_info1"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/textview_info2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dtImageView_info"
+                android:layout_margin="15dp" />
+        </RelativeLayout>
+    </ScrollView>
 
 </LinearLayout>

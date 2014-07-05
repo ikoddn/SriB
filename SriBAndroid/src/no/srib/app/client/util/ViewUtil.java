@@ -1,6 +1,7 @@
 package no.srib.app.client.util;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -34,5 +35,10 @@ public class ViewUtil {
 		} else {
 			v.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
 		}
+	}
+
+	public static int dpiToPixels(final Resources resources, final int dpi) {
+		float scale = resources.getDisplayMetrics().density;
+		return (int) (dpi * scale + 0.5f);
 	}
 }
