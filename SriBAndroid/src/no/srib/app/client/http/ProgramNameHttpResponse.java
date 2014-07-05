@@ -9,8 +9,6 @@ import no.srib.app.client.model.ProgramName;
 
 import org.apache.http.HttpStatus;
 
-import android.text.Html;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,13 +26,11 @@ public class ProgramNameHttpResponse implements HttpResponseListener {
 	}
 
 	@Override
-	public void onResponse(int statusCode, String response) {
+	public void onResponse(final int statusCode, final String response) {
 		switch (statusCode) {
 		case HttpStatus.SC_OK:
 			try {
-				String decodedHtml = Html.fromHtml(response).toString();
-
-				PodcastPrograms programs = MAPPER.readValue(decodedHtml,
+				PodcastPrograms programs = MAPPER.readValue(response,
 						PodcastPrograms.class);
 
 				updater.updateFrom(programs, true);
