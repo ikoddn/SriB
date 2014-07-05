@@ -1,7 +1,11 @@
 package no.srib.app.client.adapter;
 
+import java.util.List;
+
 import no.srib.app.client.R;
 import no.srib.app.client.model.Article;
+import no.srib.app.client.model.ArticleImage;
+import no.srib.app.client.model.ArticleMedia;
 import no.srib.app.client.util.URLUtil;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,12 +105,27 @@ public class ArticleListAdapter extends BaseListAdapter<Article> {
 					.findViewById(R.id.textview_articleitem_excerpt);
 
 			Article newsArticle = getItemInPosition(position);
+			List<ArticleMedia> articleMedia = newsArticle.getMedia();
 
-			String url = newsArticle.getMedia().get(0).getSizes().get(1)
-					.getUrl();
-			url = URLUtil.urlEncodeFilename(url);
+			if (!(articleMedia == null || articleMedia.isEmpty())) {
+				String url = null;
 
-			UrlImageViewHelper.setUrlDrawable(image, url);
+				List<ArticleImage> articleImageSizes = articleMedia.get(0)
+						.getSizes();
+
+				if (articleImageSizes != null) {
+					if (articleImageSizes.size() > 1) {
+						url = articleImageSizes.get(1).getUrl();
+					} else if (!articleImageSizes.isEmpty()) {
+						url = articleImageSizes.get(0).getUrl();
+					}
+
+					if (url != null) {
+						url = URLUtil.urlEncodeFilename(url);
+						UrlImageViewHelper.setUrlDrawable(image, url);
+					}
+				}
+			}
 
 			title.setText(newsArticle.getTitle());
 			excerpt.setText(newsArticle.getExcerptDisplay());
