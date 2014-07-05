@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 public class InfoFragment extends BaseFragment {
 
+	private Bitmap imageBitmap;
 	private DTImageView image;
 	private OnInfoClickListener infoClickListener;
 
@@ -64,25 +65,29 @@ public class InfoFragment extends BaseFragment {
 
 		textView2.setText(Html.fromHtml(getString(R.string.textView_info_2)));
 
+		if (imageBitmap == null) {
+			final int imageSizeDPI = 200;
+			int imageSizePixels = ViewUtil.dpiToPixels(res, imageSizeDPI);
+			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
+					R.drawable.app_icon, imageSizePixels, imageSizePixels);
+			imageBitmap = Bitmap.createScaledBitmap(bitmap, imageSizePixels,
+					imageSizePixels, true);
+		}
+
 		DTImageView image = (DTImageView) rootView
 				.findViewById(R.id.dtImageView_info);
-		final int imageSizeDPI = 200;
-		int imageSizePixels = ViewUtil.dpiToPixels(res, imageSizeDPI);
-
-		Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
-				R.drawable.app_icon, imageSizePixels, imageSizePixels);
-		image.setBitmap(Bitmap.createScaledBitmap(bitmap, imageSizePixels,
-				imageSizePixels, true));
+		image.setBitmap(imageBitmap);
 
 		return rootView;
 	}
 
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
+	public void onDestroy() {
+		super.onDestroy();
 
 		if (image != null) {
 			image.cleanup();
+			imageBitmap = null;
 		}
 	}
 

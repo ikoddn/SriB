@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 public class LoadingFragment extends BaseFragment {
 
+	private Bitmap backgroundBitmap;
 	private DTImageView background;
 	private View rootView;
 
@@ -42,11 +43,12 @@ public class LoadingFragment extends BaseFragment {
 	}
 
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
+	public void onDestroy() {
+		super.onDestroy();
 
 		if (background != null) {
 			background.cleanup();
+			backgroundBitmap = null;
 		}
 	}
 
@@ -61,12 +63,16 @@ public class LoadingFragment extends BaseFragment {
 
 			Resources res = getResources();
 
-			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
-					R.drawable.loading_splash, width, height);
+			if (backgroundBitmap == null) {
+				Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
+						R.drawable.loading_splash, width, height);
+				backgroundBitmap = Bitmap.createScaledBitmap(bitmap, width,
+						height, true);
+			}
+
 			background = (DTImageView) rootView
 					.findViewById(R.id.dtImageView_loading_background);
-			background.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
-					height, true));
+			background.setBitmap(backgroundBitmap);
 		}
 	}
 }

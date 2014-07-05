@@ -43,6 +43,7 @@ public class LiveRadioFragment extends BaseFragment {
 	private SribSeekBar seekbar;
 	private SeekBarInterface seekBarListener;
 
+	private Bitmap backgroundBitmap;
 	private DTImageView background;
 	private View rootView;
 
@@ -89,7 +90,6 @@ public class LiveRadioFragment extends BaseFragment {
 	}
 
 	public CharSequence getProgramNameText() {
-
 		return programNameTextView.getText();
 	}
 
@@ -305,11 +305,12 @@ public class LiveRadioFragment extends BaseFragment {
 	}
 
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
+	public void onDestroy() {
+		super.onDestroy();
 
 		if (background != null) {
 			background.cleanup();
+			backgroundBitmap = null;
 		}
 	}
 
@@ -399,12 +400,16 @@ public class LiveRadioFragment extends BaseFragment {
 
 			Resources res = getResources();
 
-			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
-					R.drawable.liveradio_background, width, height);
+			if (backgroundBitmap == null) {
+				Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
+						R.drawable.liveradio_background, width, height);
+				backgroundBitmap = Bitmap.createScaledBitmap(bitmap, width,
+						height, true);
+			}
+
 			background = (DTImageView) rootView
 					.findViewById(R.id.dtImageView_liveradio_background);
-			background.setBitmap(Bitmap.createScaledBitmap(bitmap, width,
-					height, true));
+			background.setBitmap(backgroundBitmap);
 
 			View textFieldLayout = rootView
 					.findViewById(R.id.relativelayout_liveradio_textfields);
