@@ -150,41 +150,15 @@ public class PodcastResource {
         return podList;
     }
 
-    // Get all names
-    @GET
-    @Path("names")
-    public final List<Definition> getAllPodcastNames() {
-        List<Definition> defList = new ArrayList<Definition>();
-        List<Programinfo> programInfoListNew = null;
-        List<Programinfo> programInfoListOld = null;
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -6);
-        try {
-            programInfoListNew = programInfoDAO.getProgramInfosWithPodcast(cal,
-                    true);
-            programInfoListOld = programInfoDAO.getProgramInfosWithPodcast(cal,
-                    false);
-
-        } catch (DAOException e) {
-            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-        }
-
-        programInfoListNew.addAll(programInfoListOld);
-        System.out.println("Størrelse: " + programInfoListNew.size());
-        if (programInfoListNew == null || programInfoListNew.isEmpty()) {
-            System.out.println("NO CONTENT");
-            throw new WebApplicationException(Status.NO_CONTENT);
-        }
-
-        for (Programinfo prog : programInfoListNew) {
-            Definition def = new Definition(prog.getProgram(), prog.getTitle());
-            defList.add(def);
-        }
-
-        return defList;
-    }
-
+    /**
+     * Gets a collection of podcast programs that has published a podcast more
+     * recently than the given date, and a collection of podcast programs that
+     * has not published any podcasts after the given date.
+     * 
+     * @param dateParam
+     *            - Date in the format yyyyMMdd
+     * @return Both collections sorted by podcast program name.
+     */
     @GET
     @Path("programs")
     public final PodcastPrograms getPodcastPrograms(
