@@ -39,7 +39,7 @@ public class AddUrlSchedule extends HttpServlet {
 
         if (ses != null && ses.getAttribute("loggedIn") != null) {
             if (ses.getAttribute("loggedIn").equals("true")) {
-                ses.setAttribute("errorNew", new Boolean(false));
+                ses.setAttribute("errorNew", Boolean.valueOf(false));
 
                 String fromTimeString = request.getParameter("fromTime");
                 String toTimeString = request.getParameter("toTime");
@@ -59,7 +59,7 @@ public class AddUrlSchedule extends HttpServlet {
                         }
                         fromTime = Time.valueOf(fromTimeString);
                         toTime = Time.valueOf(toTimeString);
-                        day = Integer.valueOf(dayString);
+                        day = Integer.parseInt(dayString);
                         if (!fromTime.before(toTime)) {
                             throw new IllegalArgumentException();
                         }
@@ -69,7 +69,7 @@ public class AddUrlSchedule extends HttpServlet {
                     }
 
                 } catch (IllegalArgumentException e) {
-                    ses.setAttribute("errorNew", new Boolean(true));
+                    ses.setAttribute("errorNew", Boolean.valueOf(true));
                     response.sendRedirect("/SriBServer/SetSource");
                     return;
                 }

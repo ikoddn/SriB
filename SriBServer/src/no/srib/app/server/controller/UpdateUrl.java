@@ -32,11 +32,12 @@ public class UpdateUrl extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession();
 
         if (ses != null) {
-            ses.setAttribute("errorUrl", new Boolean(false));
+            ses.setAttribute("errorUrl", Boolean.valueOf(false));
             if (ses.getAttribute("loggedIn").equals("true")) {
                 String url = request.getParameter("url");
                 String name = request.getParameter("name");
@@ -45,22 +46,21 @@ public class UpdateUrl extends HttpServlet {
 
                 try {
                     new URL(url);
-
                 } catch (MalformedURLException e) {
-                    ses.setAttribute("errorUrl", new Boolean(true));
+                    ses.setAttribute("errorUrl", Boolean.valueOf(true));
                     response.sendRedirect("/SriBServer/SetSource");
                     return;
                 }
 
-                if (url != null && name != null && idString != null) {
-                    int id = Integer.valueOf(idString);
+                if (name != null && idString != null) {
+                    int id = Integer.parseInt(idString);
                     Streamurl streamUrl = new Streamurl(name, url);
                     streamUrl.setId(id);
 
                     try {
                         streamurldao.update(streamUrl);
                     } catch (DAOException e) {
-                        ses.setAttribute("errorUrl", new Boolean(true));
+                        ses.setAttribute("errorUrl", Boolean.valueOf(true));
                         response.sendRedirect("/SriBServer/SetSource");
                         e.printStackTrace();
                     }
@@ -69,7 +69,7 @@ public class UpdateUrl extends HttpServlet {
                     return;
 
                 } else {
-                    ses.setAttribute("errorUrl", new Boolean(true));
+                    ses.setAttribute("errorUrl", Boolean.valueOf(true));
                     response.sendRedirect("/SriBServer/SetSource");
                     return;
                 }

@@ -36,7 +36,7 @@ public class UpdateSchedule extends HttpServlet {
         HttpSession ses = request.getSession(false);
         if (ses != null && ses.getAttribute("loggedIn") != null
                 && ses.getAttribute("loggedIn").equals("true")) {
-            ses.setAttribute("errorUpdate", new Boolean(false));
+            ses.setAttribute("errorUpdate", Boolean.valueOf(false));
             Time fromTime = null;
             Time toTime = null;
             int day = 0;
@@ -63,12 +63,12 @@ public class UpdateSchedule extends HttpServlet {
                     }
                     fromTime = Time.valueOf(fromTimeString);
                     toTime = Time.valueOf(toTimeString);
-                    program = Integer.valueOf(programString);
+                    program = Integer.parseInt(programString);
                     if (!fromTime.before(toTime)) {
                         throw new IllegalArgumentException();
                     }
                 } catch (IllegalArgumentException e) {
-                    ses.setAttribute("errorUpdate", new Boolean(true));
+                    ses.setAttribute("errorUpdate", Boolean.valueOf(true));
                     response.sendRedirect("/SriBServer/SetSchedule");
                     return;
                 }

@@ -41,7 +41,7 @@ public class UpdateUrlSchedule extends HttpServlet {
             int day = 0;
             Time fromTime = null;
             Time toTime = null;
-            ses.setAttribute("errorUpdate", new Boolean(false));
+            ses.setAttribute("errorUpdate", Boolean.valueOf(false));
             String idString = request.getParameter("id");
             String fromTimeString = request.getParameter("fromTime");
             String toTimeString = request.getParameter("toTime");
@@ -64,7 +64,7 @@ public class UpdateUrlSchedule extends HttpServlet {
                         throw new IllegalArgumentException();
                     }
                 } catch (IllegalArgumentException e) {
-                    ses.setAttribute("errorUpdate", new Boolean(true));
+                    ses.setAttribute("errorUpdate", Boolean.valueOf(true));
                     response.sendRedirect("/SriBServer/SetSource");
                     return;
                 }

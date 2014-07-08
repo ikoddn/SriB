@@ -64,9 +64,10 @@ public class AddProgram extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession();
-        ses.setAttribute("error", new Boolean(false));
-        ses.setAttribute("errorDuplicate", new Boolean(false));
-        if (ses != null && ses.getAttribute("loggedIn") != null
+        ses.setAttribute("error", Boolean.valueOf(false));
+        ses.setAttribute("errorDuplicate", Boolean.valueOf(false));
+
+        if (ses.getAttribute("loggedIn") != null
                 && ses.getAttribute("loggedIn").equals("true")) {
 
             String name = request.getParameter("name");
@@ -74,7 +75,7 @@ public class AddProgram extends HttpServlet {
             if (name != null && name.length() > 0) {
 
             } else {
-                ses.setAttribute("error", new Boolean(true));
+                ses.setAttribute("error", Boolean.valueOf(true));
                 response.sendRedirect("/SriBServer/AddProgram");
                 return;
             }
@@ -86,7 +87,7 @@ public class AddProgram extends HttpServlet {
                 try {
                     pDAO.add(pName);
                 } catch (DuplicateEntryException e) {
-                    ses.setAttribute("errorDuplicate", new Boolean(true));
+                    ses.setAttribute("errorDuplicate", Boolean.valueOf(true));
                     response.sendRedirect("AddProgram");
                     return;
                 }
@@ -110,7 +111,7 @@ public class AddProgram extends HttpServlet {
                     try {
                         pDAO.add(pName);
                     } catch (DuplicateEntryException e) {
-                        ses.setAttribute("errorDuplicate", new Boolean(true));
+                        ses.setAttribute("errorDuplicate", Boolean.valueOf(true));
                         response.sendRedirect("AddProgram");
                         return;
                     } catch (DAOException e) {

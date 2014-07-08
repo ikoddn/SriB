@@ -30,9 +30,9 @@ public class StreamURLResource {
     @EJB
     private StreamUrlScheduleDAO streamUrlScheduleDAO;
 
-    private final int MAIN_SOURCE = 0;
-    private final int SECOND_SOURCE = 1;
-    private final int FALLBACK_INTERVAL_MINUTES = 10;
+    private final static int MAIN_SOURCE = 0;
+    private final static int SECOND_SOURCE = 1;
+    private final static int FALLBACK_INTERVAL_MINUTES = 10;
 
     @GET
     public final StreamSchedule getCurrentStreamSchedule() {
@@ -48,7 +48,7 @@ public class StreamURLResource {
         if (streamList == null || streamList.isEmpty()) {
             throw new WebApplicationException(Status.NO_CONTENT);
         }
-        
+
         boolean mainSourceActive;
         try {
             mainSourceActive = streamUrlScheduleDAO.isMainSourceActive();
