@@ -1,5 +1,7 @@
 package no.srib.app.server.resource;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.annotation.ManagedBean;
@@ -38,14 +40,22 @@ public class ArticleResource {
         List<Article> list = null;
 
         try {
-            if (query == null || query.isEmpty()) {
+            String trimmedQuery = null;
+
+            if (query != null) {
+                trimmedQuery = query.trim();
+            }
+
+            if (trimmedQuery == null || trimmedQuery.isEmpty()) {
                 list = articleDAO.getRecentArticles(count);
             } else {
-                list = articleDAO.search(query, count);
+                String decoded = URLDecoder.decode(trimmedQuery, "UTF-8");
+                list = articleDAO.search(decoded, count);
             }
         } catch (DAOException e) {
             e.printStackTrace();
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        } catch (UnsupportedEncodingException e) {
         }
 
         if (list == null || list.isEmpty()) {
