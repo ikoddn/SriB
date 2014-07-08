@@ -1,5 +1,7 @@
 package no.srib.app.client;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -667,14 +669,21 @@ public class MainActivity extends FragmentActivity implements
 	private class ArticleSearch implements OnSearchListener {
 
 		@Override
-		public void onSearch(String query) {
-			HttpResponseListener articleResponse = new ArticleHttpResponse(
-					MainActivity.this, articleAdapterUpdater, true);
-			HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
-			StringBuilder sb = new StringBuilder();
-			sb.append(getResources().getString(R.string.url_articles));
-			sb.append("?q=" + query);
-			httpAsyncTask.execute(sb.toString());
+		public void onSearch(final String query) {
+			try {
+				String urlEncodedQuery = URLEncoder.encode(query, "UTF-8");
+
+				HttpResponseListener articleResponse = new ArticleHttpResponse(
+						MainActivity.this, articleAdapterUpdater, true);
+				HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
+
+				StringBuilder sb = new StringBuilder();
+				sb.append(getResources().getString(R.string.url_articles));
+				sb.append("?q=" + urlEncodedQuery);
+
+				httpAsyncTask.execute(sb.toString());
+			} catch (UnsupportedEncodingException e) {
+			}
 		}
 
 		@Override

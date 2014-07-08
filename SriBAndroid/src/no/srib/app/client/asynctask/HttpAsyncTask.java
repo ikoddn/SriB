@@ -28,8 +28,9 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 	protected String doInBackground(String... url) {
 		String responseString = null;
 
-		HttpGet httpGet = new HttpGet(url[0]);
 		try {
+			HttpGet httpGet = new HttpGet(url[0]);
+			
 			HttpResponse httpResponse = httpClient.execute(httpGet);
 			statusCode = httpResponse.getStatusLine().getStatusCode();
 
@@ -41,6 +42,8 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 			} else {
 				Log.d("SriB", "HttpAsyncTask: HTTP status code " + statusCode);
 			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			Log.e("SriB", "HttpAsyncTask: " + e.getMessage());
 		}
