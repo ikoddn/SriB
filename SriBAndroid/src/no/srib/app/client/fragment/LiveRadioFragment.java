@@ -52,6 +52,7 @@ public class LiveRadioFragment extends BaseFragment {
 		programNameTextView = null;
 		timeTextView = null;
 		playButton = null;
+		switchButton = null;
 	}
 
 	public void setSeekBarOnChangeListener(

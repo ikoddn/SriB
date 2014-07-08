@@ -74,8 +74,7 @@ public class InfoFragment extends BaseFragment {
 					imageSizePixels, true);
 		}
 
-		DTImageView image = (DTImageView) rootView
-				.findViewById(R.id.dtImageView_info);
+		image = (DTImageView) rootView.findViewById(R.id.dtImageView_info);
 		image.setBitmap(imageBitmap);
 
 		return rootView;

@@ -245,6 +245,8 @@ public class AudioPlayerService extends BaseService {
 			case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
 				sb.append("Timed out");
 				break;
+			default:
+				break;
 			}
 
 			Log.e("SriB", sb.toString());

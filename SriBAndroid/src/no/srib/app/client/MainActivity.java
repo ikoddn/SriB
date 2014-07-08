@@ -102,6 +102,7 @@ public class MainActivity extends FragmentActivity implements
 		articleListAdapter = null;
 		viewPager = null;
 		currentProgramResponse = null;
+		audioPlayerService = null;
 	}
 
 	@Override
@@ -479,17 +480,14 @@ public class MainActivity extends FragmentActivity implements
 			if (liveRadioSectionFragment != null) {
 				fragment = (LiveRadioFragment) liveRadioSectionFragment
 						.getBaseFragment();
-			}
-
-			if (fragment != null) {
 				fragment.setProgramNameText(podcastName);
+				fragment.setPodcastMode();
 			}
 
 			// TODO Info screen may be in focus, should show live radio screen
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			audioPlayer.setIsPodcast(true);
-			fragment.setPodcastMode();
 			audioPlayer.start();
 		}
 	}
