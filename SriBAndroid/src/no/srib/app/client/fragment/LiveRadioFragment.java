@@ -41,7 +41,6 @@ public class LiveRadioFragment extends BaseFragment {
 	private CheckBox switchButton;
 
 	private SribSeekBar seekbar;
-	private SeekBarInterface seekBarListener;
 
 	private Bitmap backgroundBitmap;
 	private DTImageView background;
@@ -71,10 +70,6 @@ public class LiveRadioFragment extends BaseFragment {
 	public void setOnLiveRadioClickListener(
 			OnLiveRadioClickListener liveRadioClickListener) {
 		this.liveRadioClickListener = liveRadioClickListener;
-	}
-
-	public void setSeekBarListener(SeekBarInterface seekBar) {
-		this.seekBarListener = seekBar;
 	}
 
 	public void setProgramNameText(CharSequence text) {

@@ -98,9 +98,6 @@ public class MainActivity extends FragmentActivity implements
 	private Runnable run;
 	private int updateTimeTextIntervall = 1000;
 
-	// TODO Put this in SharedPrefrence.
-	private String oldDataSource;
-
 	public MainActivity() {
 		articleListAdapter = null;
 		viewPager = null;
@@ -382,7 +379,6 @@ public class MainActivity extends FragmentActivity implements
 
 			} else {
 				Log.i("Debug", "Live");
-				oldDataSource = audioPlayer.getDataSource();
 
 				if (currentProgramResponse != null) {
 					HttpAsyncTask programTask = new HttpAsyncTask(
@@ -505,7 +501,7 @@ public class MainActivity extends FragmentActivity implements
 
 			liveRadio.setOnLiveRadioClickListener(new LiveRadioClickListener());
 			liveRadio.setSeekBarOnChangeListener(new SeekBarListener());
-			liveRadio.setSeekBarListener(new SeekBarImpl());
+			new SeekBarImpl();
 
 			TextView textView = liveRadio.getProgramNameTextView();
 			currentProgramResponse = new CurrentScheduleHttpResponse(textView);
