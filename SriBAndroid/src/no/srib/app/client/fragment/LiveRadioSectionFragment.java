@@ -64,8 +64,10 @@ public class LiveRadioSectionFragment extends SectionFragment {
 	}
 
 	public void replaceLoadingFragment() {
-		loading = false;
-		replaceFragment(liveRadioFragment);
+		if (loading) {
+			loading = false;
+			replaceFragment(liveRadioFragment);
+		}
 	}
 
 	@Override

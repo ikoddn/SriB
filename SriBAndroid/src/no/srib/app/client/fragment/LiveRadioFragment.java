@@ -46,6 +46,10 @@ public class LiveRadioFragment extends BaseFragment {
 	private DTImageView background;
 	private View rootView;
 
+	private boolean pauseIcon;
+	private boolean podcastMode;
+	private CharSequence programName;
+
 	public LiveRadioFragment() {
 		statusTextView = null;
 		streamTextView = null;
@@ -53,6 +57,10 @@ public class LiveRadioFragment extends BaseFragment {
 		timeTextView = null;
 		playButton = null;
 		switchButton = null;
+
+		pauseIcon = false;
+		podcastMode = false;
+		programName = null;
 	}
 
 	public void setSeekBarOnChangeListener(
@@ -73,11 +81,11 @@ public class LiveRadioFragment extends BaseFragment {
 		this.liveRadioClickListener = liveRadioClickListener;
 	}
 
-	public void setProgramNameText(CharSequence text) {
-		if (text != null) {
+	public void setProgramNameText(final CharSequence text) {
+		programName = text;
+
+		if (programNameTextView != null) {
 			programNameTextView.setText(text);
-		} else {
-			programNameTextView.setText("");
 		}
 	}
 
@@ -136,6 +144,10 @@ public class LiveRadioFragment extends BaseFragment {
 		streamTextView.setTypeface(font);
 		programNameTextView.setTypeface(font);
 
+		if (programName != null) {
+			programNameTextView.setText(programName);
+		}
+
 		seekbar = (SribSeekBar) rootView.findViewById(R.id.sribSeekBar);
 
 		timeTextView.setTypeface(font);
@@ -157,6 +169,14 @@ public class LiveRadioFragment extends BaseFragment {
 				.findViewById(R.id.button_liveradio_soundcloud);
 		ImageButton twitterButton = (ImageButton) rootView
 				.findViewById(R.id.button_liveradio_twitter);
+
+		if (pauseIcon) {
+			setPauseIcon();
+		}
+
+		if (podcastMode) {
+			switchButton.setChecked(true);
+		}
 
 		playButton.setOnClickListener(new PlayPauseButtonListener());
 		stopButton.setOnClickListener(new StopButtonListener());
@@ -311,21 +331,39 @@ public class LiveRadioFragment extends BaseFragment {
 	}
 
 	public void setPauseIcon() {
-		Drawable icon = getResources().getDrawable(R.drawable.liveradio_pause);
-		playButton.setImageDrawable(icon);
+		pauseIcon = true;
+
+		if (playButton != null) {
+			Drawable icon = getResources().getDrawable(
+					R.drawable.liveradio_pause);
+			playButton.setImageDrawable(icon);
+		}
 	}
 
 	public void setPlayIcon() {
-		Drawable icon = getResources().getDrawable(R.drawable.liveradio_play);
-		playButton.setImageDrawable(icon);
+		pauseIcon = false;
+
+		if (playButton != null) {
+			Drawable icon = getResources().getDrawable(
+					R.drawable.liveradio_play);
+			playButton.setImageDrawable(icon);
+		}
 	}
 
 	public void setPodcastMode() {
-		switchButton.setChecked(true);
+		podcastMode = true;
+
+		if (switchButton != null) {
+			switchButton.setChecked(true);
+		}
 	}
 
 	public void setLiveRadioMode() {
-		switchButton.setChecked(false);
+		podcastMode = false;
+
+		if (switchButton != null) {
+			switchButton.setChecked(false);
+		}
 	}
 
 	private class InfoButtonListener implements OnClickListener {
@@ -381,6 +419,7 @@ public class LiveRadioFragment extends BaseFragment {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
+
 			liveRadioClickListener.onSwitchPodcastSelected(isChecked);
 		}
 	}

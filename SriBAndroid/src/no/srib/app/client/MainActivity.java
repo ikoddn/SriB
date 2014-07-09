@@ -477,11 +477,12 @@ public class MainActivity extends FragmentActivity implements
 			}
 
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = null;
 
 			if (liveRadioSectionFragment != null) {
-				fragment = (LiveRadioFragment) liveRadioSectionFragment
-						.getBaseFragment();
+				liveRadioSectionFragment.replaceLoadingFragment();
+
+				LiveRadioFragment fragment = liveRadioSectionFragment
+						.getLiveRadioFragment();
 				fragment.setProgramNameText(podcastName);
 				fragment.setPodcastMode();
 			}
@@ -631,18 +632,22 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void updateSeekBar() {
 			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
-					.getChildFragmentManager().getFragments().get(0);
-			AudioPlayerService audioservice = audioPlayerService.getService();
 
-			int progress = audioservice.getProgress();
-			String time = fromMsToTime(progress);
-			liveFrag.setTimeText(time);
-			// int max = audioservice.getDuration();
-			// System.out.println(progress + "/" + max);
-			liveFrag.setSeekBarProgress(progress);
+			if (fragment != null) {
+				LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
+						.getChildFragmentManager().getFragments().get(0);
+				AudioPlayerService audioservice = audioPlayerService
+						.getService();
+
+				int progress = audioservice.getProgress();
+				String time = fromMsToTime(progress);
+				liveFrag.setTimeText(time);
+				// int max = audioservice.getDuration();
+				// System.out.println(progress + "/" + max);
+				liveFrag.setSeekBarProgress(progress);
+			}
+
 			seekHandler.postDelayed(run, updateTimeTextIntervall);
-
 		}
 
 		private String fromMsToTime(int ms) {
