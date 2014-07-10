@@ -8,14 +8,14 @@ import android.net.NetworkInfo;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
-	private OnConnectionChangedListener connectionChangedListener;
+	private OnConnectivityChangedListener connectionChangedListener;
 	
 	public ConnectivityChangeReceiver() {
 		connectionChangedListener = null;
 	}
 
 	public void setConnectionChangedListener(
-			OnConnectionChangedListener connectionChangedListener) {
+			OnConnectivityChangedListener connectionChangedListener) {
 		this.connectionChangedListener = connectionChangedListener;
 	}
 
@@ -37,7 +37,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 
-	public interface OnConnectionChangedListener {
+	public interface OnConnectivityChangedListener {
 		void onNetworkAvailable();
 
 		void onNetworkUnavailable();

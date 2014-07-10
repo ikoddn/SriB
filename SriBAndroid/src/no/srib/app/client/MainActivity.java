@@ -1,7 +1,9 @@
 package no.srib.app.client;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,7 @@ import no.srib.app.client.model.Article;
 import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
+import no.srib.app.client.receiver.ConnectivityChangeReceiver;
 import no.srib.app.client.service.BaseService;
 import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
@@ -45,8 +48,11 @@ import no.srib.app.client.viewpager.PageChangeListener;
 import no.srib.app.client.viewpager.SectionsPagerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,8 +72,22 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class MainActivity extends FragmentActivity implements
 		OnFragmentReadyListener {
+
+	private static final String PREFS_NAME = "MainActivityPrefs";
+	private static final String KEY_STREAM = "Stream";
+
+	private final ObjectMapper MAPPER;
+
+	private boolean readyToUpdateStreamSchedule;
+	private StreamSchedule streamSchedule;
+	private ConnectivityChangeReceiver connectivityChangeReceiver;
 
 	private ArticleListAdapter articleListAdapter;
 
@@ -101,6 +121,8 @@ public class MainActivity extends FragmentActivity implements
 	private int updateTimeTextIntervall = 1000;
 
 	public MainActivity() {
+		MAPPER = new ObjectMapper();
+
 		articleListAdapter = null;
 		viewPager = null;
 		currentProgramResponse = null;
@@ -110,6 +132,38 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		readyToUpdateStreamSchedule = false;
+
+		SharedPreferences sharedPrefs = getSharedPreferences(PREFS_NAME, 0);
+		String json = sharedPrefs.getString(KEY_STREAM, null);
+
+		if (json != null) {
+			try {
+				StreamSchedule storedSchedule = MAPPER.readValue(json,
+						StreamSchedule.class);
+
+				long currentTime = Calendar.getInstance().getTimeInMillis();
+
+				// Check if the stored schedule is out-of-date
+				if (storedSchedule.getTime() > currentTime) {
+					streamSchedule = storedSchedule;
+				} else {
+					streamSchedule = null;
+				}
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			streamSchedule = null;
+		}
 
 		Resources res = getResources();
 
@@ -185,15 +239,35 @@ public class MainActivity extends FragmentActivity implements
 		programTask.execute(programTaskUrl);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		unregisterReceiver(connectivityChangeReceiver);
+	}
+
 	private class StreamUpdaterServiceReadyListener implements
 			OnServiceReadyListener {
 
 		@Override
 		public void onServiceReady(BaseService baseService) {
 			StreamUpdaterService service = (StreamUpdaterService) baseService;
-			String radioUrl = getResources().getString(R.string.currentUrl);
 			service.setStreamUpdateListener(new StreamUpdateListener());
-			service.updateFrom(radioUrl);
+			String url = getResources().getString(R.string.url_audiostream);
+			service.setUpdateURL(url);
+
+			connectivityChangeReceiver = new ConnectivityChangeReceiver();
+			connectivityChangeReceiver
+					.setConnectionChangedListener(new ConnectivityChangedListener(
+							service));
+
+			IntentFilter filter = new IntentFilter(
+					ConnectivityManager.CONNECTIVITY_ACTION);
+			registerReceiver(connectivityChangeReceiver, filter);
+
+			if (streamSchedule == null) {
+				service.update();
+			}
 		}
 	}
 
@@ -204,6 +278,8 @@ public class MainActivity extends FragmentActivity implements
 		public void onServiceReady(BaseService baseService) {
 			AudioPlayerService audioPlayer = (AudioPlayerService) baseService;
 			audioPlayer.setStateListener(new AudioPlayerStateListener());
+
+			updateStreamIfReady();
 		}
 	}
 
@@ -235,35 +311,61 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 		@Override
-		public void onStreamUpdate(StreamSchedule streamSchedule) {
-			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-
-			LiveRadioFragment liveRadio = liveRadioSectionFragment
-					.getLiveRadioFragment();
+		public void onStreamUpdate(StreamSchedule newStreamSchedule) {
+			streamSchedule = newStreamSchedule;
 
 			try {
-				liveRadioSectionFragment.replaceLoadingFragment();
+				String json = MAPPER.writeValueAsString(newStreamSchedule);
 
-				String url = streamSchedule.getUrl();
-
-				if (url == null) {
-					throw new AudioPlayerException();
-				}
-
-				AudioPlayerService audioPlayer = audioPlayerService
-						.getService();
-				audioPlayer.setDataSource(url);
-				audioPlayer.setIsPodcast(false);
-				liveRadio.setLiveRadioMode();
-				if (autoPlayAfterConnect) {
-					audioPlayer.start();
-				}
-
-				liveRadio.setStreamText(streamSchedule.getName());
-			} catch (AudioPlayerException e) {
-				e.printStackTrace();
-				liveRadio.setStreamText("Playback error");
+				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString(KEY_STREAM, json);
+				editor.commit();
+			} catch (JsonProcessingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+
+			updateStreamIfReady();
+		}
+	}
+
+	private void updateStreamIfReady() {
+		if (!readyToUpdateStreamSchedule) {
+			readyToUpdateStreamSchedule = true;
+		} else if (streamSchedule != null) {
+			updateStream(streamSchedule);
+		}
+	}
+
+	private void updateStream(StreamSchedule streamSchedule) {
+		LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+
+		LiveRadioFragment liveRadio = liveRadioSectionFragment
+				.getLiveRadioFragment();
+
+		try {
+			liveRadioSectionFragment.replaceLoadingFragment();
+
+			String url = streamSchedule.getUrl();
+
+			if (url == null) {
+				throw new AudioPlayerException();
+			}
+
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
+			audioPlayer.setDataSource(url);
+			audioPlayer.setIsPodcast(false);
+			liveRadio.setLiveRadioMode();
+
+			if (autoPlayAfterConnect) {
+				audioPlayer.start();
+			}
+
+			liveRadio.setStreamText(streamSchedule.getName());
+		} catch (AudioPlayerException e) {
+			e.printStackTrace();
+			liveRadio.setStreamText("Playback error");
 		}
 	}
 
@@ -311,7 +413,6 @@ public class MainActivity extends FragmentActivity implements
 				fragment.setStatusText("completed");
 				fragment.setPlayIcon();
 				seekHandler.removeCallbacks(run);
-
 				break;
 			}
 		}
@@ -341,8 +442,10 @@ public class MainActivity extends FragmentActivity implements
 				StreamUpdaterService streamUpdater = streamUpdaterService
 						.getService();
 
-				if (!streamUpdater.isUpdating()) {
+				if (!streamUpdater.hasUpdateScheduled()) {
 					streamUpdater.update();
+				} else {
+					updateStreamIfReady();
 				}
 				break;
 			}
@@ -373,8 +476,6 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onSwitchPodcastSelected(boolean value) {
 			AudioPlayerService audioPlayer = audioPlayerService.getService();
-			StreamUpdaterService streamUpdater = streamUpdaterService
-					.getService();
 
 			audioPlayer.setIsPodcast(value);
 			if (value) {
@@ -390,11 +491,8 @@ public class MainActivity extends FragmentActivity implements
 							R.string.currentProgram));
 				}
 
-				streamUpdater.update();
-				audioPlayer.start();
-
+				updateStreamIfReady();
 			}
-
 		}
 
 		@Override
@@ -543,6 +641,8 @@ public class MainActivity extends FragmentActivity implements
 			InfoFragment info = (InfoFragment) fragment;
 
 			info.setInfoClickListener(new InfoClickListener());
+		} else if (fragment instanceof LiveRadioSectionFragment) {
+			updateStreamIfReady();
 		}
 	}
 

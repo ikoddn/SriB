@@ -1,35 +1,30 @@
 package no.srib.app.client.service;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.model.StreamSchedule;
-import no.srib.app.client.receiver.ConnectivityChangeReceiver;
-import no.srib.app.client.receiver.ConnectivityChangeReceiver.OnConnectionChangedListener;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Handler;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class StreamUpdaterService extends BaseService {
 
 	private static final int MAX_TIMER_FAILS = 2;
-	private static final int TIMER_FAIL_TRESHOLD = 10000;
 
 	private final ObjectMapper MAPPER;
 
-	private AtomicBoolean updating;
+	private AtomicBoolean currentlyUpdating;
+	private AtomicBoolean updateScheduled;
 	private AtomicInteger timerFails;
 	private Handler timerHandler;
 	private Runnable streamScheduleUpdater;
 	private OnStreamUpdateListener streamUpdateListener;
-	private ConnectivityChangeReceiver connectionChangeReceiver;
 
 	public StreamUpdaterService() {
 		MAPPER = new ObjectMapper();
@@ -39,18 +34,12 @@ public class StreamUpdaterService extends BaseService {
 	public void onCreate() {
 		super.onCreate();
 
-		updating = new AtomicBoolean(false);
+		currentlyUpdating = new AtomicBoolean(false);
+		updateScheduled = new AtomicBoolean(false);
 		timerFails = new AtomicInteger(0);
 		timerHandler = new Handler();
 		streamScheduleUpdater = null;
 		streamUpdateListener = null;
-		connectionChangeReceiver = new ConnectivityChangeReceiver();
-		connectionChangeReceiver
-				.setConnectionChangedListener(new ConnectionChangedListener());
-
-		IntentFilter filter = new IntentFilter(
-				ConnectivityManager.CONNECTIVITY_ACTION);
-		registerReceiver(connectionChangeReceiver, filter);
 	}
 
 	@Override
@@ -58,8 +47,6 @@ public class StreamUpdaterService extends BaseService {
 		super.onDestroy();
 
 		stopUpdating();
-
-		unregisterReceiver(connectionChangeReceiver);
 	}
 
 	public void setStreamUpdateListener(
@@ -67,28 +54,48 @@ public class StreamUpdaterService extends BaseService {
 		this.streamUpdateListener = streamUpdateListener;
 	}
 
-	public void updateFrom(String updateURL) {
-		if (streamScheduleUpdater == null) {
-			streamScheduleUpdater = new StreamScheduleUpdater(updateURL);
-			timerHandler.postDelayed(streamScheduleUpdater, 0);
-			updating.set(true);
-		}
+	public void setUpdateURL(final String updateURL) {
+		streamScheduleUpdater = new StreamScheduleUpdater(updateURL);
 	}
-
-	public boolean isUpdating() {
-		return updating.get();
+	
+	public boolean hasUpdateScheduled() {
+		return updateScheduled.get();
 	}
 
 	public void update() {
-		if (streamScheduleUpdater != null) {
-			timerHandler.postDelayed(streamScheduleUpdater, 0);
-			updating.set(true);
+		if (!currentlyUpdating.get()) {
+			updateIn(0);
+		}
+	}
+
+	public void updateAt(final long time) {
+		long currentTime = Calendar.getInstance().getTimeInMillis();
+		updateIn(time - currentTime);
+	}
+
+	private void updateIn(final long delayParam) {
+		long delay = delayParam;
+
+		if (delay < 0) {
+			timerFails.incrementAndGet();
+			delay = 0;
+		} else {
+			timerFails.set(0);
+		}
+
+		if (timerFails.get() < MAX_TIMER_FAILS) {
+			updateScheduled.set(true);
+			timerHandler.removeCallbacks(streamScheduleUpdater);
+			timerHandler.postDelayed(streamScheduleUpdater, delay);
+		} else {
+			stopUpdating();
 		}
 	}
 
 	public void stopUpdating() {
 		timerHandler.removeCallbacks(streamScheduleUpdater);
-		updating.set(false);
+		currentlyUpdating.set(false);
+		updateScheduled.set(false);
 	}
 
 	public interface OnStreamUpdateListener {
@@ -114,11 +121,14 @@ public class StreamUpdaterService extends BaseService {
 
 		@Override
 		public void run() {
-			HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
-					new StreamScheduleResponseListener());
-			streamScheduleTask.execute(updateURL);
+			if (!currentlyUpdating.get()) {
+				currentlyUpdating.set(true);
+				HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
+						new StreamScheduleResponseListener());
+				streamScheduleTask.execute(updateURL);
 
-			streamUpdateListener.onStatus(Status.CONNECTING);
+				streamUpdateListener.onStatus(Status.CONNECTING);
+			}
 		}
 	}
 
@@ -127,66 +137,23 @@ public class StreamUpdaterService extends BaseService {
 
 		@Override
 		public void onResponse(int statusCode, String response) {
-			updating.set(false);
-
 			if (response == null) {
-				if (connectionChangeReceiver
-						.networkAvailable(getApplicationContext())) {
-					streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
-				} else {
-					streamUpdateListener.onStatus(Status.NO_INTERNET);
-				}
+				updateScheduled.set(false);
+				streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
 			} else {
-				Log.d("SriB", response);
-
 				try {
 					StreamSchedule streamSchedule = MAPPER.readValue(response,
 							StreamSchedule.class);
 
-					if (streamUpdateListener != null) {
-						streamUpdateListener.onStreamUpdate(streamSchedule);
-					}
+					streamUpdateListener.onStreamUpdate(streamSchedule);
 
-					long delay = streamSchedule.getTime()
-							- System.currentTimeMillis();
-
-					Log.d("SriB", "delay: " + delay);
-
-					if (delay < TIMER_FAIL_TRESHOLD) {
-						timerFails.incrementAndGet();
-						Log.d("SriB", "timerFails: " + timerFails.get());
-					} else {
-						timerFails.set(0);
-					}
-
-					if (timerFails.get() < MAX_TIMER_FAILS) {
-						timerHandler.removeCallbacks(streamScheduleUpdater);
-						timerHandler.postDelayed(streamScheduleUpdater, delay);
-					} else {
-						Log.d("SriB", "Time on client is set too far ahead");
-					}
+					updateAt(streamSchedule.getTime());
 				} catch (IOException e) {
 					streamUpdateListener.onStatus(Status.INVALID_RESPONSE);
 				}
 			}
-		}
-	}
 
-	private class ConnectionChangedListener implements
-			OnConnectionChangedListener {
-
-		@Override
-		public void onNetworkAvailable() {
-			update();
-		}
-
-		@Override
-		public void onNetworkUnavailable() {
-			stopUpdating();
-
-			if (streamUpdateListener != null) {
-				streamUpdateListener.onStatus(Status.NO_INTERNET);
-			}
+			currentlyUpdating.set(false);
 		}
 	}
 }
