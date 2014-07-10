@@ -8,7 +8,6 @@ public class StreamSchedule implements Serializable {
 
     private String name;
     private String url;
-
     private long time;
 
     protected StreamSchedule() {

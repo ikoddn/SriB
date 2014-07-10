@@ -1,6 +1,5 @@
 package no.srib.app.server.resource;
 
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import no.srib.app.server.dao.interfaces.StreamurlDAO;
 import no.srib.app.server.model.jpa.Streamurl;
 import no.srib.app.server.model.jpa.Streamurlschedule;
 import no.srib.app.server.model.json.StreamSchedule;
+import no.srib.app.server.util.TimeUtil;
 
 @Path("radiourl")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -64,7 +64,7 @@ public class StreamURLResource {
         }
 
         final Calendar now = Calendar.getInstance();
-        Calendar time = Calendar.getInstance();
+        Calendar time;
 
         try {
             upcomingSchedule = streamUrlScheduleDAO.getUpcomingSchedule(now);
@@ -74,23 +74,9 @@ public class StreamURLResource {
 
         if (upcomingSchedule != null && !upcomingSchedule.isEmpty()) {
             Streamurlschedule nextSchedule = upcomingSchedule.get(0);
-
-            Time hourAndMinutes;
-            if (nextSchedule.getFromtime().after(now.getTime())) {
-                hourAndMinutes = nextSchedule.getFromtime();
-            } else {
-                hourAndMinutes = nextSchedule.getTotime();
-            }
-
-            time.setTimeInMillis(hourAndMinutes.getTime());
-
-            time.set(Calendar.YEAR, now.get(Calendar.YEAR));
-            time.set(Calendar.DAY_OF_YEAR, now.get(Calendar.DAY_OF_YEAR));
-
-            if (now.get(Calendar.HOUR_OF_DAY) > time.get(Calendar.HOUR_OF_DAY)) {
-                time.add(Calendar.DAY_OF_MONTH, 1);
-            }
+            time = nextStreamURLChangeTime(now, nextSchedule);
         } else {
+            time = (Calendar) now.clone();
             time.add(Calendar.MINUTE, FALLBACK_INTERVAL_MINUTES);
         }
 
@@ -99,5 +85,44 @@ public class StreamURLResource {
         long timeInMs = time.getTimeInMillis();
 
         return new StreamSchedule(name, url, timeInMs);
+    }
+
+    public static Calendar nextStreamURLChangeTime(final Calendar now,
+            final Streamurlschedule nextSchedule) {
+
+        Calendar result = (Calendar) now.clone();
+        int fromCompareValue = TimeUtil
+                .compare(now, nextSchedule.getFromtime());
+        int toCompareValue = TimeUtil.compare(now, nextSchedule.getTotime());
+
+        int dayDiff = (int) nextSchedule.getDay()
+                - now.get(Calendar.DAY_OF_WEEK);
+
+        if (dayDiff < 0 || (dayDiff == 0 && toCompareValue > 0)) {
+            dayDiff += 7;
+        }
+
+        if (dayDiff > 0) {
+            result.add(Calendar.DAY_OF_YEAR, dayDiff);
+        }
+
+        java.sql.Time sqlTime;
+
+        if (dayDiff > 0 || (dayDiff == 0 && fromCompareValue < 0)) {
+            sqlTime = nextSchedule.getFromtime();
+        } else {
+            sqlTime = nextSchedule.getTotime();
+        }
+
+        Calendar sqlTimeCalendar = Calendar.getInstance();
+        sqlTimeCalendar.setTimeInMillis(sqlTime.getTime());
+
+        result.set(Calendar.HOUR_OF_DAY,
+                sqlTimeCalendar.get(Calendar.HOUR_OF_DAY));
+        result.set(Calendar.MINUTE, sqlTimeCalendar.get(Calendar.MINUTE));
+        result.set(Calendar.SECOND, sqlTimeCalendar.get(Calendar.SECOND));
+        result.set(Calendar.MILLISECOND, 0);
+
+        return result;
     }
 }
