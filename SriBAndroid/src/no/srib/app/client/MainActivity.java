@@ -35,9 +35,8 @@ import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
-import no.srib.app.client.service.BaseService;
+import no.srib.app.client.service.OnServiceReadyListener;
 import no.srib.app.client.service.ServiceHandler;
-import no.srib.app.client.service.ServiceHandler.OnServiceReadyListener;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.service.audioplayer.AudioPlayerException;
@@ -247,11 +246,10 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private class StreamUpdaterServiceReadyListener implements
-			OnServiceReadyListener {
+			OnServiceReadyListener<StreamUpdaterService> {
 
 		@Override
-		public void onServiceReady(BaseService baseService) {
-			StreamUpdaterService service = (StreamUpdaterService) baseService;
+		public void onServiceReady(final StreamUpdaterService service) {
 			service.setStreamUpdateListener(new StreamUpdateListener());
 			String url = getResources().getString(R.string.url_audiostream);
 			service.setUpdateURL(url);
@@ -272,12 +270,11 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private class AudioPlayerServiceReadyListener implements
-			OnServiceReadyListener {
+			OnServiceReadyListener<AudioPlayerService> {
 
 		@Override
-		public void onServiceReady(BaseService baseService) {
-			AudioPlayerService audioPlayer = (AudioPlayerService) baseService;
-			audioPlayer.setStateListener(new AudioPlayerStateListener());
+		public void onServiceReady(final AudioPlayerService service) {
+			service.setStateListener(new AudioPlayerStateListener());
 
 			updateStreamIfReady();
 		}

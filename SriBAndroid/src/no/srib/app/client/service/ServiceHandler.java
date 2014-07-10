@@ -14,10 +14,10 @@ public class ServiceHandler<T extends BaseService> {
 	private boolean serviceBound;
 	private T service;
 	private ServiceConnection connection;
-	private OnServiceReadyListener onServiceReadyListener;
+	private OnServiceReadyListener<T> onServiceReadyListener;
 
 	public ServiceHandler(final Class<T> typeClass,
-			OnServiceReadyListener listener) {
+			final OnServiceReadyListener<T> listener) {
 
 		TYPECLASS = typeClass;
 
@@ -62,9 +62,5 @@ public class ServiceHandler<T extends BaseService> {
 		public void onServiceDisconnected(ComponentName name) {
 			service = null;
 		}
-	}
-
-	public interface OnServiceReadyListener {
-		void onServiceReady(BaseService service);
 	}
 }
