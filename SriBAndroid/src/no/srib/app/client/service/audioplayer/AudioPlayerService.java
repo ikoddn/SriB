@@ -79,14 +79,15 @@ public class AudioPlayerService extends BaseService {
 	 */
 	public void setDataSource(String dataSource, DataSourceType dataSourceType)
 			throws AudioPlayerException {
-		this.dataSource = dataSource;
-		this.dataSourceType = dataSourceType;
 
 		State state = stateHandler.getState();
 
 		if (state != State.UNINITIALIZED) {
 			uninitializeMediaPlayer();
 		}
+
+		this.dataSource = dataSource;
+		this.dataSourceType = dataSourceType;
 
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
