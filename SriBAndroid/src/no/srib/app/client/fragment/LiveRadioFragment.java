@@ -4,7 +4,6 @@ import no.srib.app.client.R;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.DTImageView;
-import no.srib.app.client.view.SribSeekBar;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -14,17 +13,19 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 
 public class LiveRadioFragment extends BaseFragment {
 
@@ -32,18 +33,22 @@ public class LiveRadioFragment extends BaseFragment {
 	private static final String KEY_STATUS = "status";
 	private static final String KEY_STREAM = "stream";
 
+	@InjectView(R.id.dtImageView_liveradio_background) DTImageView background;
+	@InjectView(R.id.button_liveradio_info) ImageButton infoButton;
+	@InjectView(R.id.button_liveradio_playpause) ImageButton playPauseButton;
+	@InjectView(R.id.button_liveradio_stop) ImageButton stopButton;
+	@InjectView(R.id.button_liveradio_radiopodcastswitch) CheckBox radioPodcastSwitch;
+	@InjectView(R.id.button_liveradio_instagram) ImageButton instagramButton;
+	@InjectView(R.id.button_liveradio_soundcloud) ImageButton soundCloudButton;
+	@InjectView(R.id.button_liveradio_twitter) ImageButton twitterButton;
+	@InjectView(R.id.seekBar_liveradio) SeekBar seekbar;
+	@InjectView(R.id.textview_liveradio_status) TextView statusTextView;
+	@InjectView(R.id.textview_liveradio_stream) TextView streamTextView;
+	@InjectView(R.id.textview_liveradio_programname) TextView programNameTextView;
+	@InjectView(R.id.textview_liveradio_time) TextView timeTextView;
+
 	private OnLiveRadioClickListener liveRadioClickListener;
-	private TextView statusTextView;
-	private TextView streamTextView;
-	private TextView programNameTextView;
-	private TextView timeTextView;
-	private ImageButton playButton;
-	private CheckBox switchButton;
-
-	private SribSeekBar seekbar;
-
 	private Bitmap backgroundBitmap;
-	private DTImageView background;
 	private View rootView;
 
 	private boolean pauseIcon;
@@ -51,13 +56,6 @@ public class LiveRadioFragment extends BaseFragment {
 	private CharSequence programName;
 
 	public LiveRadioFragment() {
-		statusTextView = null;
-		streamTextView = null;
-		programNameTextView = null;
-		timeTextView = null;
-		playButton = null;
-		switchButton = null;
-
 		pauseIcon = false;
 		podcastMode = false;
 		programName = null;
@@ -127,66 +125,29 @@ public class LiveRadioFragment extends BaseFragment {
 
 		rootView = inflater.inflate(R.layout.fragment_liveradio, container,
 				false);
-
-		statusTextView = (TextView) rootView
-				.findViewById(R.id.textview_liveradio_status);
-		streamTextView = (TextView) rootView
-				.findViewById(R.id.textview_liveradio_stream);
-
-		programNameTextView = (TextView) rootView
-				.findViewById(R.id.textview_liveradio_programname);
-		timeTextView = (TextView) rootView
-				.findViewById(R.id.textview_liveradio_time);
+		ButterKnife.inject(this, rootView);
 
 		Typeface font = Typeface.createFromAsset(rootView.getContext()
 				.getAssets(), "fonts/clairehandbold.ttf");
 		statusTextView.setTypeface(font);
 		streamTextView.setTypeface(font);
 		programNameTextView.setTypeface(font);
+		timeTextView.setTypeface(font);
 
 		if (programName != null) {
 			programNameTextView.setText(programName);
 		}
 
-		seekbar = (SribSeekBar) rootView.findViewById(R.id.sribSeekBar);
-
-		timeTextView.setTypeface(font);
-
 		// TODO Remove when time functionality works
 		timeTextView.setText("00:00");
-
-		playButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_play);
-		ImageButton stopButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_stop);
-		switchButton = (CheckBox) rootView
-				.findViewById(R.id.button_liveradiopodcastswitch);
-		ImageButton infoButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_info);
-		ImageButton instagramButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_instagram);
-		ImageButton soundCloudButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_soundcloud);
-		ImageButton twitterButton = (ImageButton) rootView
-				.findViewById(R.id.button_liveradio_twitter);
 
 		if (pauseIcon) {
 			setPauseIcon();
 		}
 
 		if (podcastMode) {
-			switchButton.setChecked(true);
+			radioPodcastSwitch.setChecked(true);
 		}
-
-		playButton.setOnClickListener(new PlayPauseButtonListener());
-		stopButton.setOnClickListener(new StopButtonListener());
-
-		twitterButton.setOnClickListener(new TwitterButtonListener());
-		switchButton.setOnCheckedChangeListener(new SwitchButtonListener());
-		instagramButton.setOnClickListener(new InstagramButtonListener());
-
-		infoButton.setOnClickListener(new InfoButtonListener());
-		soundCloudButton.setOnClickListener(new SoundCloudButtonListener());
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
 		if (observer.isAlive()) {
@@ -209,7 +170,8 @@ public class LiveRadioFragment extends BaseFragment {
 		viewUtil.setWeight(R.id.view_liveradio_vspace2, 214.0f);
 		viewUtil.setWeight(R.id.relativelayout_liveradio_textfields, 75.0f);
 		viewUtil.setWeight(R.id.view_liveradio_vspace3, 211.0f);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_play, playButtonWeight);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_playpause,
+				playButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace4, 68.0f);
 		viewUtil.setWeight(R.id.linearlayout_liveradio_stop, smallButtonWeight);
 
@@ -243,11 +205,11 @@ public class LiveRadioFragment extends BaseFragment {
 		// Horizontal LinearLayout for play button
 		final float playSpacing = (horizontalWeightSum - playButtonWeight) / 2;
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_play);
+				.findViewById(R.id.linearlayout_liveradio_playpause);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_play_hspace1, playSpacing);
-		viewUtil.setWeight(playButton, playButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_play_hspace2, playSpacing);
+		viewUtil.setWeight(R.id.view_liveradio_playpause_hspace1, playSpacing);
+		viewUtil.setWeight(playPauseButton, playButtonWeight);
+		viewUtil.setWeight(R.id.view_liveradio_playpause_hspace2, playSpacing);
 
 		// Horizontal LinearLayout for stop button
 		final float stopSpacing = (horizontalWeightSum - smallButtonWeight) / 2;
@@ -258,13 +220,13 @@ public class LiveRadioFragment extends BaseFragment {
 		viewUtil.setWeight(stopButton, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, stopSpacing);
 
-		// Horixontal LineaLayout for Liveradio/Podcast switch
+		// Horizontal LinearLayout for radio/podcast switch
 		final float switchspacing = (horizontalWeightSum - smallButtonWeight) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_livePodSwitch);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1, switchspacing);
-		viewUtil.setWeight(switchButton, smallButtonWeight);
+		viewUtil.setWeight(radioPodcastSwitch, smallButtonWeight);
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2, switchspacing);
 
 		// Horizontal LinearLayout for social media buttons
@@ -330,98 +292,81 @@ public class LiveRadioFragment extends BaseFragment {
 		}
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		ButterKnife.reset(this);
+	}
+
 	public void setPauseIcon() {
 		pauseIcon = true;
 
-		if (playButton != null) {
+		if (playPauseButton != null) {
 			Drawable icon = getResources().getDrawable(
 					R.drawable.liveradio_pause);
-			playButton.setImageDrawable(icon);
+			playPauseButton.setImageDrawable(icon);
 		}
 	}
 
 	public void setPlayIcon() {
 		pauseIcon = false;
 
-		if (playButton != null) {
+		if (playPauseButton != null) {
 			Drawable icon = getResources().getDrawable(
 					R.drawable.liveradio_play);
-			playButton.setImageDrawable(icon);
+			playPauseButton.setImageDrawable(icon);
 		}
 	}
 
 	public void setPodcastMode() {
 		podcastMode = true;
 
-		if (switchButton != null) {
-			switchButton.setChecked(true);
+		if (radioPodcastSwitch != null) {
+			radioPodcastSwitch.setChecked(true);
 		}
 	}
 
 	public void setLiveRadioMode() {
 		podcastMode = false;
 
-		if (switchButton != null) {
-			switchButton.setChecked(false);
+		if (radioPodcastSwitch != null) {
+			radioPodcastSwitch.setChecked(false);
 		}
 	}
 
-	private class InfoButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View button) {
-			liveRadioClickListener.onInfoClicked();
-		}
+	@OnClick(R.id.button_liveradio_info)
+	void infoButtonClicked() {
+		liveRadioClickListener.onInfoClicked();
 	}
 
-	private class PlayPauseButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View button) {
-			liveRadioClickListener.onPlayPauseClicked();
-		}
+	@OnClick(R.id.button_liveradio_playpause)
+	void playPauseButtonClicked() {
+		liveRadioClickListener.onPlayPauseClicked();
 	}
 
-	private class StopButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			liveRadioClickListener.onStopClicked();
-		}
+	@OnClick(R.id.button_liveradio_stop)
+	void stopButtonClicked() {
+		liveRadioClickListener.onStopClicked();
 	}
 
-	private class InstagramButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			liveRadioClickListener.onInstagramClicked();
-		}
+	@OnClick(R.id.button_liveradio_instagram)
+	void instagramButtonClicked() {
+		liveRadioClickListener.onInstagramClicked();
 	}
 
-	private class SoundCloudButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View arg0) {
-			liveRadioClickListener.onSoundCloudClicked();
-		}
+	@OnClick(R.id.button_liveradio_soundcloud)
+	void soundCloudButtonClicked() {
+		liveRadioClickListener.onSoundCloudClicked();
 	}
 
-	private class TwitterButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View view) {
-			liveRadioClickListener.onTwitterClicked();
-		}
+	@OnClick(R.id.button_liveradio_twitter)
+	void twitterButtonClicked() {
+		liveRadioClickListener.onTwitterClicked();
 	}
 
-	private class SwitchButtonListener implements OnCheckedChangeListener {
-
-		@Override
-		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked) {
-
-			liveRadioClickListener.onSwitchPodcastSelected(isChecked);
-		}
+	@OnCheckedChanged(R.id.button_liveradio_radiopodcastswitch)
+	void radioPodcastSwitchCheckedChanged(boolean checked) {
+		liveRadioClickListener.onSwitchPodcastSelected(checked);
 	}
 
 	private class LayoutReadyListener implements OnGlobalLayoutListener {
@@ -442,8 +387,6 @@ public class LiveRadioFragment extends BaseFragment {
 						height, true);
 			}
 
-			background = (DTImageView) rootView
-					.findViewById(R.id.dtImageView_liveradio_background);
 			background.setBitmap(backgroundBitmap);
 
 			View textFieldLayout = rootView

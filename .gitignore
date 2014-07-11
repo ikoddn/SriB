@@ -1,5 +1,6 @@
 /android-support-v7-appcompat/bin/classes
 /android-support-v7-appcompat/gen
+/SriBAndroid/.apt_generated
 /SriBAndroid/bin
 /SriBAndroid/gen
 /SriBServer/.settings/org.eclipse.wst.common.component

@@ -132,8 +132,8 @@
                     android:layout_weight="118"
                     android:visibility="invisible" />
 
-                <no.srib.app.client.view.SribSeekBar
-                    android:id="@+id/sribSeekBar"
+                <SeekBar
+                    android:id="@+id/seekBar_liveradio"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="417"
@@ -155,28 +155,28 @@
             android:visibility="invisible" />
 
         <LinearLayout
-            android:id="@+id/linearlayout_liveradio_play"
+            android:id="@+id/linearlayout_liveradio_playpause"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal" >
 
             <View
-                android:id="@+id/view_liveradio_play_hspace1"
+                android:id="@+id/view_liveradio_playpause_hspace1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:visibility="invisible" />
 
             <ImageButton
-                android:id="@+id/button_liveradio_play"
+                android:id="@+id/button_liveradio_playpause"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:contentDescription="@string/imagebutton_liveradio_play_desc"
+                android:contentDescription="@string/imagebutton_liveradio_playpause_desc"
                 android:scaleType="fitCenter"
                 android:src="@drawable/liveradio_play" />
 
             <View
-                android:id="@+id/view_liveradio_play_hspace2"
+                android:id="@+id/view_liveradio_playpause_hspace2"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:visibility="invisible" />
@@ -237,7 +237,7 @@
                 android:visibility="invisible" />
 
             <CheckBox
-                android:id="@+id/button_liveradiopodcastswitch"
+                android:id="@+id/button_liveradio_radiopodcastswitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@null" />
