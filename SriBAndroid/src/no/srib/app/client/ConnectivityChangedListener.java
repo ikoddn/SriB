@@ -6,20 +6,26 @@ import no.srib.app.client.service.StreamUpdaterService;
 public class ConnectivityChangedListener implements
 		OnConnectivityChangedListener {
 
+	private boolean previouslyUnavailable;
 	private StreamUpdaterService streamUpdater;
 
 	public ConnectivityChangedListener(final StreamUpdaterService streamUpdater) {
+		previouslyUnavailable = false;
 		this.streamUpdater = streamUpdater;
 	}
 
 	@Override
 	public void onNetworkAvailable() {
-		streamUpdater.update();
+		if (previouslyUnavailable) {
+			streamUpdater.update();
+			previouslyUnavailable = false;
+		}
 	}
 
 	@Override
 	public void onNetworkUnavailable() {
 		streamUpdater.stopUpdating();
+		previouslyUnavailable = true;
 
 		// TODO
 		/*

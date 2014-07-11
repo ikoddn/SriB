@@ -1,5 +1,7 @@
 package no.srib.app.client.service.audioplayer;
 
+import java.io.IOException;
+
 import no.srib.app.client.service.BaseService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateHandler;
@@ -20,15 +22,19 @@ import android.util.Log;
  */
 public class AudioPlayerService extends BaseService {
 
-	private boolean streaming;
+	public enum DataSourceType {
+		NONE,
+		LIVE_RADIO,
+		PODCAST
+	}
+
+	private DataSourceType dataSourceType;
 	private String dataSource;
 	private StateHandler stateHandler;
 	private MediaPlayer mediaPlayer;
-	private boolean isPodcast;
 
 	public AudioPlayerService() {
-		isPodcast = false;
-		streaming = false;
+		dataSourceType = DataSourceType.NONE;
 		dataSource = null;
 		stateHandler = new StateHandler();
 		mediaPlayer = new MediaPlayer();
@@ -49,6 +55,8 @@ public class AudioPlayerService extends BaseService {
 		}
 
 		mediaPlayer.reset();
+		dataSource = null;
+		dataSourceType = DataSourceType.NONE;
 		stateHandler.setState(State.UNINITIALIZED);
 	}
 
@@ -69,8 +77,10 @@ public class AudioPlayerService extends BaseService {
 	 *            - The URI
 	 * @throws AudioPlayerException
 	 */
-	public void setDataSource(String dataSource) throws AudioPlayerException {
+	public void setDataSource(String dataSource, DataSourceType dataSourceType)
+			throws AudioPlayerException {
 		this.dataSource = dataSource;
+		this.dataSourceType = dataSourceType;
 
 		State state = stateHandler.getState();
 
@@ -79,12 +89,17 @@ public class AudioPlayerService extends BaseService {
 		}
 
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		streaming = true;
 
 		try {
 			mediaPlayer.setDataSource(dataSource);
 			stateHandler.setState(State.STOPPED);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
+			throw new AudioPlayerException(e);
+		} catch (SecurityException e) {
+			throw new AudioPlayerException(e);
+		} catch (IllegalStateException e) {
+			throw new AudioPlayerException(e);
+		} catch (IOException e) {
 			throw new AudioPlayerException(e);
 		}
 	}
@@ -201,9 +216,9 @@ public class AudioPlayerService extends BaseService {
 			State beforeState = stateHandler.getState();
 			stateHandler.setState(State.COMPLETED);
 
-			if (streaming && beforeState != State.UNINITIALIZED) {
+			if (beforeState != State.UNINITIALIZED) {
 				try {
-					setDataSource(dataSource);
+					setDataSource(dataSource, dataSourceType);
 				} catch (AudioPlayerException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -258,25 +273,15 @@ public class AudioPlayerService extends BaseService {
 	}
 
 	/**
-	 * Sets the type of content.
-	 * 
-	 * @param value
-	 *            - true if podcast
-	 */
-	public void setIsPodcast(boolean value) {
-		this.isPodcast = value;
-	}
-
-	public boolean isPodcast() {
-		return isPodcast;
-	}
-
-	/**
 	 * Returns the current data source, or {@code null} if not set.
 	 * 
 	 * @return The current data source.
 	 */
 	public String getDataSource() {
 		return dataSource;
+	}
+
+	public DataSourceType getDataSourceType() {
+		return dataSourceType;
 	}
 }

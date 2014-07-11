@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
+import java.util.EnumMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
@@ -41,6 +43,7 @@ import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.service.audioplayer.AudioPlayerException;
 import no.srib.app.client.service.audioplayer.AudioPlayerService;
+import no.srib.app.client.service.audioplayer.AudioPlayerService.DataSourceType;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.viewpager.PageChangeListener;
@@ -71,9 +74,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MainActivity extends FragmentActivity implements
@@ -84,8 +85,14 @@ public class MainActivity extends FragmentActivity implements
 
 	private final ObjectMapper MAPPER;
 
-	private boolean readyToUpdateStreamSchedule;
-	private StreamSchedule streamSchedule;
+	enum Component {
+		AUDIOPLAYER,
+		STREAMUPDATER,
+		LIVERADIOSECTION
+	}
+
+	private Map<Component, Boolean> readyComponents;
+
 	private ConnectivityChangeReceiver connectivityChangeReceiver;
 
 	private ArticleListAdapter articleListAdapter;
@@ -122,6 +129,12 @@ public class MainActivity extends FragmentActivity implements
 	public MainActivity() {
 		MAPPER = new ObjectMapper();
 
+		readyComponents = new EnumMap<Component, Boolean>(Component.class);
+		Component[] components = Component.values();
+		for (Component component : components) {
+			readyComponents.put(component, false);
+		}
+
 		articleListAdapter = null;
 		viewPager = null;
 		currentProgramResponse = null;
@@ -131,38 +144,6 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		readyToUpdateStreamSchedule = false;
-
-		SharedPreferences sharedPrefs = getSharedPreferences(PREFS_NAME, 0);
-		String json = sharedPrefs.getString(KEY_STREAM, null);
-
-		if (json != null) {
-			try {
-				StreamSchedule storedSchedule = MAPPER.readValue(json,
-						StreamSchedule.class);
-
-				long currentTime = Calendar.getInstance().getTimeInMillis();
-
-				// Check if the stored schedule is out-of-date
-				if (storedSchedule.getTime() > currentTime) {
-					streamSchedule = storedSchedule;
-				} else {
-					streamSchedule = null;
-				}
-			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			streamSchedule = null;
-		}
 
 		Resources res = getResources();
 
@@ -263,9 +244,8 @@ public class MainActivity extends FragmentActivity implements
 					ConnectivityManager.CONNECTIVITY_ACTION);
 			registerReceiver(connectivityChangeReceiver, filter);
 
-			if (streamSchedule == null) {
-				service.update();
-			}
+			readyComponents.put(Component.STREAMUPDATER, true);
+			prepareLiveRadioIfReady();
 		}
 	}
 
@@ -276,7 +256,8 @@ public class MainActivity extends FragmentActivity implements
 		public void onServiceReady(final AudioPlayerService service) {
 			service.setStateListener(new AudioPlayerStateListener());
 
-			updateStreamIfReady();
+			readyComponents.put(Component.AUDIOPLAYER, true);
+			prepareLiveRadioIfReady();
 		}
 	}
 
@@ -308,11 +289,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 		@Override
-		public void onStreamUpdate(StreamSchedule newStreamSchedule) {
-			streamSchedule = newStreamSchedule;
-
+		public void onStreamUpdate(StreamSchedule streamSchedule) {
 			try {
-				String json = MAPPER.writeValueAsString(newStreamSchedule);
+				String json = MAPPER.writeValueAsString(streamSchedule);
 
 				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 				SharedPreferences.Editor editor = settings.edit();
@@ -323,15 +302,85 @@ public class MainActivity extends FragmentActivity implements
 				e1.printStackTrace();
 			}
 
-			updateStreamIfReady();
+			updateStream(streamSchedule);
+
+			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			liveRadioSectionFragment.replaceLoadingFragment();
 		}
 	}
 
-	private void updateStreamIfReady() {
-		if (!readyToUpdateStreamSchedule) {
-			readyToUpdateStreamSchedule = true;
-		} else if (streamSchedule != null) {
-			updateStream(streamSchedule);
+	private void prepareLiveRadioIfReady() {
+		if (readyComponents.get(Component.AUDIOPLAYER)
+				&& readyComponents.get(Component.STREAMUPDATER)
+				&& readyComponents.get(Component.LIVERADIOSECTION)) {
+
+			StreamSchedule streamSchedule;
+
+			SharedPreferences sharedPrefs = getSharedPreferences(PREFS_NAME, 0);
+			String json = sharedPrefs.getString(KEY_STREAM, null);
+
+			if (json != null) {
+				try {
+					StreamSchedule storedSchedule = MAPPER.readValue(json,
+							StreamSchedule.class);
+
+					long currentTime = Calendar.getInstance().getTimeInMillis();
+
+					// Check if the stored schedule is out-of-date
+					if (storedSchedule.getTime() > currentTime) {
+						streamSchedule = storedSchedule;
+					} else {
+						streamSchedule = null;
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					streamSchedule = null;
+				}
+			} else {
+				streamSchedule = null;
+			}
+
+			if (streamSchedule == null) {
+				StreamUpdaterService streamUpdater = streamUpdaterService
+						.getService();
+
+				streamUpdater.update();
+			} else {
+				AudioPlayerService audioPlayer = audioPlayerService
+						.getService();
+
+				switch (audioPlayer.getState()) {
+				case PAUSED:
+				case PREPARING:
+				case STARTED:
+				case STOPPED:
+					DataSourceType dataSourceType = audioPlayer
+							.getDataSourceType();
+
+					switch (dataSourceType) {
+					case NONE:
+					case PODCAST:
+						updateStream(streamSchedule);
+						break;
+					case LIVE_RADIO:
+					default:
+						break;
+
+					}
+					break;
+				case UNINITIALIZED:
+				case COMPLETED:
+					updateStream(streamSchedule);
+					break;
+				default:
+					break;
+
+				}
+
+				LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+				liveRadioSectionFragment.replaceLoadingFragment();
+			}
 		}
 	}
 
@@ -342,8 +391,6 @@ public class MainActivity extends FragmentActivity implements
 				.getLiveRadioFragment();
 
 		try {
-			liveRadioSectionFragment.replaceLoadingFragment();
-
 			String url = streamSchedule.getUrl();
 
 			if (url == null) {
@@ -351,8 +398,8 @@ public class MainActivity extends FragmentActivity implements
 			}
 
 			AudioPlayerService audioPlayer = audioPlayerService.getService();
-			audioPlayer.setDataSource(url);
-			audioPlayer.setIsPodcast(false);
+
+			audioPlayer.setDataSource(url, DataSourceType.LIVE_RADIO);
 			liveRadio.setLiveRadioMode();
 
 			if (autoPlayAfterConnect) {
@@ -435,15 +482,7 @@ public class MainActivity extends FragmentActivity implements
 			case UNINITIALIZED:
 			case COMPLETED:
 				autoPlayAfterConnect = true;
-
-				StreamUpdaterService streamUpdater = streamUpdaterService
-						.getService();
-
-				if (!streamUpdater.hasUpdateScheduled()) {
-					streamUpdater.update();
-				} else {
-					updateStreamIfReady();
-				}
+				prepareLiveRadioIfReady();
 				break;
 			}
 		}
@@ -472,9 +511,6 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onSwitchPodcastSelected(boolean value) {
-			AudioPlayerService audioPlayer = audioPlayerService.getService();
-
-			audioPlayer.setIsPodcast(value);
 			if (value) {
 				Log.i("Debug", "Pod");
 
@@ -488,7 +524,7 @@ public class MainActivity extends FragmentActivity implements
 							R.string.currentProgram));
 				}
 
-				updateStreamIfReady();
+				prepareLiveRadioIfReady();
 			}
 		}
 
@@ -563,11 +599,10 @@ public class MainActivity extends FragmentActivity implements
 			String correctUrl = url.substring(3, url.length());
 			String nasUrl = getResources().getString(R.string.podcast_nas_URL);
 			String URL = nasUrl + correctUrl;
-			System.out.println(URL);
-			try {
-				audioPlayer.setDataSource(URL);
-			} catch (AudioPlayerException e) {
 
+			try {
+				audioPlayer.setDataSource(URL, DataSourceType.PODCAST);
+			} catch (AudioPlayerException e) {
 				e.printStackTrace();
 			}
 
@@ -585,7 +620,6 @@ public class MainActivity extends FragmentActivity implements
 			// TODO Info screen may be in focus, should show live radio screen
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			audioPlayer.setIsPodcast(true);
 			audioPlayer.start();
 		}
 	}
@@ -639,7 +673,8 @@ public class MainActivity extends FragmentActivity implements
 
 			info.setInfoClickListener(new InfoClickListener());
 		} else if (fragment instanceof LiveRadioSectionFragment) {
-			updateStreamIfReady();
+			readyComponents.put(Component.LIVERADIOSECTION, true);
+			prepareLiveRadioIfReady();
 		}
 	}
 
