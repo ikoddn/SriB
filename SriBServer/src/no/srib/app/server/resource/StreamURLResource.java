@@ -82,9 +82,9 @@ public class StreamURLResource {
 
         String name = stream.getName();
         String url = stream.getUrl();
-        long timeInMs = time.getTimeInMillis();
+        long unixTime = time.getTimeInMillis() / 1000;
 
-        return new StreamSchedule(name, url, timeInMs);
+        return new StreamSchedule(name, url, unixTime);
     }
 
     public static Calendar nextStreamURLChangeTime(final Calendar now,
