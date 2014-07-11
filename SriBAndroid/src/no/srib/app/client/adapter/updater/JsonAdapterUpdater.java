@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import no.srib.app.client.adapter.BaseListAdapter;
+import no.srib.app.client.adapter.ListBasedAdapter;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JavaType;
@@ -15,13 +15,13 @@ public class JsonAdapterUpdater<T> implements AdapterUpdater<T, String> {
 
 	private final JavaType LIST_TYPE;
 	private final ObjectMapper MAPPER;
-	private final BaseListAdapter<T> ADAPTER;
+	private final ListBasedAdapter<T> ADAPTER;
 	private T defaultValue;
 	private List<T> storedData;
 	private AtomicBoolean didStoreData;
 
 	public JsonAdapterUpdater(final Class<T> typeClass,
-			final BaseListAdapter<T> adapter) {
+			final ListBasedAdapter<T> adapter) {
 		MAPPER = new ObjectMapper();
 		LIST_TYPE = MAPPER.getTypeFactory().constructCollectionType(List.class,
 				typeClass);

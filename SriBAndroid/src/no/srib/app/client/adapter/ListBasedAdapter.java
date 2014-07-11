@@ -4,15 +4,15 @@ import java.util.List;
 
 import android.widget.BaseAdapter;
 
-public abstract class BaseListAdapter<T> extends BaseAdapter {
+public abstract class ListBasedAdapter<T> extends BaseAdapter {
 
 	private List<T> list;
 
-	public BaseListAdapter() {
+	public ListBasedAdapter() {
 		list = null;
 	}
 
-	public BaseListAdapter(final List<T> list) {
+	public ListBasedAdapter(final List<T> list) {
 		this.list = list;
 	}
 

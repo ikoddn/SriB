@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ProgramSpinnerAdapter extends BaseListAdapter<ProgramName> {
+public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 
 	enum ViewType {
 		GENERAL,

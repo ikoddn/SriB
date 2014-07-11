@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-public class PodcastGridAdapter extends BaseListAdapter<Podcast> {
+public class PodcastGridAdapter extends ListBasedAdapter<Podcast> {
 
 	private LayoutInflater inflater;
 	private Typeface font;

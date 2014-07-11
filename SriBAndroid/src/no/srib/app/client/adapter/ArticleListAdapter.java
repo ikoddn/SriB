@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-public class ArticleListAdapter extends BaseListAdapter<Article> {
+public class ArticleListAdapter extends ListBasedAdapter<Article> {
 
 	private static final int[] DIVIDERS = { R.drawable.list_divider_1,
 			R.drawable.list_divider_2, R.drawable.list_divider_3,
