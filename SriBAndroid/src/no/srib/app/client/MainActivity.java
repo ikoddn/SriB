@@ -134,6 +134,7 @@ public class MainActivity extends FragmentActivity implements
 		viewPager = null;
 		currentProgramResponse = null;
 		audioPlayerService = null;
+		streamUpdaterService = null;
 	}
 
 	@Override
