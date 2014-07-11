@@ -1,6 +1,5 @@
 package no.srib.app.client;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
@@ -17,6 +16,9 @@ import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.adapter.updater.ProgramNameAdapterUpdater;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
+import no.srib.app.client.dao.StreamScheduleDAO;
+import no.srib.app.client.dao.exception.DAOException;
+import no.srib.app.client.dao.sharedpreferences.StreamScheduleDAOImpl;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
@@ -51,7 +53,6 @@ import no.srib.app.client.viewpager.SectionsPagerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -74,16 +75,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class MainActivity extends FragmentActivity implements
 		OnFragmentReadyListener {
-
-	private static final String PREFS_NAME = "MainActivityPrefs";
-	private static final String KEY_STREAM = "Stream";
-
-	private final ObjectMapper MAPPER;
 
 	enum Component {
 		AUDIOPLAYER,
@@ -92,6 +85,8 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private Map<Component, Boolean> readyComponents;
+
+	private StreamScheduleDAO streamScheduleDAO;
 
 	private ConnectivityChangeReceiver connectivityChangeReceiver;
 
@@ -127,13 +122,13 @@ public class MainActivity extends FragmentActivity implements
 	private int updateTimeTextIntervall = 1000;
 
 	public MainActivity() {
-		MAPPER = new ObjectMapper();
-
 		readyComponents = new EnumMap<Component, Boolean>(Component.class);
 		Component[] components = Component.values();
 		for (Component component : components) {
 			readyComponents.put(component, false);
 		}
+
+		streamScheduleDAO = new StreamScheduleDAOImpl(this);
 
 		articleListAdapter = null;
 		viewPager = null;
@@ -291,15 +286,8 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
 			try {
-				String json = MAPPER.writeValueAsString(streamSchedule);
-
-				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-				SharedPreferences.Editor editor = settings.edit();
-				editor.putString(KEY_STREAM, json);
-				editor.commit();
-			} catch (JsonProcessingException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				streamScheduleDAO.set(streamSchedule);
+			} catch (DAOException e) {
 			}
 
 			updateStream(streamSchedule);
@@ -316,28 +304,18 @@ public class MainActivity extends FragmentActivity implements
 
 			StreamSchedule streamSchedule;
 
-			SharedPreferences sharedPrefs = getSharedPreferences(PREFS_NAME, 0);
-			String json = sharedPrefs.getString(KEY_STREAM, null);
+			try {
+				StreamSchedule storedSchedule = streamScheduleDAO.get();
 
-			if (json != null) {
-				try {
-					StreamSchedule storedSchedule = MAPPER.readValue(json,
-							StreamSchedule.class);
+				long currentTime = Calendar.getInstance().getTimeInMillis();
 
-					long currentTime = Calendar.getInstance().getTimeInMillis();
-
-					// Check if the stored schedule is out-of-date
-					if (storedSchedule.getTime() > currentTime) {
-						streamSchedule = storedSchedule;
-					} else {
-						streamSchedule = null;
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				// Check if the stored schedule is out-of-date
+				if (storedSchedule != null && storedSchedule.getTime() > currentTime) {
+					streamSchedule = storedSchedule;
+				} else {
 					streamSchedule = null;
 				}
-			} else {
+			} catch (DAOException e) {
 				streamSchedule = null;
 			}
 
