@@ -307,7 +307,7 @@ public class MainActivity extends FragmentActivity implements
 			try {
 				StreamSchedule storedSchedule = streamScheduleDAO.get();
 
-				long currentTime = Calendar.getInstance().getTimeInMillis();
+				long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
 
 				// Check if the stored schedule is out-of-date
 				if (storedSchedule != null && storedSchedule.getTime() > currentTime) {

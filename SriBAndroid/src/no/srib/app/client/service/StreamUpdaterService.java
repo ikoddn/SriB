@@ -57,7 +57,7 @@ public class StreamUpdaterService extends BaseService {
 	public void setUpdateURL(final String updateURL) {
 		streamScheduleUpdater = new StreamScheduleUpdater(updateURL);
 	}
-	
+
 	public boolean hasUpdateScheduled() {
 		return updateScheduled.get();
 	}
@@ -147,7 +147,7 @@ public class StreamUpdaterService extends BaseService {
 
 					streamUpdateListener.onStreamUpdate(streamSchedule);
 
-					updateAt(streamSchedule.getTime());
+					updateAt(streamSchedule.getTime() * 1000);
 				} catch (IOException e) {
 					streamUpdateListener.onStatus(Status.INVALID_RESPONSE);
 				}
