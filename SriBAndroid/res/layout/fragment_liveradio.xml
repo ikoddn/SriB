@@ -92,7 +92,13 @@
                     android:id="@+id/textview_liveradio_programname"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical" />
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true" />
 
                 <View
                     android:id="@+id/view_liveradio_textfields_hspace2"
