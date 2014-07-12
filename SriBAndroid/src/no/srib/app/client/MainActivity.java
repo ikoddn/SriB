@@ -188,17 +188,10 @@ public class MainActivity extends FragmentActivity implements
 
 		// Podcast Part
 		podcastGridAdapter = new PodcastGridAdapter(inflater, font);
-		programSpinnerAdapter = new ProgramSpinnerAdapter(inflater, font);
-
-		JsonAdapterUpdater<ProgramName> programNameUpdater = new JsonAdapterUpdater<ProgramName>(
-				ProgramName.class, programSpinnerAdapter);
-		programNameUpdater.setDefaultValue(new ProgramName(0, res
-				.getString(R.string.spinner_podcast_default)));
+		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
 
 		AdapterUpdater<ProgramName, PodcastPrograms> programNameAdapterUpdater = new ProgramNameAdapterUpdater(
 				programSpinnerAdapter);
-		programNameAdapterUpdater.setDefaultValue(new ProgramName(0,
-				getResources().getString(R.string.spinner_podcast_default)));
 
 		HttpResponseListener programResponse = new ProgramNameHttpResponse(
 				programNameAdapterUpdater);

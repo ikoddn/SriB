@@ -2,42 +2,49 @@ package no.srib.app.client.adapter;
 
 import no.srib.app.client.R;
 import no.srib.app.client.model.ProgramName;
-import android.graphics.Typeface;
-import android.view.LayoutInflater;
+import no.srib.app.client.view.DividerView;
+import no.srib.app.client.view.ProgramSpinnerDefaultView;
+import no.srib.app.client.view.ProgramSpinnerGreyedOutView;
+import no.srib.app.client.view.ProgramSpinnerIndentedView;
+import no.srib.app.client.view.ProgramSpinnerView;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 
-	enum ViewType {
+	enum Type {
 		GENERAL,
 		DIVIDER,
+		SUBHEADER,
 		PROGRAM
 	}
 
-	/**
-	 * 1: Velg program
-	 */
-	private static final int GENERAL_ITEMS_COUNT = 1;
+	private static final int TYPE_COUNT = Type.values().length;
+	private static final int[] GENERAL_ITEM_IDS = { R.string.spinner_podcast_default };
+	private static final int[] SUBHEADER_IDS = {
+			R.string.spinner_podcast_newer, R.string.spinner_podcast_older };
 
-	/**
-	 * 1: Between general items and newer podcast programs <br>
-	 * 2: Between newer podcast programs and older podcast programs
-	 */
-	private static final int DIVIDER_COUNT = 2;
+	private final Context context;
+	private final String[] generalItems;
+	private final String[] subheaders;
 
 	private int newerCount;
-	private LayoutInflater inflater;
-	private Typeface font;
 
-	public ProgramSpinnerAdapter(final LayoutInflater inflater,
-			final Typeface font) {
+	public ProgramSpinnerAdapter(final Context context) {
+		this.context = context;
+
+		generalItems = new String[GENERAL_ITEM_IDS.length];
+		for (int i = 0; i < generalItems.length; ++i) {
+			generalItems[i] = context.getString(GENERAL_ITEM_IDS[i]);
+		}
+
+		subheaders = new String[SUBHEADER_IDS.length];
+		for (int i = 0; i < subheaders.length; ++i) {
+			subheaders[i] = context.getString(SUBHEADER_IDS[i]);
+		}
 
 		newerCount = 0;
-		this.inflater = inflater;
-		this.font = font;
 	}
 
 	public void setNewerCount(final int newerCount) {
@@ -47,24 +54,25 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 	@Override
 	public int getCount() {
 		int listSize = super.getCount();
-		return listSize == 0 ? 0 : listSize + DIVIDER_COUNT;
+		return listSize == 0 ? 0 : listSize + generalItems.length + 2
+				* subheaders.length;
 	}
 
 	@Override
 	public ProgramName getItem(final int position) {
-		int divider1Pos = GENERAL_ITEMS_COUNT;
-		int divider2Pos = divider1Pos + newerCount + 1;
+		int divider1Pos = generalItems.length;
+		int divider2Pos = divider1Pos + newerCount + 2;
+		int subheader1Pos = divider1Pos + 1;
+		int subheader2Pos = divider2Pos + 1;
 
-		if (position < divider1Pos) {
-			return super.getItem(position);
-		} else if (position == divider1Pos) {
+		if (position <= subheader1Pos) {
 			return null;
 		} else if (position < divider2Pos) {
-			return super.getItem(position - 1);
-		} else if (position == divider2Pos) {
+			return super.getItem(position - generalItems.length - 2);
+		} else if (position <= subheader2Pos) {
 			return null;
 		} else {
-			return super.getItem(position - 2);
+			return super.getItem(position - generalItems.length - 4);
 		}
 	}
 
@@ -74,123 +82,145 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 		return item == null ? 0 : item.getDefnr();
 	}
 
-	private boolean isDivider(final int position) {
-		int divider1Pos = GENERAL_ITEMS_COUNT;
-		int divider2Pos = divider1Pos + newerCount + 1;
-
-		return position == divider1Pos || position == divider2Pos;
-	}
-
 	@Override
 	public boolean isEnabled(final int position) {
-		return !isDivider(position);
+		Type type = getItemViewEnumType(position);
+		return type != Type.DIVIDER && type != Type.SUBHEADER;
 	}
 
 	@Override
 	public int getViewTypeCount() {
-		return ViewType.values().length;
+		return TYPE_COUNT;
+	}
+
+	private Type getItemViewEnumType(final int position) {
+		int divider1Pos = generalItems.length;
+		int divider2Pos = divider1Pos + newerCount + 2;
+		int subheader1Pos = divider1Pos + 1;
+		int subheader2Pos = divider2Pos + 1;
+
+		if (position < divider1Pos) {
+			return Type.GENERAL;
+		} else if (position == divider1Pos || position == divider2Pos) {
+			return Type.DIVIDER;
+		} else if (position == subheader1Pos || position == subheader2Pos) {
+			return Type.SUBHEADER;
+		} else {
+			return Type.PROGRAM;
+		}
 	}
 
 	@Override
 	public int getItemViewType(final int position) {
-		int divider1Pos = GENERAL_ITEMS_COUNT;
+		return getItemViewEnumType(position).ordinal();
+	}
 
-		if (position < divider1Pos) {
-			return ViewType.GENERAL.ordinal();
-		} else if (isDivider(position)) {
-			return ViewType.DIVIDER.ordinal();
+	private int dividerNumber(final int position) {
+		int divider1Pos = generalItems.length;
+		int divider2Pos = divider1Pos + newerCount + 2;
+
+		if (position == divider1Pos) {
+			return 0;
+		} else if (position == divider2Pos) {
+			return 1;
 		} else {
-			return ViewType.PROGRAM.ordinal();
+			return -1;
 		}
 	}
 
 	@Override
 	public View getDropDownView(final int position, final View convertView,
 			final ViewGroup parent) {
-		View view = convertView;
 
-		int divider1Pos = GENERAL_ITEMS_COUNT;
-		int divider2Pos = divider1Pos + newerCount + 1;
+		View resultView;
 
-		int itemViewType = getItemViewType(position);
+		Type itemViewType = getItemViewEnumType(position);
 
 		// Workaround for reusing convertView since a Spinner does not support
 		// multiple view types:
 		// https://code.google.com/p/android/issues/detail?id=17128
-		boolean mustInflate = view == null
-				|| (Integer) view.getTag() != itemViewType;
+		boolean mustInflate = convertView == null
+				|| (Type) convertView.getTag() != itemViewType;
 
-		if (position < divider1Pos) {
+		int dividerNumber = dividerNumber(position);
+
+		if (dividerNumber != -1) { // Divider
+			DividerView view;
+
 			if (mustInflate) {
-				view = inflater.inflate(R.layout.spinneritem_podcast_default,
-						null);
+				view = new DividerView(context);
+			} else {
+				view = (DividerView) convertView;
 			}
 
-			TextView text = (TextView) view
-					.findViewById(R.id.textView_programItem_default);
-			text.setTypeface(font);
-			text.setText(getItem(position).getName());
-		} else if (position == divider1Pos) {
-			if (mustInflate) {
-				view = inflater.inflate(R.layout.spinneritem_podcast_divider,
-						null);
+			view.showDivider(dividerNumber);
+			resultView = view;
+		} else { // Not a divider
+			ProgramSpinnerView view = null;
+			String text = null;
+
+			switch (itemViewType) {
+			case GENERAL:
+				if (mustInflate) {
+					view = new ProgramSpinnerDefaultView(context);
+				}
+
+				text = generalItems[position];
+				break;
+			case PROGRAM:
+				if (mustInflate) {
+					view = new ProgramSpinnerIndentedView(context);
+				}
+
+				text = getItem(position).getName();
+				break;
+			case SUBHEADER:
+				if (mustInflate) {
+					view = new ProgramSpinnerGreyedOutView(context);
+				}
+
+				int previousDivider = dividerNumber(position - 1);
+				text = subheaders[previousDivider];
+				break;
+			default:
+				break;
 			}
 
-			ImageView imageView = (ImageView) view
-					.findViewById(R.id.imageView_programItem_divider);
-			imageView.setImageResource(R.drawable.list_divider_1);
-
-			TextView text = (TextView) view
-					.findViewById(R.id.textView_programItem_divider);
-			text.setTypeface(font);
-			text.setText(R.string.spinner_podcast_newer);
-		} else if (position == divider2Pos) {
-			if (mustInflate) {
-				view = inflater.inflate(R.layout.spinneritem_podcast_divider,
-						null);
+			if (!mustInflate) {
+				view = (ProgramSpinnerView) convertView;
 			}
 
-			ImageView imageView = (ImageView) view
-					.findViewById(R.id.imageView_programItem_divider);
-			imageView.setImageResource(R.drawable.list_divider_2);
-
-			TextView text = (TextView) view
-					.findViewById(R.id.textView_programItem_divider);
-			text.setTypeface(font);
-			text.setText(R.string.spinner_podcast_older);
-		} else {
-			if (mustInflate) {
-				view = inflater.inflate(R.layout.spinneritem_podcast_program,
-						null);
-			}
-
-			TextView text = (TextView) view
-					.findViewById(R.id.textView_programItem_program);
-			text.setTypeface(font);
-			text.setText(getItem(position).getName());
+			view.showText(text);
+			resultView = view;
 		}
 
 		if (mustInflate) {
-			view.setTag(Integer.valueOf(itemViewType));
+			resultView.setTag(itemViewType);
 		}
 
-		return view;
+		return resultView;
 	}
 
 	@Override
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
 
-		View view = convertView;
+		ProgramSpinnerView view;
 
-		if (view == null) {
-			view = inflater.inflate(R.layout.spinneritem_podcast_default, null);
+		if (convertView == null) {
+			view = new ProgramSpinnerDefaultView(context);
+		} else {
+			view = (ProgramSpinnerView) convertView;
 		}
 
-		TextView text = (TextView) view
-				.findViewById(R.id.textView_programItem_default);
-		text.setTypeface(font);
-		text.setText(getItem(position).getName());
+		String text;
+		if (position < generalItems.length) {
+			text = generalItems[position];
+		} else {
+			text = getItem(position).getName();
+		}
+
+		view.showText(text);
 
 		return view;
 	}

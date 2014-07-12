@@ -16,7 +16,6 @@ public class JsonAdapterUpdater<T> implements AdapterUpdater<T, String> {
 	private final JavaType LIST_TYPE;
 	private final ObjectMapper MAPPER;
 	private final ListBasedAdapter<T> ADAPTER;
-	private T defaultValue;
 	private List<T> storedData;
 	private AtomicBoolean didStoreData;
 
@@ -26,14 +25,8 @@ public class JsonAdapterUpdater<T> implements AdapterUpdater<T, String> {
 		LIST_TYPE = MAPPER.getTypeFactory().constructCollectionType(List.class,
 				typeClass);
 		this.ADAPTER = adapter;
-		defaultValue = null;
 		storedData = null;
 		didStoreData = new AtomicBoolean(false);
-	}
-
-	@Override
-	public void setDefaultValue(final T defaultValue) {
-		this.defaultValue = defaultValue;
 	}
 
 	@Override
@@ -41,14 +34,10 @@ public class JsonAdapterUpdater<T> implements AdapterUpdater<T, String> {
 		try {
 			List<T> list = MAPPER.readValue(json, LIST_TYPE);
 
-			if (defaultValue != null) {
-				list.add(0, defaultValue);
-			}
-
 			if (store) {
 				storedData = list;
 			}
-			
+
 			didStoreData.set(store);
 
 			ADAPTER.setList(list);

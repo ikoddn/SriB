@@ -1,7 +1,7 @@
 package no.srib.app.client.adapter;
 
 import no.srib.app.client.model.Article;
-import no.srib.app.client.view.ArticleDividerView;
+import no.srib.app.client.view.DividerView;
 import no.srib.app.client.view.ArticleView;
 import android.content.Context;
 import android.view.View;
@@ -69,12 +69,12 @@ public class ArticleListAdapter extends ListBasedAdapter<Article> {
 			final ViewGroup parent) {
 
 		if (isDivider(position)) {
-			ArticleDividerView view;
+			DividerView view;
 
 			if (convertView == null) {
-				view = new ArticleDividerView(context);
+				view = new DividerView(context);
 			} else {
-				view = (ArticleDividerView) convertView;
+				view = (DividerView) convertView;
 			}
 
 			view.showDivider(position / 2);
