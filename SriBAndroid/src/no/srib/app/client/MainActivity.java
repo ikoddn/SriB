@@ -176,7 +176,7 @@ public class MainActivity extends FragmentActivity implements
 		Typeface font = Typeface.createFromAsset(getAssets(),
 				"fonts/clairehandbold.ttf");
 
-		articleListAdapter = new ArticleListAdapter(inflater);
+		articleListAdapter = new ArticleListAdapter(this);
 
 		articleAdapterUpdater = new JsonAdapterUpdater<Article>(Article.class,
 				articleListAdapter);
@@ -311,7 +311,8 @@ public class MainActivity extends FragmentActivity implements
 				long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
 
 				// Check if the stored schedule is out-of-date
-				if (storedSchedule != null && storedSchedule.getTime() > currentTime) {
+				if (storedSchedule != null
+						&& storedSchedule.getTime() > currentTime) {
 					streamSchedule = storedSchedule;
 				} else {
 					streamSchedule = null;

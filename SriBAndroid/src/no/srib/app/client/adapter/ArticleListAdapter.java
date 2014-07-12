@@ -1,19 +1,13 @@
 package no.srib.app.client.adapter;
 
-import java.util.List;
-
 import no.srib.app.client.R;
 import no.srib.app.client.model.Article;
-import no.srib.app.client.model.ArticleImage;
-import no.srib.app.client.model.ArticleMedia;
-import no.srib.app.client.util.URLUtil;
+import no.srib.app.client.view.ArticleView;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class ArticleListAdapter extends ListBasedAdapter<Article> {
 
@@ -21,10 +15,10 @@ public class ArticleListAdapter extends ListBasedAdapter<Article> {
 			R.drawable.list_divider_2, R.drawable.list_divider_3,
 			R.drawable.list_divider_4, R.drawable.list_divider_5 };
 
-	private LayoutInflater inflater;
+	private final Context context;
 
-	public ArticleListAdapter(final LayoutInflater inflater) {
-		this.inflater = inflater;
+	public ArticleListAdapter(final Context context) {
+		this.context = context;
 	}
 
 	private Article getItemInPosition(final int position) {
@@ -79,12 +73,14 @@ public class ArticleListAdapter extends ListBasedAdapter<Article> {
 	@Override
 	public final View getView(final int position, final View convertView,
 			final ViewGroup parent) {
-		View view = convertView;
 
 		if (isDivider(position)) {
+			View view = convertView;
+
 			if (view == null) {
-				view = inflater.inflate(R.layout.listitem_articlelist_divider,
-						null);
+				LayoutInflater inflater = LayoutInflater.from(context);
+				view = inflater
+						.inflate(R.layout.listitem_article_divider, null);
 			}
 
 			int divider = DIVIDERS[position / 2 % DIVIDERS.length];
@@ -92,47 +88,21 @@ public class ArticleListAdapter extends ListBasedAdapter<Article> {
 			ImageView imageView = (ImageView) view
 					.findViewById(R.id.imageView_articleItem_divider);
 			imageView.setImageResource(divider);
+
+			return view;
 		} else {
-			if (view == null) {
-				view = inflater.inflate(R.layout.listitem_articlelist, null);
+			ArticleView articleView;
+
+			if (convertView == null) {
+				articleView = new ArticleView(context);
+			} else {
+				articleView = (ArticleView) convertView;
 			}
 
-			ImageView image = (ImageView) view
-					.findViewById(R.id.imageview_articleitem);
-			TextView title = (TextView) view
-					.findViewById(R.id.textview_articleitem_title);
-			TextView excerpt = (TextView) view
-					.findViewById(R.id.textview_articleitem_excerpt);
+			Article item = getItemInPosition(position);
+			articleView.showArticle(item);
 
-			Article newsArticle = getItemInPosition(position);
-			List<ArticleMedia> articleMedia = newsArticle.getMedia();
-
-			if (!(articleMedia == null || articleMedia.isEmpty())) {
-				String url = null;
-
-				List<ArticleImage> articleImageSizes = articleMedia.get(0)
-						.getSizes();
-
-				if (articleImageSizes != null) {
-					if (articleImageSizes.size() > 1) {
-						url = articleImageSizes.get(1).getUrl();
-					} else if (!articleImageSizes.isEmpty()) {
-						url = articleImageSizes.get(0).getUrl();
-					}
-
-					if (url != null) {
-						url = URLUtil.urlEncodeFilename(url);
-						UrlImageViewHelper.setUrlDrawable(image, url);
-					}
-				}
-			}
-
-			title.setText(newsArticle.getTitle());
-			excerpt.setText(newsArticle.getExcerptDisplay());
-
-			view.setTag(R.id.key_article_url, newsArticle.getPermalink());
+			return articleView;
 		}
-
-		return view;
 	}
 }
