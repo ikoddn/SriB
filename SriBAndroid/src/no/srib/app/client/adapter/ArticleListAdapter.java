@@ -1,19 +1,13 @@
 package no.srib.app.client.adapter;
 
-import no.srib.app.client.R;
 import no.srib.app.client.model.Article;
+import no.srib.app.client.view.ArticleDividerView;
 import no.srib.app.client.view.ArticleView;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 public class ArticleListAdapter extends ListBasedAdapter<Article> {
-
-	private static final int[] DIVIDERS = { R.drawable.list_divider_1,
-			R.drawable.list_divider_2, R.drawable.list_divider_3,
-			R.drawable.list_divider_4, R.drawable.list_divider_5 };
 
 	private final Context context;
 
@@ -75,34 +69,30 @@ public class ArticleListAdapter extends ListBasedAdapter<Article> {
 			final ViewGroup parent) {
 
 		if (isDivider(position)) {
-			View view = convertView;
+			ArticleDividerView view;
 
-			if (view == null) {
-				LayoutInflater inflater = LayoutInflater.from(context);
-				view = inflater
-						.inflate(R.layout.listitem_article_divider, null);
+			if (convertView == null) {
+				view = new ArticleDividerView(context);
+			} else {
+				view = (ArticleDividerView) convertView;
 			}
 
-			int divider = DIVIDERS[position / 2 % DIVIDERS.length];
-
-			ImageView imageView = (ImageView) view
-					.findViewById(R.id.imageView_articleItem_divider);
-			imageView.setImageResource(divider);
+			view.showDivider(position / 2);
 
 			return view;
 		} else {
-			ArticleView articleView;
+			ArticleView view;
 
 			if (convertView == null) {
-				articleView = new ArticleView(context);
+				view = new ArticleView(context);
 			} else {
-				articleView = (ArticleView) convertView;
+				view = (ArticleView) convertView;
 			}
 
 			Article item = getItemInPosition(position);
-			articleView.showArticle(item);
+			view.showArticle(item);
 
-			return articleView;
+			return view;
 		}
 	}
 }
