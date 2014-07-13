@@ -8,7 +8,7 @@
     <!-- Podcast -->
     <string name="getAllPodcast">http://app.srib.no:8080/SriBServer/rest/podcast</string>
     <string name="url_podcastprograms">http://app.srib.no:8080/SriBServer/rest/podcast/programs</string>
-    <string name="podcast_nas_URL">http://podcast.srib.no:8080/podcast/</string>
+    <string name="url_podcast_nas">http://podcast.srib.no:8080/podcast/</string>
 
     <!-- Articles -->
     <string name="url_articles">http://app.srib.no:8080/SriBServer/rest/articles</string>

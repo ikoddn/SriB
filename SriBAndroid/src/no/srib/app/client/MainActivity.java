@@ -35,6 +35,7 @@ import no.srib.app.client.http.ProgramNameHttpResponse;
 import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.listener.OnSearchListener;
 import no.srib.app.client.model.Article;
+import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
@@ -54,7 +55,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,7 +64,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -172,10 +171,6 @@ public class MainActivity extends FragmentActivity implements
 		audioPlayerService.bind(MainActivity.this);
 		streamUpdaterService.bind(MainActivity.this);
 
-		LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
-		Typeface font = Typeface.createFromAsset(getAssets(),
-				"fonts/clairehandbold.ttf");
-
 		articleListAdapter = new ArticleListAdapter(this);
 
 		articleAdapterUpdater = new JsonAdapterUpdater<Article>(Article.class,
@@ -187,7 +182,7 @@ public class MainActivity extends FragmentActivity implements
 		httpAsyncTask.execute(url);
 
 		// Podcast Part
-		podcastGridAdapter = new PodcastGridAdapter(inflater, font);
+		podcastGridAdapter = new PodcastGridAdapter(this);
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
 
 		AdapterUpdater<ProgramName, PodcastPrograms> programNameAdapterUpdater = new ProgramNameAdapterUpdater(
@@ -567,14 +562,17 @@ public class MainActivity extends FragmentActivity implements
 				int position, long id) {
 
 			AudioPlayerService audioPlayer = audioPlayerService.getService();
-			String url = (String) view.getTag(R.id.podcast_url);
-			String podcastName = (String) view.getTag(R.id.podcast_name);
-			String correctUrl = url.substring(3, url.length());
-			String nasUrl = getResources().getString(R.string.podcast_nas_URL);
-			String URL = nasUrl + correctUrl;
+			Podcast podcast = (Podcast) view.getTag();
+
+			String filepath = podcast.getFilename();
+			int lastSlashIndex = filepath.lastIndexOf("\\");
+			String filename = filepath.substring(lastSlashIndex + 1);
+
+			String nasUrl = getResources().getString(R.string.url_podcast_nas);
+			String url = nasUrl + filename;
 
 			try {
-				audioPlayer.setDataSource(URL, DataSourceType.PODCAST);
+				audioPlayer.setDataSource(url, DataSourceType.PODCAST);
 			} catch (AudioPlayerException e) {
 				e.printStackTrace();
 			}
@@ -586,11 +584,10 @@ public class MainActivity extends FragmentActivity implements
 
 				LiveRadioFragment fragment = liveRadioSectionFragment
 						.getLiveRadioFragment();
-				fragment.setProgramNameText(podcastName);
+				fragment.setProgramNameText(podcast.getProgram());
 				fragment.setPodcastMode();
 			}
 
-			// TODO Info screen may be in focus, should show live radio screen
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			audioPlayer.start();

@@ -1,76 +1,65 @@
 package no.srib.app.client.adapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Locale;
 
-import no.srib.app.client.R;
 import no.srib.app.client.model.Podcast;
-import no.srib.app.client.util.TimeUtil;
-import android.graphics.Typeface;
-import android.view.LayoutInflater;
+import no.srib.app.client.view.PodcastView;
+
+import org.apache.commons.lang3.time.FastDateFormat;
+
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class PodcastGridAdapter extends ListBasedAdapter<Podcast> {
 
-	private LayoutInflater inflater;
-	private Typeface font;
+	private static final String DATE_IN_FORMAT = "yyyyMMdd";
+	private static final String DATE_OUT_FORMAT = "dd-MM-yyyy";
 
-	public PodcastGridAdapter(final LayoutInflater inflater, final Typeface font) {
-		this.inflater = inflater;
-		this.font = font;
+	private final Context context;
+	private final FastDateFormat dateInFormatter;
+	private final FastDateFormat dateOutFormatter;
+
+	public PodcastGridAdapter(final Context context) {
+		this.context = context;
+
+		Locale locale = Locale.getDefault();
+		dateInFormatter = FastDateFormat.getInstance(DATE_IN_FORMAT, locale);
+		dateOutFormatter = FastDateFormat.getInstance(DATE_OUT_FORMAT, locale);
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public long getItemId(final int position) {
 		return getItem(position).getRefnr();
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View view = convertView;
+	public View getView(final int position, final View convertView,
+			final ViewGroup parent) {
 
-		if (view == null) {
-			view = inflater.inflate(R.layout.griditem_podcast, null);
+		PodcastView view;
+
+		if (convertView == null) {
+			view = new PodcastView(context);
+		} else {
+			view = (PodcastView) convertView;
 		}
 
 		Podcast podcast = getItem(position);
-		TextView programNameTextView = (TextView) view
-				.findViewById(R.id.textView_podcastItem_programname);
-		programNameTextView.setTypeface(font);
-		String programName = podcast.getProgram();
 
-		if (programName != null) {
-			programNameTextView.setText(programName);
-		} else {
-			programNameTextView.setText("");
+		String formattedDate;
+		try {
+			Date date = dateInFormatter.parse(String.valueOf(podcast
+					.getCreatedate()));
+			formattedDate = dateOutFormatter.format(date);
+		} catch (ParseException e) {
+			formattedDate = "";
 		}
 
-		TextView programNameDate = (TextView) view
-				.findViewById(R.id.textView_podcastItem_date);
-		programNameDate.setTypeface(font);
-		int date = podcast.getCreatedate();
-		Calendar cal = TimeUtil.parseIntDate(date);
-		String format = "dd-MM-yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
-		programNameDate.setText(sdf.format(cal.getTime()));
-
-		final ImageView image = (ImageView) view
-				.findViewById(R.id.imageView_podcastItem_art);
-		final String url = podcast.getImageUrl();
-
-		UrlImageViewHelper.setUrlDrawable(image, url,
-				R.drawable.podcast_default_art);
-
-		view.setTag(R.id.podcast_url, podcast.getFilename());
-
-		view.setTag(R.id.podcast_name, podcast.getProgram());
-		view.setTag(R.id.podcast_date, podcast.getCreatedate());
+		view.showPodcast(podcast, formattedDate);
+		view.setTag(podcast);
 
 		return view;
 	}
