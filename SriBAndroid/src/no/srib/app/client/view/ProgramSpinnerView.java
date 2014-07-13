@@ -13,7 +13,7 @@ import butterknife.InjectView;
 
 public abstract class ProgramSpinnerView extends LinearLayout {
 
-	private static final String FONT = "fonts/clairehandbold.ttf";
+	private static final int FONT_ID = R.string.font_clairehandbold;
 
 	@InjectView(R.id.textView_programItem) TextView textView;
 
@@ -29,7 +29,7 @@ public abstract class ProgramSpinnerView extends LinearLayout {
 		LayoutInflater.from(context).inflate(layoutId, this, true);
 		ButterKnife.inject(this);
 
-		Typeface font = FontFactory.INSTANCE.getFont(context.getAssets(), FONT);
+		Typeface font = FontFactory.INSTANCE.getFont(context, FONT_ID);
 		textView.setTypeface(font);
 	}
 

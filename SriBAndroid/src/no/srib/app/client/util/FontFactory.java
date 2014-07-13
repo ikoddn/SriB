@@ -1,10 +1,8 @@
 package no.srib.app.client.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import android.content.res.AssetManager;
+import android.content.Context;
 import android.graphics.Typeface;
+import android.util.SparseArray;
 
 /**
  * A singleton for loading custom fonts in Android.
@@ -15,18 +13,19 @@ import android.graphics.Typeface;
 public enum FontFactory {
 	INSTANCE;
 
-	private Map<String, Typeface> fontMap;
+	private SparseArray<Typeface> fontMap;
 
 	private FontFactory() {
-		fontMap = new HashMap<String, Typeface>();
+		fontMap = new SparseArray<Typeface>();
 	}
 
-	public Typeface getFont(final AssetManager assets, final String font) {
-		Typeface typeface = fontMap.get(font);
+	public Typeface getFont(final Context context, final int fontId) {
+		Typeface typeface = fontMap.get(fontId);
 
 		if (typeface == null) {
-			typeface = Typeface.createFromAsset(assets, font);
-			fontMap.put(font, typeface);
+			String font = context.getResources().getString(fontId);
+			typeface = Typeface.createFromAsset(context.getAssets(), font);
+			fontMap.put(fontId, typeface);
 		}
 
 		return typeface;

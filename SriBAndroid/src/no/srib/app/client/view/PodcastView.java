@@ -19,7 +19,7 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 public class PodcastView extends LinearLayout {
 
 	private static final int DEFAULT_IMAGE_ID = R.drawable.podcast_default_art;
-	private static final String FONT = "fonts/clairehandbold.ttf";
+	private static final int FONT_ID = R.string.font_clairehandbold;
 
 	@InjectView(R.id.imageView_podcastItem_art) ImageView imageView;
 	@InjectView(R.id.textView_podcastItem_date) TextView dateTextView;
@@ -45,7 +45,7 @@ public class PodcastView extends LinearLayout {
 		ButterKnife.inject(this);
 
 		defaultImage = context.getResources().getDrawable(DEFAULT_IMAGE_ID);
-		Typeface font = FontFactory.INSTANCE.getFont(context.getAssets(), FONT);
+		Typeface font = FontFactory.INSTANCE.getFont(context, FONT_ID);
 		dateTextView.setTypeface(font);
 		programNameTextView.setTypeface(font);
 	}
