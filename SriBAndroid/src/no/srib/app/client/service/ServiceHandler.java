@@ -1,6 +1,7 @@
 package no.srib.app.client.service;
 
 import no.srib.app.client.service.BaseService.BaseBinder;
+import no.srib.app.client.util.BusProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,17 +15,14 @@ public class ServiceHandler<T extends BaseService> {
 	private boolean serviceBound;
 	private T service;
 	private ServiceConnection connection;
-	private OnServiceReadyListener<T> onServiceReadyListener;
 
-	public ServiceHandler(final Class<T> typeClass,
-			final OnServiceReadyListener<T> listener) {
+	public ServiceHandler(final Class<T> typeClass) {
 
 		TYPECLASS = typeClass;
 
 		serviceBound = false;
 		service = null;
 		connection = new ServiceConnectionImpl();
-		onServiceReadyListener = listener;
 	}
 
 	public T getService() {
@@ -55,7 +53,7 @@ public class ServiceHandler<T extends BaseService> {
 			BaseBinder customBinder = (BaseService.BaseBinder) binder;
 			service = TYPECLASS.cast(customBinder.getService());
 
-			onServiceReadyListener.onServiceReady(service);
+			BusProvider.INSTANCE.get().post(service);
 		}
 
 		@Override

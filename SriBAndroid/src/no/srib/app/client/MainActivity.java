@@ -39,7 +39,6 @@ import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
-import no.srib.app.client.service.OnServiceReadyListener;
 import no.srib.app.client.service.ServiceHandler;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
@@ -165,11 +164,10 @@ public class MainActivity extends FragmentActivity {
 		autoPlayAfterConnect = false;
 
 		audioPlayerService = new ServiceHandler<AudioPlayerService>(
-				AudioPlayerService.class, new AudioPlayerServiceReadyListener());
+				AudioPlayerService.class);
 
 		streamUpdaterService = new ServiceHandler<StreamUpdaterService>(
-				StreamUpdaterService.class,
-				new StreamUpdaterServiceReadyListener());
+				StreamUpdaterService.class);
 
 		audioPlayerService.bind(MainActivity.this);
 		streamUpdaterService.bind(MainActivity.this);
@@ -212,41 +210,6 @@ public class MainActivity extends FragmentActivity {
 
 		BusProvider.INSTANCE.get().unregister(this);
 		unregisterReceiver(connectivityChangeReceiver);
-	}
-
-	private class StreamUpdaterServiceReadyListener implements
-			OnServiceReadyListener<StreamUpdaterService> {
-
-		@Override
-		public void onServiceReady(final StreamUpdaterService service) {
-			service.setStreamUpdateListener(new StreamUpdateListener());
-			String url = getResources().getString(R.string.url_audiostream);
-			service.setUpdateURL(url);
-
-			connectivityChangeReceiver = new ConnectivityChangeReceiver();
-			connectivityChangeReceiver
-					.setConnectionChangedListener(new ConnectivityChangedListener(
-							service));
-
-			IntentFilter filter = new IntentFilter(
-					ConnectivityManager.CONNECTIVITY_ACTION);
-			registerReceiver(connectivityChangeReceiver, filter);
-
-			readyComponents.put(Component.STREAMUPDATER, true);
-			prepareLiveRadioIfReady();
-		}
-	}
-
-	private class AudioPlayerServiceReadyListener implements
-			OnServiceReadyListener<AudioPlayerService> {
-
-		@Override
-		public void onServiceReady(final AudioPlayerService service) {
-			service.setStateListener(new AudioPlayerStateListener());
-
-			readyComponents.put(Component.AUDIOPLAYER, true);
-			prepareLiveRadioIfReady();
-		}
 	}
 
 	private class StreamUpdateListener implements OnStreamUpdateListener {
@@ -596,6 +559,33 @@ public class MainActivity extends FragmentActivity {
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 			audioPlayer.start();
 		}
+	}
+
+	@Subscribe
+	public void onAudioPlayerServiceReady(final AudioPlayerService service) {
+		service.setStateListener(new AudioPlayerStateListener());
+
+		readyComponents.put(Component.AUDIOPLAYER, true);
+		prepareLiveRadioIfReady();
+	}
+
+	@Subscribe
+	public void onStreamUpdaterServiceReady(final StreamUpdaterService service) {
+		service.setStreamUpdateListener(new StreamUpdateListener());
+		String url = getResources().getString(R.string.url_audiostream);
+		service.setUpdateURL(url);
+
+		connectivityChangeReceiver = new ConnectivityChangeReceiver();
+		connectivityChangeReceiver
+				.setConnectionChangedListener(new ConnectivityChangedListener(
+						service));
+
+		IntentFilter filter = new IntentFilter(
+				ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(connectivityChangeReceiver, filter);
+
+		readyComponents.put(Component.STREAMUPDATER, true);
+		prepareLiveRadioIfReady();
 	}
 
 	@Subscribe
