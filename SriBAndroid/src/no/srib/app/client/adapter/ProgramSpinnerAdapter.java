@@ -3,9 +3,6 @@ package no.srib.app.client.adapter;
 import no.srib.app.client.R;
 import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.view.DividerView;
-import no.srib.app.client.view.ProgramSpinnerDefaultView;
-import no.srib.app.client.view.ProgramSpinnerGreyedOutView;
-import no.srib.app.client.view.ProgramSpinnerIndentedView;
 import no.srib.app.client.view.ProgramSpinnerView;
 import android.content.Context;
 import android.view.View;
@@ -157,36 +154,30 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 			resultView = view;
 		} else { // Not a divider
 			ProgramSpinnerView view = null;
+			int layoutId = 0;
 			String text = null;
 
 			switch (itemViewType) {
 			case GENERAL:
-				if (mustInflate) {
-					view = new ProgramSpinnerDefaultView(context);
-				}
-
+				layoutId = R.layout.spinneritem_podcast_default;
 				text = generalItems[position];
 				break;
 			case PROGRAM:
-				if (mustInflate) {
-					view = new ProgramSpinnerIndentedView(context);
-				}
-
+				layoutId = R.layout.spinneritem_podcast_indented;
 				text = getItem(position).getName();
 				break;
 			case SUBHEADER:
-				if (mustInflate) {
-					view = new ProgramSpinnerGreyedOutView(context);
-				}
-
-				int previousDivider = dividerNumber(position - 1);
-				text = subheaders[previousDivider];
+				layoutId = R.layout.spinneritem_podcast_greyedout;
+				text = subheaders[dividerNumber(position - 1)];
 				break;
 			default:
 				break;
 			}
 
-			if (!mustInflate) {
+			if (mustInflate) {
+				view = new ProgramSpinnerView(context);
+				view.init(layoutId);
+			} else {
 				view = (ProgramSpinnerView) convertView;
 			}
 
@@ -208,7 +199,8 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 		ProgramSpinnerView view;
 
 		if (convertView == null) {
-			view = new ProgramSpinnerDefaultView(context);
+			view = new ProgramSpinnerView(context);
+			view.init(R.layout.spinneritem_podcast_default);
 		} else {
 			view = (ProgramSpinnerView) convertView;
 		}

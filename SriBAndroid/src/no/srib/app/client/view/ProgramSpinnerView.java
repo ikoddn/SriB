@@ -11,7 +11,7 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public abstract class ProgramSpinnerView extends LinearLayout {
+public class ProgramSpinnerView extends LinearLayout {
 
 	private static final int FONT_ID = R.string.font_clairehandbold;
 
@@ -25,11 +25,11 @@ public abstract class ProgramSpinnerView extends LinearLayout {
 		super(context, attrs);
 	}
 
-	protected void init(final Context context, final int layoutId) {
-		LayoutInflater.from(context).inflate(layoutId, this, true);
+	public void init(final int layoutId) {
+		LayoutInflater.from(getContext()).inflate(layoutId, this, true);
 		ButterKnife.inject(this);
 
-		Typeface font = FontFactory.INSTANCE.getFont(context, FONT_ID);
+		Typeface font = FontFactory.INSTANCE.getFont(getContext(), FONT_ID);
 		textView.setTypeface(font);
 	}
 
