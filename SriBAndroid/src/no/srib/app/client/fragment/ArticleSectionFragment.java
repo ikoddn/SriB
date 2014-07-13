@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.model.Article;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -64,7 +65,8 @@ public class ArticleSectionFragment extends SectionFragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 
-			String url = (String) view.getTag(R.id.key_article_url);
+			Article article = (Article) view.getTag();
+			String url = article.getPermalink();
 			pushFragment(ArticleFragment.newInstance(url));
 		}
 	}

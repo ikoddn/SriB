@@ -32,7 +32,6 @@ import no.srib.app.client.http.ArticleHttpResponse;
 import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.http.PodcastHttpResponse;
 import no.srib.app.client.http.ProgramNameHttpResponse;
-import no.srib.app.client.listener.OnFragmentReadyListener;
 import no.srib.app.client.listener.OnSearchListener;
 import no.srib.app.client.model.Article;
 import no.srib.app.client.model.Podcast;
@@ -49,6 +48,7 @@ import no.srib.app.client.service.audioplayer.AudioPlayerService;
 import no.srib.app.client.service.audioplayer.AudioPlayerService.DataSourceType;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
+import no.srib.app.client.util.BusProvider;
 import no.srib.app.client.viewpager.PageChangeListener;
 import no.srib.app.client.viewpager.SectionsPagerAdapter;
 import android.content.ActivityNotFoundException;
@@ -74,8 +74,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity implements
-		OnFragmentReadyListener {
+import com.squareup.otto.Subscribe;
+
+public class MainActivity extends FragmentActivity {
 
 	enum Component {
 		AUDIOPLAYER,
@@ -139,6 +140,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		BusProvider.INSTANCE.get().register(this);
 
 		Resources res = getResources();
 
@@ -207,6 +210,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onDestroy() {
 		super.onDestroy();
 
+		BusProvider.INSTANCE.get().unregister(this);
 		unregisterReceiver(connectivityChangeReceiver);
 	}
 
@@ -594,58 +598,61 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	@Override
-	public void onFragmentReady(final Fragment fragment) {
-		if (fragment instanceof LiveRadioFragment) {
-			LiveRadioFragment liveRadio = (LiveRadioFragment) fragment;
+	@Subscribe
+	public void onArticleListFragmentReady(final ArticleListFragment fragment) {
+		fragment.setArticleListAdapter(articleListAdapter);
+		fragment.setSearchListener(new ArticleSearch());
+	}
 
-			liveRadio.setOnLiveRadioClickListener(new LiveRadioClickListener());
-			liveRadio.setSeekBarOnChangeListener(new SeekBarListener());
-			new SeekBarImpl();
+	@Subscribe
+	public void onInfoFragmentReady(final InfoFragment fragment) {
+		fragment.setInfoClickListener(new InfoClickListener());
+	}
 
-			TextView textView = liveRadio.getProgramNameTextView();
-			currentProgramResponse = new CurrentScheduleHttpResponse(textView);
+	@Subscribe
+	public void onLiveRadioFragmentReady(final LiveRadioFragment fragment) {
+		fragment.setOnLiveRadioClickListener(new LiveRadioClickListener());
+		fragment.setSeekBarOnChangeListener(new SeekBarListener());
+		new SeekBarImpl();
 
-			HttpAsyncTask programName = new HttpAsyncTask(
-					currentProgramResponse);
-			String programNameURL = getResources().getString(
-					R.string.currentProgram);
+		TextView textView = fragment.getProgramNameTextView();
+		currentProgramResponse = new CurrentScheduleHttpResponse(textView);
 
-			programName.execute(programNameURL);
+		HttpAsyncTask programName = new HttpAsyncTask(currentProgramResponse);
+		String programNameURL = getResources().getString(
+				R.string.currentProgram);
 
-			AudioPlayerService audioPlayer = audioPlayerService.getService();
+		programName.execute(programNameURL);
 
-			switch (audioPlayer.getState()) {
-			case PREPARING:
-			case STARTED:
-				liveRadio.setPauseIcon();
-				break;
-			case COMPLETED:
-			case PAUSED:
-			case STOPPED:
-			case UNINITIALIZED:
-				break;
-			}
-		} else if (fragment instanceof PodcastFragment) {
-			PodcastFragment podcast = (PodcastFragment) fragment;
+		AudioPlayerService audioPlayer = audioPlayerService.getService();
 
-			podcast.setGridArrayAdapter(podcastGridAdapter);
-			podcast.setPodcastClickedListener(new GridViewItemClickListener());
-			podcast.setSpinnerListAdapter(programSpinnerAdapter);
-			podcast.setSpinnerListSelectedListener(new ListViewItemClickListener());
-		} else if (fragment instanceof ArticleListFragment) {
-			ArticleListFragment articleList = (ArticleListFragment) fragment;
-
-			articleList.setArticleListAdapter(articleListAdapter);
-			articleList.setSearchListener(new ArticleSearch());
-		} else if (fragment instanceof InfoFragment) {
-			InfoFragment info = (InfoFragment) fragment;
-
-			info.setInfoClickListener(new InfoClickListener());
-		} else if (fragment instanceof LiveRadioSectionFragment) {
-			readyComponents.put(Component.LIVERADIOSECTION, true);
-			prepareLiveRadioIfReady();
+		switch (audioPlayer.getState()) {
+		case PREPARING:
+		case STARTED:
+			fragment.setPauseIcon();
+			break;
+		case COMPLETED:
+		case PAUSED:
+		case STOPPED:
+		case UNINITIALIZED:
+			break;
 		}
+	}
+
+	@Subscribe
+	public void onLiveRadioSectionFragmentReady(
+			final LiveRadioSectionFragment fragment) {
+
+		readyComponents.put(Component.LIVERADIOSECTION, true);
+		prepareLiveRadioIfReady();
+	}
+
+	@Subscribe
+	public void onPodcastFragmentReady(final PodcastFragment fragment) {
+		fragment.setGridArrayAdapter(podcastGridAdapter);
+		fragment.setSpinnerListAdapter(programSpinnerAdapter);
+		fragment.setPodcastClickedListener(new GridViewItemClickListener());
+		fragment.setSpinnerListSelectedListener(new ListViewItemClickListener());
 	}
 
 	private void openURL(int resId) {

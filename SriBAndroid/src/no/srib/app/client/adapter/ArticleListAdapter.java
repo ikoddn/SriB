@@ -91,6 +91,7 @@ public class ArticleListAdapter extends ListBasedAdapter<Article> {
 
 			Article item = getItemInPosition(position);
 			view.showArticle(item);
+			view.setTag(item);
 
 			return view;
 		}
