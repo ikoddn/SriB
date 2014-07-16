@@ -263,6 +263,8 @@ public class MainActivity extends FragmentActivity {
 				&& readyComponents.get(Component.STREAMUPDATER)
 				&& readyComponents.get(Component.LIVERADIOSECTION)) {
 
+			AudioPlayerService audioPlayer = audioPlayerService.getService();
+			DataSourceType dataSourceType = audioPlayer.getDataSourceType();
 			StreamSchedule streamSchedule;
 
 			try {
@@ -287,22 +289,16 @@ public class MainActivity extends FragmentActivity {
 
 				streamUpdater.update();
 			} else {
-				AudioPlayerService audioPlayer = audioPlayerService
-						.getService();
-
 				switch (audioPlayer.getState()) {
 				case PAUSED:
 				case PREPARING:
 				case STARTED:
 				case STOPPED:
-					DataSourceType dataSourceType = audioPlayer
-							.getDataSourceType();
-
 					switch (dataSourceType) {
 					case NONE:
-					case PODCAST:
 						updateStream(streamSchedule);
 						break;
+					case PODCAST:
 					case LIVE_RADIO:
 					default:
 						break;
@@ -396,6 +392,7 @@ public class MainActivity extends FragmentActivity {
 			case STOPPED:
 				fragment.setStatusText("stopped");
 				fragment.setPlayIcon();
+				fragment.setTimeText("");
 				break;
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
@@ -634,6 +631,40 @@ public class MainActivity extends FragmentActivity {
 		case UNINITIALIZED:
 			break;
 		}
+
+		switch (audioPlayer.getDataSourceType()) {
+		case LIVE_RADIO:
+			fragment.setLiveRadioMode();
+
+			switch (audioPlayer.getState()) {
+			case STARTED:
+			case PAUSED:
+				String liveText = getResources().getString(
+						R.string.textView_liveradio_time_live);
+				fragment.setTimeText(liveText);
+				break;
+			case STOPPED:
+			case COMPLETED:
+			case PREPARING:
+			case UNINITIALIZED:
+			default:
+				break;
+			}
+
+			break;
+		case PODCAST:
+			fragment.setPodcastMode();
+			fragment.setMaxOnSeekBar(audioPlayer.getDuration());
+
+			if (audioPlayer.getState() == State.STARTED) {
+				seekbarHandler.removeCallbacks(seekbarUpdater);
+				seekbarHandler.postDelayed(seekbarUpdater, 0);
+			}
+			break;
+		case NONE:
+		default:
+			break;
+		}
 	}
 
 	@Subscribe
@@ -706,13 +737,18 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public void run() {
 			AudioPlayerService service = audioPlayerService.getService();
-			LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = sectionFragment.getLiveRadioFragment();
 
 			if (service.getState() == State.STARTED) {
-				fragment.setSeekBarProgress(service.getProgress());
-				seekbarHandler.postDelayed(seekbarUpdater,
-						SEEKBAR_UPDATE_INTERVAL);
+				LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+
+				if (sectionFragment != null) {
+					LiveRadioFragment fragment = sectionFragment
+							.getLiveRadioFragment();
+
+					fragment.setSeekBarProgress(service.getProgress());
+					seekbarHandler.postDelayed(seekbarUpdater,
+							SEEKBAR_UPDATE_INTERVAL);
+				}
 			}
 		}
 	}
