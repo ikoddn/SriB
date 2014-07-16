@@ -371,15 +371,26 @@ public class MainActivity extends FragmentActivity {
 				break;
 			case PREPARING:
 				fragment.setStatusText("preparing");
+				fragment.setTimeText("");
 				fragment.setPauseIcon();
 				break;
 			case STARTED:
 				fragment.setStatusText("started");
 				fragment.setPauseIcon();
 
-				if (audioservice.getDataSourceType() == DataSourceType.PODCAST) {
+				switch (audioservice.getDataSourceType()) {
+				case LIVE_RADIO:
+					String liveText = getResources().getString(
+							R.string.textView_liveradio_time_live);
+					fragment.setTimeText(liveText);
+					break;
+				case PODCAST:
 					fragment.setMaxOnSeekBar(audioservice.getDuration());
 					seekbarHandler.postDelayed(seekbarUpdater, 0);
+					break;
+				case NONE:
+				default:
+					break;
 				}
 				break;
 			case STOPPED:
@@ -388,10 +399,12 @@ public class MainActivity extends FragmentActivity {
 				break;
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
+				fragment.setTimeText("");
 				break;
 			case COMPLETED:
 				fragment.setStatusText("completed");
 				fragment.setPlayIcon();
+				fragment.setTimeText("");
 				break;
 			}
 		}

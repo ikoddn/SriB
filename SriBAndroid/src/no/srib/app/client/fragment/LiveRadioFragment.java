@@ -138,9 +138,6 @@ public class LiveRadioFragment extends BaseFragment {
 			programNameTextView.setText(programName);
 		}
 
-		// TODO Remove when time functionality works
-		timeTextView.setText("00:00");
-
 		if (pauseIcon) {
 			setPauseIcon();
 		}
