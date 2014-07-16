@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.util.FontFactory;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.DTImageView;
@@ -35,8 +36,8 @@ public class LoadingFragment extends BaseFragment {
 
 		TextView textView = (TextView) rootView
 				.findViewById(R.id.textView_loading);
-		Typeface font = Typeface.createFromAsset(rootView.getContext()
-				.getAssets(), "fonts/clairehandbold.ttf");
+		Typeface font = FontFactory.INSTANCE.getFont(getActivity(),
+				R.string.font_clairehandbold);
 		textView.setTypeface(font);
 
 		return rootView;
