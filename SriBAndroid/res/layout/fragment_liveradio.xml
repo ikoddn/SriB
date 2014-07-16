@@ -137,7 +137,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="417"
-                    android:progressDrawable="@android:color/transparent" />
+                    android:progressDrawable="@android:color/transparent"
+                    android:visibility="invisible" />
 
                 <View
                     android:id="@+id/view_liveradio_seekbar_hspace2"

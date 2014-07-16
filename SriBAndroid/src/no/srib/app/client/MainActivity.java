@@ -63,7 +63,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -698,8 +697,6 @@ public class MainActivity extends FragmentActivity {
 			LiveRadioFragment fragment = sectionFragment.getLiveRadioFragment();
 
 			if (service.getState() == State.STARTED) {
-				Log.d("SriB", "updating the seekbar...");
-
 				fragment.setSeekBarProgress(service.getProgress());
 				seekbarHandler.postDelayed(seekbarUpdater,
 						SEEKBAR_UPDATE_INTERVAL);

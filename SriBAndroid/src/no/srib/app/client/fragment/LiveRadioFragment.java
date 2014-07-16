@@ -324,6 +324,10 @@ public class LiveRadioFragment extends BaseFragment {
 		if (radioPodcastSwitch != null) {
 			radioPodcastSwitch.setChecked(true);
 		}
+
+		if (seekbar != null) {
+			seekbar.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void setLiveRadioMode() {
@@ -331,6 +335,10 @@ public class LiveRadioFragment extends BaseFragment {
 
 		if (radioPodcastSwitch != null) {
 			radioPodcastSwitch.setChecked(false);
+		}
+
+		if (seekbar != null) {
+			seekbar.setVisibility(View.INVISIBLE);
 		}
 	}
 
