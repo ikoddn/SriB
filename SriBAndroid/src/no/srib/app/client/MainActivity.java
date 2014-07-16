@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.EnumMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +23,6 @@ import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
-import no.srib.app.client.fragment.LiveRadioFragment.SeekBarInterface;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
@@ -50,6 +48,9 @@ import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.util.BusProvider;
 import no.srib.app.client.viewpager.PageChangeListener;
 import no.srib.app.client.viewpager.SectionsPagerAdapter;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -76,6 +77,8 @@ import android.widget.TextView;
 import com.squareup.otto.Subscribe;
 
 public class MainActivity extends FragmentActivity {
+
+	private static final int SEEKBAR_UPDATE_INTERVAL = 1000;
 
 	enum Component {
 		AUDIOPLAYER,
@@ -116,9 +119,9 @@ public class MainActivity extends FragmentActivity {
 
 	private PodcastGridAdapter podcastGridAdapter;
 	private ProgramSpinnerAdapter programSpinnerAdapter;
-	private Handler seekHandler = new Handler();
-	private Runnable run;
-	private int updateTimeTextIntervall = 1000;
+
+	private Handler seekbarHandler;
+	private Runnable seekbarUpdater;
 
 	public MainActivity() {
 		readyComponents = new EnumMap<Component, Boolean>(Component.class);
@@ -134,6 +137,9 @@ public class MainActivity extends FragmentActivity {
 		currentProgramResponse = null;
 		audioPlayerService = null;
 		streamUpdaterService = null;
+
+		seekbarHandler = new Handler();
+		seekbarUpdater = new SeekbarUpdater();
 	}
 
 	@Override
@@ -353,18 +359,16 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public void onStateChanged(State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = null;
+			LiveRadioFragment fragment = liveRadioSectionFragment
+					.getLiveRadioFragment();
 			AudioPlayerService audioservice = audioPlayerService.getService();
 
-			if (liveRadioSectionFragment != null) {
-				fragment = liveRadioSectionFragment.getLiveRadioFragment();
-			}
+			seekbarHandler.removeCallbacks(seekbarUpdater);
 
 			switch (state) {
 			case PAUSED:
 				fragment.setStatusText("paused");
 				fragment.setPlayIcon();
-				seekHandler.removeCallbacks(run);
 				break;
 			case PREPARING:
 				fragment.setStatusText("preparing");
@@ -373,17 +377,15 @@ public class MainActivity extends FragmentActivity {
 			case STARTED:
 				fragment.setStatusText("started");
 				fragment.setPauseIcon();
-				seekHandler.removeCallbacks(run);
-				int duration = audioservice.getDuration();
-				fragment.setMaxOnSeekBar(duration);
-				SeekBarInterface seekBar = new SeekBarImpl();
-				seekBar.updateSeekBar();
+
+				if (audioservice.getDataSourceType() == DataSourceType.PODCAST) {
+					fragment.setMaxOnSeekBar(audioservice.getDuration());
+					seekbarHandler.postDelayed(seekbarUpdater, 0);
+				}
 				break;
 			case STOPPED:
 				fragment.setStatusText("stopped");
 				fragment.setPlayIcon();
-				seekHandler.removeCallbacks(run);
-
 				break;
 			case UNINITIALIZED:
 				fragment.setStatusText("uninitialized");
@@ -391,7 +393,6 @@ public class MainActivity extends FragmentActivity {
 			case COMPLETED:
 				fragment.setStatusText("completed");
 				fragment.setPlayIcon();
-				seekHandler.removeCallbacks(run);
 				break;
 			}
 		}
@@ -446,11 +447,8 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public void onSwitchPodcastSelected(boolean value) {
-			if (value) {
-				Log.i("Debug", "Pod");
-
-			} else {
-				Log.i("Debug", "Live");
+			if (!value) {
+				seekbarHandler.removeCallbacks(seekbarUpdater);
 
 				if (currentProgramResponse != null) {
 					HttpAsyncTask programTask = new HttpAsyncTask(
@@ -546,14 +544,12 @@ public class MainActivity extends FragmentActivity {
 
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
-			if (liveRadioSectionFragment != null) {
-				liveRadioSectionFragment.replaceLoadingFragment();
+			liveRadioSectionFragment.replaceLoadingFragment();
 
-				LiveRadioFragment fragment = liveRadioSectionFragment
-						.getLiveRadioFragment();
-				fragment.setProgramNameText(podcast.getProgram());
-				fragment.setPodcastMode();
-			}
+			LiveRadioFragment fragment = liveRadioSectionFragment
+					.getLiveRadioFragment();
+			fragment.setProgramNameText(podcast.getProgram());
+			fragment.setPodcastMode();
 
 			viewPager
 					.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
@@ -602,8 +598,7 @@ public class MainActivity extends FragmentActivity {
 	@Subscribe
 	public void onLiveRadioFragmentReady(final LiveRadioFragment fragment) {
 		fragment.setOnLiveRadioClickListener(new LiveRadioClickListener());
-		fragment.setSeekBarOnChangeListener(new SeekBarListener());
-		new SeekBarImpl();
+		fragment.setSeekBarOnChangeListener(new SeekBarChangeListener());
 
 		TextView textView = fragment.getProgramNameTextView();
 		currentProgramResponse = new CurrentScheduleHttpResponse(textView);
@@ -652,37 +647,64 @@ public class MainActivity extends FragmentActivity {
 		startActivity(intent);
 	}
 
-	private class SeekBarListener implements OnSeekBarChangeListener {
+	private class SeekBarChangeListener implements OnSeekBarChangeListener {
+
+		private int progress;
+
+		public SeekBarChangeListener() {
+			progress = 0;
+		}
 
 		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress,
-				boolean fromUser) {
-			AudioPlayerService audioservice = audioPlayerService.getService();
-			State currentState = audioservice.getState();
-			if (fromUser && currentState == State.STARTED
-					|| currentState == State.PAUSED) {
-				System.out.println(progress + " " + seekBar.getMax());
+		public void onProgressChanged(final SeekBar seekBar,
+				final int progress, final boolean fromUser) {
 
-				audioservice.seekTo(progress);
+			this.progress = progress;
+
+			LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment fragment = sectionFragment.getLiveRadioFragment();
+
+			String timeString = fromMsToTime(progress);
+			fragment.setTimeText(timeString);
+		}
+
+		@Override
+		public void onStartTrackingTouch(final SeekBar seekBar) {
+			seekbarHandler.removeCallbacks(seekbarUpdater);
+		}
+
+		@Override
+		public void onStopTrackingTouch(final SeekBar seekBar) {
+			seekbarHandler.postDelayed(seekbarUpdater, SEEKBAR_UPDATE_INTERVAL);
+
+			AudioPlayerService service = audioPlayerService.getService();
+			service.seekTo(progress);
+		}
+
+		private String fromMsToTime(final int ms) {
+			long hours = TimeUnit.MILLISECONDS.toHours(ms);
+			String format = hours > 0 ? "HH:mm:ss" : "mm:ss";
+
+			return DurationFormatUtils.formatDuration(ms, format);
+		}
+	}
+
+	private class SeekbarUpdater implements Runnable {
+
+		@Override
+		public void run() {
+			AudioPlayerService service = audioPlayerService.getService();
+			LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+			LiveRadioFragment fragment = sectionFragment.getLiveRadioFragment();
+
+			if (service.getState() == State.STARTED) {
+				Log.d("SriB", "updating the seekbar...");
+
+				fragment.setSeekBarProgress(service.getProgress());
+				seekbarHandler.postDelayed(seekbarUpdater,
+						SEEKBAR_UPDATE_INTERVAL);
 			}
 		}
-
-		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {
-			seekHandler.removeCallbacks(run);
-			updateTimeTextIntervall = 10;
-			seekHandler.postDelayed(run, updateTimeTextIntervall);
-
-		}
-
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) {
-			seekHandler.removeCallbacks(run);
-			updateTimeTextIntervall = 1000;
-			seekHandler.postDelayed(run, updateTimeTextIntervall);
-
-		}
-
 	}
 
 	@Override
@@ -713,61 +735,6 @@ public class MainActivity extends FragmentActivity {
 
 	private static String getFragmentTag(int viewPagerId, int index) {
 		return "android:switcher:" + viewPagerId + ":" + index;
-	}
-
-	private class SeekBarImpl implements SeekBarInterface {
-
-		public SeekBarImpl() {
-			run = new Runnable() {
-
-				@Override
-				public void run() {
-					SeekBarInterface sek = new SeekBarImpl();
-					sek.updateSeekBar();
-				}
-			};
-		}
-
-		@Override
-		public void updateSeekBar() {
-			LiveRadioSectionFragment fragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-
-			if (fragment != null) {
-				LiveRadioFragment liveFrag = (LiveRadioFragment) fragment
-						.getChildFragmentManager().getFragments().get(0);
-				AudioPlayerService audioservice = audioPlayerService
-						.getService();
-
-				int progress = audioservice.getProgress();
-				String time = fromMsToTime(progress);
-				liveFrag.setTimeText(time);
-				// int max = audioservice.getDuration();
-				// System.out.println(progress + "/" + max);
-				liveFrag.setSeekBarProgress(progress);
-			}
-
-			seekHandler.postDelayed(run, updateTimeTextIntervall);
-		}
-
-		private String fromMsToTime(int ms) {
-			String time = "";
-			long hours = TimeUnit.MILLISECONDS.toHours(ms);
-			long minutes = TimeUnit.MILLISECONDS.toMinutes(ms)
-					- TimeUnit.HOURS.toMinutes(hours);
-			long seconds = TimeUnit.MILLISECONDS.toSeconds(ms)
-					- TimeUnit.MINUTES.toSeconds(minutes);
-
-			Locale locale = Locale.getDefault();
-			if (hours == 0) {
-				time = String.format(locale, "%02d:%02d", minutes, seconds);
-			} else {
-				time = String.format(locale, "%02d:%02d:%02d", hours, minutes,
-						seconds);
-			}
-
-			return time;
-		}
-
 	}
 
 	private class ArticleSearch implements OnSearchListener {
