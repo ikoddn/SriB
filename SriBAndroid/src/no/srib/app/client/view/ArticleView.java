@@ -2,11 +2,9 @@ package no.srib.app.client.view;
 
 import java.util.List;
 
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import no.srib.app.client.R;
+import no.srib.app.client.imageloader.UrlImageLoaderProvider;
+import no.srib.app.client.imageloader.UrlImageLoader;
 import no.srib.app.client.model.Article;
 import no.srib.app.client.model.ArticleImage;
 import no.srib.app.client.model.ArticleMedia;
@@ -17,6 +15,8 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ArticleView extends LinearLayout {
 
@@ -60,7 +60,10 @@ public class ArticleView extends LinearLayout {
 
 				if (url != null) {
 					url = URLUtil.urlEncodeFilename(url);
-					UrlImageViewHelper.setUrlDrawable(image, url);
+
+					UrlImageLoader imageLoader = UrlImageLoaderProvider.INSTANCE
+							.get();
+					imageLoader.loadFromUrl(image, url);
 				}
 			}
 		}

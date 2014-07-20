@@ -430,8 +430,4 @@ public class LiveRadioFragment extends BaseFragment {
 
 		void onSwitchPodcastSelected(boolean value);
 	}
-
-	public interface SeekBarInterface {
-		void updateSeekBar();
-	}
 }

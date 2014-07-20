@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import no.srib.app.client.model.Podcast;
+import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.PodcastView;
 
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 public class PodcastGridAdapter extends ListBasedAdapter<Podcast> {
 
@@ -42,7 +44,11 @@ public class PodcastGridAdapter extends ListBasedAdapter<Podcast> {
 		PodcastView view;
 
 		if (convertView == null) {
+			GridView gridView = (GridView) parent;
+			int columnWidth = ViewUtil.getColumnWidth(gridView);
+
 			view = new PodcastView(context);
+			view.init(columnWidth);
 		} else {
 			view = (PodcastView) convertView;
 		}

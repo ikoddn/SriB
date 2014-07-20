@@ -1,10 +1,13 @@
 package no.srib.app.client.util;
 
+import java.lang.reflect.Field;
+
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 
 public class ViewUtil {
@@ -40,5 +43,25 @@ public class ViewUtil {
 	public static int dpiToPixels(final Resources resources, final int dpi) {
 		float scale = resources.getDisplayMetrics().density;
 		return (int) (dpi * scale + 0.5f);
+	}
+
+	@SuppressLint("NewApi")
+	public static int getColumnWidth(final GridView gridView) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			return gridView.getColumnWidth();
+		} else {
+			try {
+				Field field = GridView.class.getDeclaredField("mColumnWidth");
+				field.setAccessible(true);
+				Integer value = (Integer) field.get(gridView);
+				field.setAccessible(false);
+
+				return value.intValue();
+			} catch (NoSuchFieldException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

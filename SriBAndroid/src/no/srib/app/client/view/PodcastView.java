@@ -1,6 +1,8 @@
 package no.srib.app.client.view;
 
 import no.srib.app.client.R;
+import no.srib.app.client.imageloader.UrlImageLoaderProvider;
+import no.srib.app.client.imageloader.UrlImageLoader;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.FontFactory;
 import android.content.Context;
@@ -14,8 +16,6 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
 public class PodcastView extends LinearLayout {
 
 	private static final int DEFAULT_IMAGE_ID = R.drawable.podcast_default_art;
@@ -25,19 +25,22 @@ public class PodcastView extends LinearLayout {
 	@InjectView(R.id.textView_podcastItem_date) TextView dateTextView;
 	@InjectView(R.id.textView_podcastItem_programname) TextView programNameTextView;
 
+	private int viewWidth;
 	private Drawable defaultImage;
 
 	public PodcastView(final Context context) {
 		super(context);
-		init(context);
 	}
 
 	public PodcastView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		init(context);
 	}
 
-	private void init(final Context context) {
+	public void init(final int viewWidth) {
+		this.viewWidth = viewWidth;
+
+		final Context context = getContext();
+
 		setOrientation(VERTICAL);
 
 		LayoutInflater.from(context).inflate(R.layout.griditem_podcast, this,
@@ -45,6 +48,7 @@ public class PodcastView extends LinearLayout {
 		ButterKnife.inject(this);
 
 		defaultImage = context.getResources().getDrawable(DEFAULT_IMAGE_ID);
+
 		Typeface font = FontFactory.INSTANCE.getFont(context, FONT_ID);
 		dateTextView.setTypeface(font);
 		programNameTextView.setTypeface(font);
@@ -54,7 +58,15 @@ public class PodcastView extends LinearLayout {
 		dateTextView.setText(formattedDate);
 		programNameTextView.setText(podcast.getProgram());
 
-		UrlImageViewHelper.setUrlDrawable(imageView, podcast.getImageUrl(),
-				defaultImage);
+		final String imageUrl = podcast.getImageUrl();
+
+		if (imageUrl == null || imageUrl.trim().isEmpty()) {
+			imageView.setImageDrawable(defaultImage);
+		} else {
+			UrlImageLoader urlImageLoader = UrlImageLoaderProvider.INSTANCE
+					.get();
+			urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
+					imageUrl, defaultImage);
+		}
 	}
 }
