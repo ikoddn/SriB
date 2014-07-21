@@ -34,7 +34,7 @@ public class LiveRadioFragment extends BaseFragment {
 	private static final String KEY_STATUS = "status";
 	private static final String KEY_STREAM = "stream";
 
-	@InjectView(R.id.dtImageView_liveradio_background) DTImageView background;
+	@InjectView(R.id.dtimageview_liveradio_background) DTImageView background;
 	@InjectView(R.id.button_liveradio_info) ImageButton infoButton;
 	@InjectView(R.id.button_liveradio_playpause) ImageButton playPauseButton;
 	@InjectView(R.id.button_liveradio_stop) ImageButton stopButton;
@@ -195,8 +195,7 @@ public class LiveRadioFragment extends BaseFragment {
 		LinearLayout layout;
 
 		// Main vertical LinearLayout
-		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio);
+		layout = (LinearLayout) rootView.findViewById(R.id.vlayout_liveradio);
 		layout.setWeightSum(verticalWeightSum);
 		final float vspace1Weight = infoButtonTop;
 		final float vinfoWeight = smallButtonSize;
@@ -217,24 +216,23 @@ public class LiveRadioFragment extends BaseFragment {
 		final float vspace7Weight = verticalWeightSum - socialButtonsTop
 				- smallButtonSize;
 		viewUtil.setWeight(R.id.view_liveradio_vspace1, vspace1Weight);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_info, vinfoWeight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_info, vinfoWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace2, vspace2Weight);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_textfields,
-				vtextFieldsWeight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_textfields, vtextFieldsWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace3, vspace3Weight);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_playpause, vplayWeight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_playpause, vplayWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace4, vspace4Weight);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_stop, vstopWeight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_stop, vstopWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace5, vspace5Weight);
 		viewUtil.setWeight(R.id.hlayout_liveradio_radiopodcastswitch,
 				vradioPodcastWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace6, vspace6Weight);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_social, vsocialWeight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_social, vsocialWeight);
 		viewUtil.setWeight(R.id.view_liveradio_vspace7, vspace7Weight);
 
 		// Horizontal LinearLayout for info button
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_info);
+				.findViewById(R.id.hlayout_liveradio_info);
 		layout.setWeightSum(horizontalWeightSum);
 		final float hInfoSpace1Weight = infoButtonLeft;
 		final float hInfoWeight = smallButtonSize;
@@ -246,7 +244,7 @@ public class LiveRadioFragment extends BaseFragment {
 
 		// Horizontal LinearLayout for text fields
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_textfields);
+				.findViewById(R.id.hlayout_liveradio_textfields);
 		layout.setWeightSum(horizontalWeightSum);
 		final float hTextFieldsSpace1Weight = textProgramLeft;
 		final float hTextProgramWeight = textProgramRight - textProgramLeft;
@@ -265,7 +263,7 @@ public class LiveRadioFragment extends BaseFragment {
 
 		// Horizontal LinearLayout for play button
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_playpause);
+				.findViewById(R.id.hlayout_liveradio_playpause);
 		layout.setWeightSum(horizontalWeightSum);
 		final float hPlaySpace1Weight = playButtonLeft;
 		final float hPlayWeight = playButtonSize;
@@ -279,7 +277,7 @@ public class LiveRadioFragment extends BaseFragment {
 
 		// Horizontal LinearLayout for stop button
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_stop);
+				.findViewById(R.id.hlayout_liveradio_stop);
 		layout.setWeightSum(horizontalWeightSum);
 		final float hStopSpace1Weight = stopButtonLeft;
 		final float hStopWeight = smallButtonSize;
@@ -307,7 +305,7 @@ public class LiveRadioFragment extends BaseFragment {
 		// Horizontal LinearLayout for social media buttons
 		final float socialSpacing = (horizontalWeightSum - 5 * smallButtonSize) / 2;
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_social);
+				.findViewById(R.id.hlayout_liveradio_social);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, socialSpacing);
 		viewUtil.setWeight(instagramButton, smallButtonSize);
