@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -25,7 +24,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class LiveRadioFragment extends BaseFragment {
@@ -38,7 +36,7 @@ public class LiveRadioFragment extends BaseFragment {
 	@InjectView(R.id.button_liveradio_info) ImageButton infoButton;
 	@InjectView(R.id.button_liveradio_playpause) ImageButton playPauseButton;
 	@InjectView(R.id.button_liveradio_stop) ImageButton stopButton;
-	@InjectView(R.id.button_liveradio_radiopodcastswitch) CheckBox radioPodcastSwitch;
+	//@InjectView(R.id.button_liveradio_radiopodcastswitch) CheckBox radioPodcastSwitch;
 	@InjectView(R.id.button_liveradio_instagram) ImageButton instagramButton;
 	@InjectView(R.id.button_liveradio_soundcloud) ImageButton soundCloudButton;
 	@InjectView(R.id.button_liveradio_twitter) ImageButton twitterButton;
@@ -144,7 +142,7 @@ public class LiveRadioFragment extends BaseFragment {
 		}
 
 		if (podcastMode) {
-			radioPodcastSwitch.setChecked(true);
+			//radioPodcastSwitch.setChecked(true);
 		}
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
@@ -298,7 +296,7 @@ public class LiveRadioFragment extends BaseFragment {
 				- radioPodcastSwitchRight;
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1,
 				hSwitchSpace1Weight);
-		viewUtil.setWeight(radioPodcastSwitch, hSwitchWeight);
+		viewUtil.setWeight(R.id.rlayout_liveradio_radiopodcastswitch, hSwitchWeight);
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2,
 				hSwitchSpace2Weight);
 
@@ -416,9 +414,9 @@ public class LiveRadioFragment extends BaseFragment {
 	public void setPodcastMode() {
 		podcastMode = true;
 
-		if (radioPodcastSwitch != null) {
+		/*if (radioPodcastSwitch != null) {
 			radioPodcastSwitch.setChecked(true);
-		}
+		}*/
 
 		if (seekbar != null) {
 			seekbar.setVisibility(View.VISIBLE);
@@ -428,9 +426,9 @@ public class LiveRadioFragment extends BaseFragment {
 	public void setLiveRadioMode() {
 		podcastMode = false;
 
-		if (radioPodcastSwitch != null) {
+		/*if (radioPodcastSwitch != null) {
 			radioPodcastSwitch.setChecked(false);
-		}
+		}*/
 
 		if (seekbar != null) {
 			seekbar.setVisibility(View.INVISIBLE);
@@ -467,10 +465,10 @@ public class LiveRadioFragment extends BaseFragment {
 		liveRadioClickListener.onTwitterClicked();
 	}
 
-	@OnCheckedChanged(R.id.button_liveradio_radiopodcastswitch)
+	/*@OnCheckedChanged(R.id.button_liveradio_radiopodcastswitch)
 	void radioPodcastSwitchCheckedChanged(boolean checked) {
 		liveRadioClickListener.onSwitchPodcastSelected(checked);
-	}
+	}*/
 
 	private class LayoutReadyListener implements OnGlobalLayoutListener {
 
