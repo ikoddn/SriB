@@ -42,7 +42,7 @@ public class LiveRadioFragment extends BaseFragment {
 	@InjectView(R.id.button_liveradio_instagram) ImageButton instagramButton;
 	@InjectView(R.id.button_liveradio_soundcloud) ImageButton soundCloudButton;
 	@InjectView(R.id.button_liveradio_twitter) ImageButton twitterButton;
-	@InjectView(R.id.seekBar_liveradio) SeekBar seekbar;
+	@InjectView(R.id.seekbar_liveradio) SeekBar seekbar;
 	@InjectView(R.id.textview_liveradio_status) TextView statusTextView;
 	@InjectView(R.id.textview_liveradio_stream) TextView streamTextView;
 	@InjectView(R.id.textview_liveradio_programname) TextView programNameTextView;
@@ -152,10 +152,45 @@ public class LiveRadioFragment extends BaseFragment {
 			observer.addOnGlobalLayoutListener(new LayoutReadyListener());
 		}
 
+		setLayoutWeights();
+
+		return rootView;
+	}
+
+	private void setLayoutWeights() {
 		final float verticalWeightSum = 1300.0f;
 		final float horizontalWeightSum = 780.0f;
-		final float smallButtonWeight = 67.0f;
-		final float playButtonWeight = 203.0f;
+		final float smallButtonSize = 75.0f;
+
+		final float infoButtonTop = 27.0f;
+		final float infoButtonLeft = 678.0f;
+
+		final float textFieldsTop = 345.0f;
+		final float textFieldsBottom = 392.0f;
+		final float textProgramLeft = 145.0f;
+		final float textProgramRight = 537.0f;
+		final float textTimeLeft = 559.0f;
+		final float textTimeRight = 656.0f;
+
+		final float seekBarTop = 326.0f;
+		final float seekBarBottom = 407.0f;
+		final float seekBarLeft = 133.0f;
+		final float seekBarRight = 550.0f;
+
+		final float playButtonTop = 613.0f;
+		final float playButtonLeft = 293.0f;
+		final float playButtonSize = 214.0f;
+
+		final float stopButtonTop = 884.0f;
+		final float stopButtonLeft = 366.0f;
+
+		final float radioPodcastSwitchTop = 1075.0f;
+		final float radioPodcastSwitchBottom = 1127.0f;
+		final float radioPodcastSwitchLeft = 319.0f;
+		final float radioPodcastSwitchRight = 489.0f;
+
+		final float socialButtonsTop = 1190.0f;
+
 		ViewUtil viewUtil = new ViewUtil(rootView);
 		LinearLayout layout;
 
@@ -163,86 +198,150 @@ public class LiveRadioFragment extends BaseFragment {
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio);
 		layout.setWeightSum(verticalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_vspace1, 27.0f);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_info, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_vspace2, 214.0f);
-		viewUtil.setWeight(R.id.relativelayout_liveradio_textfields, 75.0f);
-		viewUtil.setWeight(R.id.view_liveradio_vspace3, 211.0f);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_playpause,
-				playButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_vspace4, 68.0f);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_stop, smallButtonWeight);
-
-		viewUtil.setWeight(R.id.view_liveradio_vspace5, 115.0f);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_livePodSwitch,
-				smallButtonWeight);
-
-		viewUtil.setWeight(R.id.view_liveradio_vspace6, 69.0f);
-		viewUtil.setWeight(R.id.linearlayout_liveradio_social,
-				smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_vspace7, 50.0f);
+		final float vspace1Weight = infoButtonTop;
+		final float vinfoWeight = smallButtonSize;
+		final float vspace2Weight = textFieldsTop - infoButtonTop
+				- smallButtonSize;
+		final float vtextFieldsWeight = textFieldsBottom - textFieldsTop;
+		final float vspace3Weight = playButtonTop - textFieldsBottom;
+		final float vplayWeight = playButtonSize;
+		final float vspace4Weight = stopButtonTop - playButtonTop
+				- playButtonSize;
+		final float vstopWeight = smallButtonSize;
+		final float vspace5Weight = radioPodcastSwitchTop - stopButtonTop
+				- smallButtonSize;
+		final float vradioPodcastWeight = radioPodcastSwitchBottom
+				- radioPodcastSwitchTop;
+		final float vspace6Weight = socialButtonsTop - radioPodcastSwitchBottom;
+		final float vsocialWeight = smallButtonSize;
+		final float vspace7Weight = verticalWeightSum - socialButtonsTop
+				- smallButtonSize;
+		viewUtil.setWeight(R.id.view_liveradio_vspace1, vspace1Weight);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_info, vinfoWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace2, vspace2Weight);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_textfields,
+				vtextFieldsWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace3, vspace3Weight);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_playpause, vplayWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace4, vspace4Weight);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_stop, vstopWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace5, vspace5Weight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_radiopodcastswitch,
+				vradioPodcastWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace6, vspace6Weight);
+		viewUtil.setWeight(R.id.linearlayout_liveradio_social, vsocialWeight);
+		viewUtil.setWeight(R.id.view_liveradio_vspace7, vspace7Weight);
 
 		// Horizontal LinearLayout for info button
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_info);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_info_hspace1, 678.0f);
-		viewUtil.setWeight(infoButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_info_hspace2, 35.0f);
+		final float hInfoSpace1Weight = infoButtonLeft;
+		final float hInfoWeight = smallButtonSize;
+		final float hInfoSpace2Weight = horizontalWeightSum - infoButtonLeft
+				- smallButtonSize;
+		viewUtil.setWeight(R.id.view_liveradio_info_hspace1, hInfoSpace1Weight);
+		viewUtil.setWeight(infoButton, hInfoWeight);
+		viewUtil.setWeight(R.id.view_liveradio_info_hspace2, hInfoSpace2Weight);
 
 		// Horizontal LinearLayout for text fields
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_textfields);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace1, 130.0f);
-		viewUtil.setWeight(programNameTextView, 395.0f);
-		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace2, 15.0f);
-		viewUtil.setWeight(timeTextView, 104.0f);
-		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace3, 136.0f);
+		final float hTextFieldsSpace1Weight = textProgramLeft;
+		final float hTextProgramWeight = textProgramRight - textProgramLeft;
+		final float hTextFieldsSpace2Weight = textTimeLeft - textProgramRight;
+		final float hTextTimeWeight = textTimeRight - textTimeLeft;
+		final float hTextFieldsSpace3Weight = horizontalWeightSum
+				- textTimeRight;
+		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace1,
+				hTextFieldsSpace1Weight);
+		viewUtil.setWeight(programNameTextView, hTextProgramWeight);
+		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace2,
+				hTextFieldsSpace2Weight);
+		viewUtil.setWeight(timeTextView, hTextTimeWeight);
+		viewUtil.setWeight(R.id.view_liveradio_textfields_hspace3,
+				hTextFieldsSpace3Weight);
 
 		// Horizontal LinearLayout for play button
-		final float playSpacing = (horizontalWeightSum - playButtonWeight) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_playpause);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_playpause_hspace1, playSpacing);
-		viewUtil.setWeight(playPauseButton, playButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_playpause_hspace2, playSpacing);
+		final float hPlaySpace1Weight = playButtonLeft;
+		final float hPlayWeight = playButtonSize;
+		final float hPlaySpace2Weight = horizontalWeightSum - playButtonLeft
+				- playButtonSize;
+		viewUtil.setWeight(R.id.view_liveradio_playpause_hspace1,
+				hPlaySpace1Weight);
+		viewUtil.setWeight(playPauseButton, hPlayWeight);
+		viewUtil.setWeight(R.id.view_liveradio_playpause_hspace2,
+				hPlaySpace2Weight);
 
 		// Horizontal LinearLayout for stop button
-		final float stopSpacing = (horizontalWeightSum - smallButtonWeight) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_stop);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_stop_hspace1, stopSpacing);
-		viewUtil.setWeight(stopButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, stopSpacing);
+		final float hStopSpace1Weight = stopButtonLeft;
+		final float hStopWeight = smallButtonSize;
+		final float hStopSpace2Weight = horizontalWeightSum - stopButtonLeft
+				- smallButtonSize;
+		viewUtil.setWeight(R.id.view_liveradio_stop_hspace1, hStopSpace1Weight);
+		viewUtil.setWeight(stopButton, hStopWeight);
+		viewUtil.setWeight(R.id.view_liveradio_stop_hspace2, hStopSpace2Weight);
 
 		// Horizontal LinearLayout for radio/podcast switch
-		final float switchspacing = (horizontalWeightSum - smallButtonWeight) / 2;
 		layout = (LinearLayout) rootView
-				.findViewById(R.id.linearlayout_liveradio_livePodSwitch);
+				.findViewById(R.id.hlayout_liveradio_radiopodcastswitch);
 		layout.setWeightSum(horizontalWeightSum);
-		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1, switchspacing);
-		viewUtil.setWeight(radioPodcastSwitch, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2, switchspacing);
+		final float hSwitchSpace1Weight = radioPodcastSwitchLeft;
+		final float hSwitchWeight = radioPodcastSwitchRight
+				- radioPodcastSwitchLeft;
+		final float hSwitchSpace2Weight = horizontalWeightSum
+				- radioPodcastSwitchRight;
+		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1,
+				hSwitchSpace1Weight);
+		viewUtil.setWeight(radioPodcastSwitch, hSwitchWeight);
+		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2,
+				hSwitchSpace2Weight);
 
 		// Horizontal LinearLayout for social media buttons
-		final float socialSpacing = (horizontalWeightSum - 5 * smallButtonWeight) / 2;
+		final float socialSpacing = (horizontalWeightSum - 5 * smallButtonSize) / 2;
 		layout = (LinearLayout) rootView
 				.findViewById(R.id.linearlayout_liveradio_social);
 		layout.setWeightSum(horizontalWeightSum);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace1, socialSpacing);
-		viewUtil.setWeight(instagramButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace2,
-				smallButtonWeight);
-		viewUtil.setWeight(soundCloudButton, smallButtonWeight);
-		viewUtil.setWeight(R.id.view_liveradio_social_hspace3,
-				smallButtonWeight);
-		viewUtil.setWeight(twitterButton, smallButtonWeight);
+		viewUtil.setWeight(instagramButton, smallButtonSize);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace2, smallButtonSize);
+		viewUtil.setWeight(soundCloudButton, smallButtonSize);
+		viewUtil.setWeight(R.id.view_liveradio_social_hspace3, smallButtonSize);
+		viewUtil.setWeight(twitterButton, smallButtonSize);
 		viewUtil.setWeight(R.id.view_liveradio_social_hspace4, socialSpacing);
 
-		return rootView;
+		// Vertical LinearLayout for SeekBar
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.vlayout_liveradio_seekbar);
+		layout.setWeightSum(verticalWeightSum);
+		final float vSeekBarSpace1Weight = seekBarTop;
+		final float vSeekBarWeight = seekBarBottom - seekBarTop;
+		final float vSeekBarSpace2Weight = verticalWeightSum - seekBarBottom;
+		viewUtil.setWeight(R.id.view_liveradio_seekbar_vspace1,
+				vSeekBarSpace1Weight);
+		viewUtil.setWeight(R.id.hlayout_liveradio_seekbar, vSeekBarWeight);
+		viewUtil.setWeight(R.id.view_liveradio_seekbar_vspace2,
+				vSeekBarSpace2Weight);
+
+		// Horizontal layout for SeekBar
+		layout = (LinearLayout) rootView
+				.findViewById(R.id.hlayout_liveradio_seekbar);
+		layout.setWeightSum(horizontalWeightSum);
+		final float hSeekBarSpace1Weight = seekBarLeft;
+		final float hSeekBarWeight = seekBarRight - seekBarLeft;
+		final float hSeekBarSpace2Weight = horizontalWeightSum - seekBarRight;
+		viewUtil.setWeight(R.id.view_liveradio_seekbar_hspace1,
+				hSeekBarSpace1Weight);
+		viewUtil.setWeight(R.id.seekbar_liveradio, hSeekBarWeight);
+		viewUtil.setWeight(R.id.view_liveradio_seekbar_hspace2,
+				hSeekBarSpace2Weight);
 	}
 
 	@Override
@@ -395,14 +494,14 @@ public class LiveRadioFragment extends BaseFragment {
 
 			background.setBitmap(backgroundBitmap);
 
-			View textFieldLayout = rootView
-					.findViewById(R.id.relativelayout_liveradio_textfields);
+			View seekbarLayout = rootView
+					.findViewById(R.id.hlayout_liveradio_seekbar);
 			final float seekbarWidthFactor = 0.023f;
 			int seekbarWidth = (int) (seekbarWidthFactor * width);
 
 			Drawable thumb = res.getDrawable(R.drawable.liveradio_spoleslider);
 			Drawable thumbScaled = ImageUtil.resize(thumb, seekbarWidth,
-					textFieldLayout.getHeight(), res);
+					seekbarLayout.getHeight(), res);
 			seekbar.setThumb(thumbScaled);
 			seekbar.setThumbOffset(0);
 			seekbar.setPadding(0, 0, 0, 0);
