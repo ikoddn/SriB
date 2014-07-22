@@ -45,6 +45,11 @@ public class OnOffSeekBarChangeHandler implements OnSeekBarChangeListener {
 	public void onStopTrackingTouch(final SeekBar seekBar) {
 		int max = seekBar.getMax();
 		boolean overHalf = progress * 2 > max;
-		seekBar.setProgress(overHalf ? max : 0);
+
+		if (currentlyOn) {
+			seekBar.setProgress(overHalf ? max : 0);
+		} else {
+			seekBar.setProgress(0);
+		}
 	}
 }
