@@ -200,19 +200,11 @@
                 android:layout_height="match_parent"
                 android:visibility="invisible" />
 
-            <RelativeLayout
-                android:id="@+id/rlayout_liveradio_radiopodcastswitch"
+            <SeekBar
+                android:id="@+id/seekbar_liveradio_radiopodcast"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:gravity="left" >
-
-                <no.srib.app.client.view.SquareImageView
-                    android:id="@+id/imageview_liveradio_radiopodcastswitch"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/liveradio_npslider"
-                    srib:usingHeight="true" />
-            </RelativeLayout>
+                android:progressDrawable="@android:color/transparent" />
 
             <View
                 android:id="@+id/view_liveradio_switch_hspace2"

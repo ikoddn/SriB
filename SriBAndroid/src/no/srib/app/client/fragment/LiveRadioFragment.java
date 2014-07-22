@@ -1,6 +1,8 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.event.handler.OnOffSeekBarChangeHandler;
+import no.srib.app.client.event.listener.OnOffSwitchListener;
 import no.srib.app.client.util.FontFactory;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
@@ -36,11 +38,11 @@ public class LiveRadioFragment extends BaseFragment {
 	@InjectView(R.id.button_liveradio_info) ImageButton infoButton;
 	@InjectView(R.id.button_liveradio_playpause) ImageButton playPauseButton;
 	@InjectView(R.id.button_liveradio_stop) ImageButton stopButton;
-	//@InjectView(R.id.button_liveradio_radiopodcastswitch) CheckBox radioPodcastSwitch;
 	@InjectView(R.id.button_liveradio_instagram) ImageButton instagramButton;
 	@InjectView(R.id.button_liveradio_soundcloud) ImageButton soundCloudButton;
 	@InjectView(R.id.button_liveradio_twitter) ImageButton twitterButton;
 	@InjectView(R.id.seekbar_liveradio) SeekBar seekbar;
+	@InjectView(R.id.seekbar_liveradio_radiopodcast) SeekBar radioPodcastSwitch;
 	@InjectView(R.id.textview_liveradio_status) TextView statusTextView;
 	@InjectView(R.id.textview_liveradio_stream) TextView streamTextView;
 	@InjectView(R.id.textview_liveradio_programname) TextView programNameTextView;
@@ -141,8 +143,12 @@ public class LiveRadioFragment extends BaseFragment {
 			setPauseIcon();
 		}
 
+		radioPodcastSwitch
+				.setOnSeekBarChangeListener(new OnOffSeekBarChangeHandler(
+						new RadioPodcastSwitchToggledHandler()));
+
 		if (podcastMode) {
-			//radioPodcastSwitch.setChecked(true);
+			radioPodcastSwitch.setProgress(radioPodcastSwitch.getMax());
 		}
 
 		ViewTreeObserver observer = rootView.getViewTreeObserver();
@@ -182,8 +188,8 @@ public class LiveRadioFragment extends BaseFragment {
 		final float stopButtonTop = 884.0f;
 		final float stopButtonLeft = 366.0f;
 
-		final float radioPodcastSwitchTop = 1075.0f;
-		final float radioPodcastSwitchBottom = 1127.0f;
+		final float radioPodcastSwitchTop = 1080.0f;
+		final float radioPodcastSwitchBottom = 1122.0f;
 		final float radioPodcastSwitchLeft = 319.0f;
 		final float radioPodcastSwitchRight = 489.0f;
 
@@ -296,7 +302,7 @@ public class LiveRadioFragment extends BaseFragment {
 				- radioPodcastSwitchRight;
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace1,
 				hSwitchSpace1Weight);
-		viewUtil.setWeight(R.id.rlayout_liveradio_radiopodcastswitch, hSwitchWeight);
+		viewUtil.setWeight(R.id.seekbar_liveradio_radiopodcast, hSwitchWeight);
 		viewUtil.setWeight(R.id.view_liveradio_switch_hspace2,
 				hSwitchSpace2Weight);
 
@@ -414,9 +420,9 @@ public class LiveRadioFragment extends BaseFragment {
 	public void setPodcastMode() {
 		podcastMode = true;
 
-		/*if (radioPodcastSwitch != null) {
-			radioPodcastSwitch.setChecked(true);
-		}*/
+		if (radioPodcastSwitch != null) {
+			radioPodcastSwitch.setProgress(radioPodcastSwitch.getMax());
+		}
 
 		if (seekbar != null) {
 			seekbar.setVisibility(View.VISIBLE);
@@ -426,9 +432,9 @@ public class LiveRadioFragment extends BaseFragment {
 	public void setLiveRadioMode() {
 		podcastMode = false;
 
-		/*if (radioPodcastSwitch != null) {
-			radioPodcastSwitch.setChecked(false);
-		}*/
+		if (radioPodcastSwitch != null) {
+			radioPodcastSwitch.setProgress(0);
+		}
 
 		if (seekbar != null) {
 			seekbar.setVisibility(View.INVISIBLE);
@@ -465,10 +471,14 @@ public class LiveRadioFragment extends BaseFragment {
 		liveRadioClickListener.onTwitterClicked();
 	}
 
-	/*@OnCheckedChanged(R.id.button_liveradio_radiopodcastswitch)
-	void radioPodcastSwitchCheckedChanged(boolean checked) {
-		liveRadioClickListener.onSwitchPodcastSelected(checked);
-	}*/
+	private class RadioPodcastSwitchToggledHandler implements
+			OnOffSwitchListener {
+
+		@Override
+		public void onToggled(final boolean on) {
+			liveRadioClickListener.onRadioPodcastSwitchToggled(on);
+		}
+	}
 
 	private class LayoutReadyListener implements OnGlobalLayoutListener {
 
@@ -493,6 +503,7 @@ public class LiveRadioFragment extends BaseFragment {
 			View seekbarLayout = rootView
 					.findViewById(R.id.hlayout_liveradio_seekbar);
 			final float seekbarWidthFactor = 0.023f;
+			final float radioPodcastWidthFactor = seekbarWidthFactor * 3;
 			int seekbarWidth = (int) (seekbarWidthFactor * width);
 
 			Drawable thumb = res.getDrawable(R.drawable.liveradio_spoleslider);
@@ -501,6 +512,16 @@ public class LiveRadioFragment extends BaseFragment {
 			seekbar.setThumb(thumbScaled);
 			seekbar.setThumbOffset(0);
 			seekbar.setPadding(0, 0, 0, 0);
+
+			seekbarLayout = rootView
+					.findViewById(R.id.hlayout_liveradio_radiopodcastswitch);
+			seekbarWidth = (int) (radioPodcastWidthFactor * width);
+			thumb = res.getDrawable(R.drawable.liveradio_npslider);
+			thumbScaled = ImageUtil.resize(thumb, seekbarWidth,
+					seekbarLayout.getHeight(), res);
+			radioPodcastSwitch.setThumb(thumbScaled);
+			radioPodcastSwitch.setThumbOffset(0);
+			radioPodcastSwitch.setPadding(0, 0, 0, 0);
 		}
 	}
 
@@ -523,6 +544,6 @@ public class LiveRadioFragment extends BaseFragment {
 
 		void onTwitterClicked();
 
-		void onSwitchPodcastSelected(boolean value);
+		void onRadioPodcastSwitchToggled(boolean value);
 	}
 }

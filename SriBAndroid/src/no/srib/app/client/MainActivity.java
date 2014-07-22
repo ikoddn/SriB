@@ -111,7 +111,7 @@ public class MainActivity extends FragmentActivity {
 	 */
 	private ViewPager viewPager;
 
-	private boolean autoPlayAfterConnect;
+	private boolean autoPlay;
 
 	private ServiceHandler<AudioPlayerService> audioPlayerService;
 	private ServiceHandler<StreamUpdaterService> streamUpdaterService;
@@ -166,7 +166,7 @@ public class MainActivity extends FragmentActivity {
 		viewPager.setOnPageChangeListener(new PageChangeListener(
 				MainActivity.this, viewPager));
 
-		autoPlayAfterConnect = false;
+		autoPlay = false;
 
 		audioPlayerService = new ServiceHandler<AudioPlayerService>(
 				AudioPlayerService.class);
@@ -258,7 +258,7 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	private void prepareLiveRadioIfReady() {
+	private void prepareLiveRadioIfReady(final boolean fromUser) {
 		if (readyComponents.get(Component.AUDIOPLAYER)
 				&& readyComponents.get(Component.STREAMUPDATER)
 				&& readyComponents.get(Component.LIVERADIOSECTION)) {
@@ -299,6 +299,10 @@ public class MainActivity extends FragmentActivity {
 						updateStream(streamSchedule);
 						break;
 					case PODCAST:
+						if (fromUser) {
+							updateStream(streamSchedule);
+						}
+						break;
 					case LIVE_RADIO:
 					default:
 						break;
@@ -338,7 +342,7 @@ public class MainActivity extends FragmentActivity {
 			audioPlayer.setDataSource(url, DataSourceType.LIVE_RADIO);
 			liveRadio.setLiveRadioMode();
 
-			if (autoPlayAfterConnect) {
+			if (autoPlay) {
 				audioPlayer.start();
 			}
 
@@ -417,24 +421,24 @@ public class MainActivity extends FragmentActivity {
 			case PAUSED:
 			case PREPARING:
 			case STOPPED:
-				autoPlayAfterConnect = true;
+				autoPlay = true;
 				audioPlayer.start();
 				break;
 			case STARTED:
-				autoPlayAfterConnect = false;
+				autoPlay = false;
 				audioPlayer.pause();
 				break;
 			case UNINITIALIZED:
 			case COMPLETED:
-				autoPlayAfterConnect = true;
-				prepareLiveRadioIfReady();
+				autoPlay = true;
+				prepareLiveRadioIfReady(true);
 				break;
 			}
 		}
 
 		@Override
 		public void onStopClicked() {
-			autoPlayAfterConnect = false;
+			autoPlay = false;
 			AudioPlayerService audioPlayer = audioPlayerService.getService();
 			audioPlayer.stop();
 		}
@@ -455,8 +459,8 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		@Override
-		public void onSwitchPodcastSelected(boolean value) {
-			if (!value) {
+		public void onRadioPodcastSwitchToggled(final boolean podcast) {
+			if (!podcast) {
 				seekbarHandler.removeCallbacks(seekbarUpdater);
 
 				if (currentProgramResponse != null) {
@@ -466,7 +470,23 @@ public class MainActivity extends FragmentActivity {
 							R.string.currentProgram));
 				}
 
-				prepareLiveRadioIfReady();
+				AudioPlayerService audioPlayer = audioPlayerService
+						.getService();
+
+				switch (audioPlayer.getState()) {
+				case STARTED:
+					autoPlay = true;
+					break;
+				case COMPLETED:
+				case PAUSED:
+				case PREPARING:
+				case STOPPED:
+				case UNINITIALIZED:
+				default:
+					break;
+				}
+
+				prepareLiveRadioIfReady(true);
 			}
 		}
 
@@ -571,7 +591,7 @@ public class MainActivity extends FragmentActivity {
 		service.setStateListener(new AudioPlayerStateListener());
 
 		readyComponents.put(Component.AUDIOPLAYER, true);
-		prepareLiveRadioIfReady();
+		prepareLiveRadioIfReady(false);
 	}
 
 	@Subscribe
@@ -590,7 +610,7 @@ public class MainActivity extends FragmentActivity {
 		registerReceiver(connectivityChangeReceiver, filter);
 
 		readyComponents.put(Component.STREAMUPDATER, true);
-		prepareLiveRadioIfReady();
+		prepareLiveRadioIfReady(false);
 	}
 
 	@Subscribe
@@ -672,7 +692,7 @@ public class MainActivity extends FragmentActivity {
 			final LiveRadioSectionFragment fragment) {
 
 		readyComponents.put(Component.LIVERADIOSECTION, true);
-		prepareLiveRadioIfReady();
+		prepareLiveRadioIfReady(false);
 	}
 
 	@Subscribe
