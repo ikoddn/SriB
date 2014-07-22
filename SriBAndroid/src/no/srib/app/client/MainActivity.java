@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
+import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.adapter.updater.AdapterUpdater;
 import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.adapter.updater.ProgramNameAdapterUpdater;
@@ -18,6 +19,9 @@ import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.dao.StreamScheduleDAO;
 import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.sharedpreferences.StreamScheduleDAOImpl;
+import no.srib.app.client.event.handler.ConnectivityChangedHandler;
+import no.srib.app.client.event.handler.PageChangeHandler;
+import no.srib.app.client.event.listener.OnSearchListener;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
@@ -30,7 +34,6 @@ import no.srib.app.client.http.ArticleHttpResponse;
 import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.http.PodcastHttpResponse;
 import no.srib.app.client.http.ProgramNameHttpResponse;
-import no.srib.app.client.listener.OnSearchListener;
 import no.srib.app.client.model.Article;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.PodcastPrograms;
@@ -46,8 +49,6 @@ import no.srib.app.client.service.audioplayer.AudioPlayerService.DataSourceType;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.util.BusProvider;
-import no.srib.app.client.viewpager.PageChangeListener;
-import no.srib.app.client.viewpager.SectionsPagerAdapter;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
@@ -163,7 +164,7 @@ public class MainActivity extends FragmentActivity {
 		viewPager
 				.setCurrentItem(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
-		viewPager.setOnPageChangeListener(new PageChangeListener(
+		viewPager.setOnPageChangeListener(new PageChangeHandler(
 				MainActivity.this, viewPager));
 
 		autoPlay = false;
@@ -602,7 +603,7 @@ public class MainActivity extends FragmentActivity {
 
 		connectivityChangeReceiver = new ConnectivityChangeReceiver();
 		connectivityChangeReceiver
-				.setConnectionChangedListener(new ConnectivityChangedListener(
+				.setConnectionChangedListener(new ConnectivityChangedHandler(
 						service));
 
 		IntentFilter filter = new IntentFilter(

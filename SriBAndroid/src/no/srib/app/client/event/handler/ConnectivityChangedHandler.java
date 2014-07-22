@@ -1,15 +1,15 @@
-package no.srib.app.client;
+package no.srib.app.client.event.handler;
 
 import no.srib.app.client.receiver.ConnectivityChangeReceiver.OnConnectivityChangedListener;
 import no.srib.app.client.service.StreamUpdaterService;
 
-public class ConnectivityChangedListener implements
+public class ConnectivityChangedHandler implements
 		OnConnectivityChangedListener {
 
 	private boolean previouslyUnavailable;
 	private StreamUpdaterService streamUpdater;
 
-	public ConnectivityChangedListener(final StreamUpdaterService streamUpdater) {
+	public ConnectivityChangedHandler(final StreamUpdaterService streamUpdater) {
 		previouslyUnavailable = false;
 		this.streamUpdater = streamUpdater;
 	}

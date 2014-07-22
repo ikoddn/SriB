@@ -2,7 +2,7 @@ package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
 import no.srib.app.client.adapter.ArticleListAdapter;
-import no.srib.app.client.listener.OnSearchListener;
+import no.srib.app.client.event.listener.OnSearchListener;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;

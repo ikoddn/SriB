@@ -1,16 +1,17 @@
-package no.srib.app.client.viewpager;
+package no.srib.app.client.event.handler;
 
+import no.srib.app.client.adapter.SectionsPagerAdapter;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.inputmethod.InputMethodManager;
 
-public class PageChangeListener implements OnPageChangeListener {
+public class PageChangeHandler implements OnPageChangeListener {
 
 	private InputMethodManager inputManager;
 	private ViewPager viewPager;
 
-	public PageChangeListener(final Context context, final ViewPager viewPager) {
+	public PageChangeHandler(final Context context, final ViewPager viewPager) {
 
 		this.viewPager = viewPager;
 		inputManager = (InputMethodManager) context
