@@ -8,6 +8,7 @@
 
     <!-- Live radio fragment -->
     <string name="textView_liveradio_time_live">LIVE</string>
+    <string name="toast_liveradio_switch_to_podcast_attempt">Velg podcast fra siden til høyre.</string>
     <string name="imagebutton_liveradio_info_desc">Info</string>
     <string name="imagebutton_liveradio_playpause_desc">Play/pause</string>
     <string name="imagebutton_liveradio_stop_desc">Stop</string>

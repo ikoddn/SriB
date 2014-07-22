@@ -1,8 +1,10 @@
 package no.srib.app.client.event.handler;
 
+import no.srib.app.client.R;
 import no.srib.app.client.event.listener.OnOffSwitchListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 
 public class OnOffSeekBarChangeHandler implements OnSeekBarChangeListener {
 
@@ -49,6 +51,12 @@ public class OnOffSeekBarChangeHandler implements OnSeekBarChangeListener {
 		if (currentlyOn) {
 			seekBar.setProgress(overHalf ? max : 0);
 		} else {
+			if (overHalf) {
+				Toast.makeText(seekBar.getContext(),
+						R.string.toast_liveradio_switch_to_podcast_attempt,
+						Toast.LENGTH_SHORT).show();
+			}
+
 			seekBar.setProgress(0);
 		}
 	}
