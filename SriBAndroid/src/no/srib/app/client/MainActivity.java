@@ -641,50 +641,52 @@ public class MainActivity extends FragmentActivity {
 
 		AudioPlayerService audioPlayer = audioPlayerService.getService();
 
-		switch (audioPlayer.getState()) {
-		case PREPARING:
-		case STARTED:
-			fragment.setPauseIcon();
-			break;
-		case COMPLETED:
-		case PAUSED:
-		case STOPPED:
-		case UNINITIALIZED:
-			break;
-		}
-
-		switch (audioPlayer.getDataSourceType()) {
-		case LIVE_RADIO:
-			fragment.setLiveRadioMode();
-
+		if (audioPlayer != null) {
 			switch (audioPlayer.getState()) {
-			case STARTED:
-			case PAUSED:
-				String liveText = getResources().getString(
-						R.string.textView_liveradio_time_live);
-				fragment.setTimeText(liveText);
-				break;
-			case STOPPED:
-			case COMPLETED:
 			case PREPARING:
+			case STARTED:
+				fragment.setPauseIcon();
+				break;
+			case COMPLETED:
+			case PAUSED:
+			case STOPPED:
 			case UNINITIALIZED:
+				break;
+			}
+
+			switch (audioPlayer.getDataSourceType()) {
+			case LIVE_RADIO:
+				fragment.setLiveRadioMode();
+
+				switch (audioPlayer.getState()) {
+				case STARTED:
+				case PAUSED:
+					String liveText = getResources().getString(
+							R.string.textView_liveradio_time_live);
+					fragment.setTimeText(liveText);
+					break;
+				case STOPPED:
+				case COMPLETED:
+				case PREPARING:
+				case UNINITIALIZED:
+				default:
+					break;
+				}
+
+				break;
+			case PODCAST:
+				fragment.setPodcastMode();
+				fragment.setMaxOnSeekBar(audioPlayer.getDuration());
+
+				if (audioPlayer.getState() == State.STARTED) {
+					seekbarHandler.removeCallbacks(seekbarUpdater);
+					seekbarHandler.postDelayed(seekbarUpdater, 0);
+				}
+				break;
+			case NONE:
 			default:
 				break;
 			}
-
-			break;
-		case PODCAST:
-			fragment.setPodcastMode();
-			fragment.setMaxOnSeekBar(audioPlayer.getDuration());
-
-			if (audioPlayer.getState() == State.STARTED) {
-				seekbarHandler.removeCallbacks(seekbarUpdater);
-				seekbarHandler.postDelayed(seekbarUpdater, 0);
-			}
-			break;
-		case NONE:
-		default:
-			break;
 		}
 	}
 
