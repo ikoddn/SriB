@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 
 public class ImageUtil {
 
+	private static final int MAX_SAMPLE_SIZE = 64;
+
 	public static Bitmap decodeSampledBitmapFromResource(Resources res,
 			int resId, int reqWidth, int reqHeight) {
 
@@ -22,7 +24,20 @@ public class ImageUtil {
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeResource(res, resId, options);
+
+		boolean enoughMemory = false;
+		Bitmap bitmap = null;
+
+		while (!enoughMemory && options.inSampleSize < MAX_SAMPLE_SIZE) {
+			try {
+				bitmap = BitmapFactory.decodeResource(res, resId, options);
+				enoughMemory = true;
+			} catch (OutOfMemoryError e) {
+				options.inSampleSize *= 2;
+			}
+		}
+
+		return bitmap;
 	}
 
 	private static int calculateInSampleSize(BitmapFactory.Options options,
