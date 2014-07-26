@@ -12,8 +12,8 @@ import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.adapter.updater.AdapterUpdater;
-import no.srib.app.client.adapter.updater.JsonAdapterUpdater;
 import no.srib.app.client.adapter.updater.ProgramNameAdapterUpdater;
+import no.srib.app.client.asynctask.ArticleAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.dao.StreamScheduleDAO;
@@ -30,11 +30,9 @@ import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
-import no.srib.app.client.http.ArticleHttpResponse;
 import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.http.PodcastHttpResponse;
 import no.srib.app.client.http.ProgramNameHttpResponse;
-import no.srib.app.client.model.Article;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
@@ -95,8 +93,6 @@ public class MainActivity extends FragmentActivity {
 	private ArticleListAdapter articleListAdapter;
 
 	private HttpResponseListener currentProgramResponse;
-
-	private AdapterUpdater<Article, String> articleAdapterUpdater;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -180,13 +176,9 @@ public class MainActivity extends FragmentActivity {
 
 		articleListAdapter = new ArticleListAdapter(this);
 
-		articleAdapterUpdater = new JsonAdapterUpdater<Article>(Article.class,
+		ArticleAsyncTask articleTask = new ArticleAsyncTask(this,
 				articleListAdapter);
-		HttpResponseListener articleResponse = new ArticleHttpResponse(
-				MainActivity.this, articleAdapterUpdater, false);
-		HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
-		String url = getResources().getString(R.string.url_articles);
-		httpAsyncTask.execute(url);
+		articleTask.execute();
 
 		// Podcast Part
 		podcastGridAdapter = new PodcastGridAdapter(this);
@@ -813,22 +805,18 @@ public class MainActivity extends FragmentActivity {
 			try {
 				String urlEncodedQuery = URLEncoder.encode(query, "UTF-8");
 
-				HttpResponseListener articleResponse = new ArticleHttpResponse(
-						MainActivity.this, articleAdapterUpdater, true);
-				HttpAsyncTask httpAsyncTask = new HttpAsyncTask(articleResponse);
-
-				StringBuilder sb = new StringBuilder();
-				sb.append(getResources().getString(R.string.url_articles));
-				sb.append("?q=" + urlEncodedQuery);
-
-				httpAsyncTask.execute(sb.toString());
+				ArticleAsyncTask articleTask = new ArticleAsyncTask(
+						MainActivity.this, articleListAdapter);
+				articleTask.execute(urlEncodedQuery);
 			} catch (UnsupportedEncodingException e) {
 			}
 		}
 
 		@Override
 		public void restorePreSearchData() {
-			articleAdapterUpdater.restoreStoredData();
+			ArticleAsyncTask articleTask = new ArticleAsyncTask(
+					MainActivity.this, articleListAdapter);
+			articleTask.execute();
 		}
 	}
 }
