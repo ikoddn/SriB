@@ -26,7 +26,7 @@ public class ArticleAsyncTask extends
 	public ArticleAsyncTask(final Context context,
 			final ListBasedAdapter<Article> adapter) {
 
-		super(ArticleCacheDAOImpl.INSTANCE, CACHE_VALIDITY_SECONDS);
+		super(ArticleCacheDAOImpl.INSTANCE);
 
 		this.context = context;
 		this.adapter = adapter;
@@ -60,7 +60,9 @@ public class ArticleAsyncTask extends
 
 			// If query == null then the result is not a search result
 			if (query == null && result != null) {
-				cache(result);
+				long expiration = System.currentTimeMillis()
+						+ CACHE_VALIDITY_SECONDS * 1000;
+				cache(result, expiration);
 			}
 		}
 

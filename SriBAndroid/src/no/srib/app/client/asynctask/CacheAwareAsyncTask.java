@@ -8,13 +8,10 @@ import android.os.AsyncTask;
 public abstract class CacheAwareAsyncTask<Params, Result> extends
 		AsyncTask<Params, Result, Result> {
 
-	private final int cacheValidity;
 	private final CacheObjectDAO<Result> cacheDAO;
 
-	protected CacheAwareAsyncTask(final CacheObjectDAO<Result> cacheDAO,
-			final int cacheValidity) {
+	protected CacheAwareAsyncTask(final CacheObjectDAO<Result> cacheDAO) {
 		this.cacheDAO = cacheDAO;
-		this.cacheValidity = cacheValidity;
 	}
 
 	@Override
@@ -37,10 +34,7 @@ public abstract class CacheAwareAsyncTask<Params, Result> extends
 		if (cacheObject != null) {
 			result = cacheObject.getData();
 
-			long diffSeconds = (System.currentTimeMillis() - cacheObject
-					.getTimeMillis()) / 1000;
-
-			if (diffSeconds > cacheValidity) {
+			if (System.currentTimeMillis() > cacheObject.getExpirationTime()) {
 				publishProgress(result);
 				result = null;
 			}
@@ -49,11 +43,9 @@ public abstract class CacheAwareAsyncTask<Params, Result> extends
 		return result;
 	}
 
-	protected void cache(final Result result) {
-		final long now = System.currentTimeMillis();
-
+	protected void cache(final Result result, final long expirationTime) {
 		try {
-			cacheDAO.set(new CacheObject<Result>(result, now));
+			cacheDAO.set(new CacheObject<Result>(result, expirationTime));
 		} catch (DAOException e) {
 		}
 	}

@@ -27,7 +27,7 @@ public class PodcastProgramsAsyncTask extends
 	public PodcastProgramsAsyncTask(final Context context,
 			final ProgramSpinnerAdapter adapter) {
 
-		super(PodcastProgramsCacheDAOImpl.INSTANCE, CACHE_VALIDITY_SECONDS);
+		super(PodcastProgramsCacheDAOImpl.INSTANCE);
 
 		this.context = context;
 		this.adapter = adapter;
@@ -51,7 +51,9 @@ public class PodcastProgramsAsyncTask extends
 			}
 
 			if (result != null) {
-				cache(result);
+				long expiration = System.currentTimeMillis()
+						+ CACHE_VALIDITY_SECONDS * 1000;
+				cache(result, expiration);
 			}
 		}
 

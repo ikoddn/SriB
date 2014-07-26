@@ -18,4 +18,7 @@ public interface AppServerService {
 
 	@GET("/podcast/programs")
 	Response getPodcastPrograms();
+
+	@GET("/schedule/now")
+	Response getCurrentSchedule();
 }

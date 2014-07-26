@@ -6,23 +6,23 @@ public class CacheObject<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private long timeMillis;
+	private long expirationTime;
 	private T data;
 
 	public CacheObject() {
 	}
 
-	public CacheObject(final T data, final long timeMillis) {
-		this.timeMillis = timeMillis;
+	public CacheObject(final T data, final long expirationTime) {
+		this.expirationTime = expirationTime;
 		this.data = data;
 	}
 
-	public long getTimeMillis() {
-		return timeMillis;
+	public long getExpirationTime() {
+		return expirationTime;
 	}
 
-	public void setTimeMillis(final long timeMillis) {
-		this.timeMillis = timeMillis;
+	public void setExpirationTime(final long expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 
 	public T getData() {

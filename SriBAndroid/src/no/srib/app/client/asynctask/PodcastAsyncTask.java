@@ -25,7 +25,7 @@ public class PodcastAsyncTask extends
 	public PodcastAsyncTask(final Context context,
 			final ListBasedAdapter<Podcast> adapter) {
 
-		super(PodcastCacheDAOImpl.INSTANCE, CACHE_VALIDITY_SECONDS);
+		super(PodcastCacheDAOImpl.INSTANCE);
 
 		this.context = context;
 		this.adapter = adapter;
@@ -57,7 +57,9 @@ public class PodcastAsyncTask extends
 				}
 
 				if (result != null) {
-					cache(result);
+					long expiration = System.currentTimeMillis()
+							+ CACHE_VALIDITY_SECONDS * 1000;
+					cache(result, expiration);
 				}
 			} else {
 				try {

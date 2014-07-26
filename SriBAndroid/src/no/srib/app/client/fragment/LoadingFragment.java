@@ -23,7 +23,7 @@ public class LoadingFragment extends BaseFragment {
 	private View rootView;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onBaseCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		rootView = inflater

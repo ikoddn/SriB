@@ -5,7 +5,6 @@
 
     <!-- Live radio -->
     <string name="url_audiostream">http://app.srib.no:8080/SriBServer/rest/radiourl</string>
-    <string name="currentProgram">http://app.srib.no:8080/SriBServer/rest/schedule/now</string>
 
     <!-- Podcast -->
     <string name="url_podcast_nas">http://podcast.srib.no:8080/podcast/</string>

@@ -12,10 +12,9 @@ import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.asynctask.ArticleAsyncTask;
-import no.srib.app.client.asynctask.HttpAsyncTask;
-import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
 import no.srib.app.client.asynctask.PodcastAsyncTask;
 import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
+import no.srib.app.client.asynctask.ScheduleAsyncTask;
 import no.srib.app.client.dao.StreamScheduleDAO;
 import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.sharedpreferences.StreamScheduleDAOImpl;
@@ -30,7 +29,6 @@ import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
-import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
@@ -85,8 +83,6 @@ public class MainActivity extends FragmentActivity {
 
 	private ConnectivityChangeReceiver connectivityChangeReceiver;
 
-	private HttpResponseListener currentProgramResponse;
-
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -124,7 +120,6 @@ public class MainActivity extends FragmentActivity {
 
 		articleListAdapter = null;
 		viewPager = null;
-		currentProgramResponse = null;
 		audioPlayerService = null;
 		streamUpdaterService = null;
 
@@ -437,12 +432,13 @@ public class MainActivity extends FragmentActivity {
 			if (!podcast) {
 				seekbarHandler.removeCallbacks(seekbarUpdater);
 
-				if (currentProgramResponse != null) {
-					HttpAsyncTask programTask = new HttpAsyncTask(
-							currentProgramResponse);
-					programTask.execute(getResources().getString(
-							R.string.currentProgram));
-				}
+				LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+				LiveRadioFragment fragment = sectionFragment
+						.getLiveRadioFragment();
+				TextView textView = fragment.getProgramNameTextView();
+
+				ScheduleAsyncTask scheduleTask = new ScheduleAsyncTask(textView);
+				scheduleTask.execute();
 
 				AudioPlayerService audioPlayer = audioPlayerService
 						.getService();
@@ -602,13 +598,9 @@ public class MainActivity extends FragmentActivity {
 		fragment.setSeekBarOnChangeListener(new SeekBarChangeListener());
 
 		TextView textView = fragment.getProgramNameTextView();
-		currentProgramResponse = new CurrentScheduleHttpResponse(textView);
 
-		HttpAsyncTask programName = new HttpAsyncTask(currentProgramResponse);
-		String programNameURL = getResources().getString(
-				R.string.currentProgram);
-
-		programName.execute(programNameURL);
+		ScheduleAsyncTask scheduleTask = new ScheduleAsyncTask(textView);
+		scheduleTask.execute();
 
 		AudioPlayerService audioPlayer = audioPlayerService.getService();
 
