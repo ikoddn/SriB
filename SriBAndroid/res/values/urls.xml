@@ -8,8 +8,6 @@
     <string name="currentProgram">http://app.srib.no:8080/SriBServer/rest/schedule/now</string>
 
     <!-- Podcast -->
-    <string name="getAllPodcast">http://app.srib.no:8080/SriBServer/rest/podcast</string>
-    <string name="url_podcastprograms">http://app.srib.no:8080/SriBServer/rest/podcast/programs</string>
     <string name="url_podcast_nas">http://podcast.srib.no:8080/podcast/</string>
 
     <!-- Social media -->

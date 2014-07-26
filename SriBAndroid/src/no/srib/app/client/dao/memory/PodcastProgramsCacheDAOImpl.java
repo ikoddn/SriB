@@ -1,7 +1,6 @@
 package no.srib.app.client.dao.memory;
 
 import no.srib.app.client.dao.CacheObjectDAO;
-import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.model.CacheObject;
 import no.srib.app.client.model.PodcastPrograms;
 
@@ -17,13 +16,12 @@ public enum PodcastProgramsCacheDAOImpl
 	}
 
 	@Override
-	public CacheObject<PodcastPrograms> get() throws DAOException {
+	public CacheObject<PodcastPrograms> get() {
 		return cacheObject;
 	}
 
 	@Override
-	public void set(final CacheObject<PodcastPrograms> cacheObject)
-			throws DAOException {
+	public void set(final CacheObject<PodcastPrograms> cacheObject) {
 		this.cacheObject = cacheObject;
 	}
 }

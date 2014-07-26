@@ -1,6 +1,5 @@
 package no.srib.app.client.dao.retrofit;
 
-import java.io.IOException;
 import java.util.List;
 
 import no.srib.app.client.dao.ArticleDAO;
@@ -12,9 +11,7 @@ import org.apache.http.HttpStatus;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ArticleDAOImpl extends BaseDAOImpl implements ArticleDAO {
 
@@ -51,15 +48,7 @@ public class ArticleDAOImpl extends BaseDAOImpl implements ArticleDAO {
 		}
 
 		if (response != null && response.getStatus() == HttpStatus.SC_OK) {
-			try {
-				list = mapper.readValue(response.getBody().in(), type);
-			} catch (JsonParseException e) {
-				throw new DAOException(e);
-			} catch (JsonMappingException e) {
-				throw new DAOException(e);
-			} catch (IOException e) {
-				throw new DAOException(e);
-			}
+			list = convertToType(response, type);
 		}
 
 		return list;

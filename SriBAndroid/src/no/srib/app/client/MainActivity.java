@@ -14,6 +14,7 @@ import no.srib.app.client.adapter.SectionsPagerAdapter;
 import no.srib.app.client.asynctask.ArticleAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
+import no.srib.app.client.asynctask.PodcastAsyncTask;
 import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
 import no.srib.app.client.dao.StreamScheduleDAO;
 import no.srib.app.client.dao.exception.DAOException;
@@ -30,7 +31,6 @@ import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.http.CurrentScheduleHttpResponse;
-import no.srib.app.client.http.PodcastHttpResponse;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
@@ -49,7 +49,6 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -139,8 +138,6 @@ public class MainActivity extends FragmentActivity {
 
 		BusProvider.INSTANCE.get().register(this);
 
-		Resources res = getResources();
-
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
@@ -177,18 +174,13 @@ public class MainActivity extends FragmentActivity {
 				articleListAdapter);
 		articleTask.execute();
 
+		PodcastAsyncTask podcastTask = new PodcastAsyncTask(this,
+				podcastGridAdapter);
+		podcastTask.execute();
+
 		PodcastProgramsAsyncTask podcastProgramsTask = new PodcastProgramsAsyncTask(
 				this, programSpinnerAdapter);
 		podcastProgramsTask.execute();
-
-		HttpResponseListener podcastResponse = new PodcastHttpResponse(
-				podcastGridAdapter);
-
-		HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
-
-		String podcastTaskUrl = res.getString(R.string.getAllPodcast);
-
-		podcastTask.execute(podcastTaskUrl);
 	}
 
 	@Override
@@ -509,19 +501,17 @@ public class MainActivity extends FragmentActivity {
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
 
-			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
-
-			HttpResponseListener podcastResponse = new PodcastHttpResponse(
-					podcastGridAdapter);
-			HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
-			String url = getResources().getString(R.string.getAllPodcast);
+			PodcastAsyncTask podcastTask = new PodcastAsyncTask(
+					MainActivity.this, podcastGridAdapter);
+			Integer programId = null;
 
 			if (position != 0) {
-				url += "/" + parent.getItemIdAtPosition(position);
+				programId = (int) parent.getItemIdAtPosition(position);
 			}
 
-			podcastTask.execute(url);
+			podcastTask.execute(programId);
 
+			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
 			GridView grid = fragment.getGridView();
 			grid.smoothScrollToPosition(0);
 		}
