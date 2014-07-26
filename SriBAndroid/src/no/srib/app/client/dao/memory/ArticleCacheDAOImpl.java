@@ -2,9 +2,9 @@ package no.srib.app.client.dao.memory;
 
 import java.util.List;
 
-import no.srib.app.client.dao.CacheObject;
 import no.srib.app.client.dao.CacheObjectDAO;
 import no.srib.app.client.model.Article;
+import no.srib.app.client.model.CacheObject;
 
 public enum ArticleCacheDAOImpl implements CacheObjectDAO<List<Article>> {
 	INSTANCE;

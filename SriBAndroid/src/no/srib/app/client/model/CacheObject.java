@@ -1,4 +1,4 @@
-package no.srib.app.client.dao;
+package no.srib.app.client.model;
 
 import java.io.Serializable;
 
