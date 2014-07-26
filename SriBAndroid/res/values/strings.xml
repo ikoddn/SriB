@@ -19,7 +19,7 @@
     <!-- Articles fragment -->
     <string name="imageview_articleitem_desc">Image</string>
     <string name="searchView_articleList_hint">Søk etter artikkel…</string>
-    <string name="toast_noContent">Fant ingen artikler :(</string>
+    <string name="toast_articles_nocontent">Fant ingen artikler :(</string>
 
     <!-- Podcast fragment -->
     <string name="spinner_podcast_default">Velg program</string>

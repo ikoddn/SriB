@@ -14,6 +14,7 @@ import no.srib.app.client.model.CacheObject;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ArticleAsyncTask extends
 		AsyncTask<String, List<Article>, List<Article>> {
@@ -104,8 +105,8 @@ public class ArticleAsyncTask extends
 			Log.d("SriB", "ArticleAsyncTask onPostExecute(): exception != null");
 			exception.printStackTrace();
 		} else if (result == null) {
-			// 204
-			Log.d("SriB", "ArticleAsyncTask onPostExecute(): result == null");
+			Toast.makeText(context, R.string.toast_articles_nocontent,
+					Toast.LENGTH_SHORT).show();
 		} else {
 			adapter.setList(result);
 			adapter.notifyDataSetChanged();
