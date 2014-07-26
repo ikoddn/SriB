@@ -5,7 +5,9 @@ import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.imageloader.UrlImageLoader;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.FontFactory;
+import no.srib.app.client.util.ImageUtil;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -47,7 +49,10 @@ public class PodcastView extends LinearLayout {
 				true);
 		ButterKnife.inject(this);
 
-		defaultImage = context.getResources().getDrawable(DEFAULT_IMAGE_ID);
+		Resources resources = context.getResources();
+		defaultImage = resources.getDrawable(DEFAULT_IMAGE_ID);
+		defaultImage = ImageUtil.resize(defaultImage, viewWidth, viewWidth,
+				resources);
 
 		Typeface font = FontFactory.INSTANCE.getFont(context, FONT_ID);
 		dateTextView.setTypeface(font);
