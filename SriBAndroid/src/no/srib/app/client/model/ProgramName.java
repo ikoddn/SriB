@@ -4,12 +4,11 @@ public class ProgramName {
 
 	private int defnr;
 	private String name;
-	
+
 	public ProgramName() {
-		// TODO Auto-generated constructor stub
 	}
-	
-	public ProgramName(int defnr, String name) {
+
+	public ProgramName(final int defnr, final String name) {
 		super();
 		this.defnr = defnr;
 		this.name = name;
@@ -19,7 +18,7 @@ public class ProgramName {
 		return defnr;
 	}
 
-	public void setDefnr(int defnr) {
+	public void setDefnr(final int defnr) {
 		this.defnr = defnr;
 	}
 
@@ -27,16 +26,7 @@ public class ProgramName {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
-	
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return getName();
-	}
-	
-	
-
 }

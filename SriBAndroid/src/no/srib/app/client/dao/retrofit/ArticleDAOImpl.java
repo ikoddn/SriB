@@ -9,31 +9,22 @@ import no.srib.app.client.model.Article;
 
 import org.apache.http.HttpStatus;
 
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ArticleDAOImpl implements ArticleDAO {
+public class ArticleDAOImpl extends BaseDAOImpl implements ArticleDAO {
 
 	private final JavaType type;
-	private final ObjectMapper mapper;
-
-	private AppServerService appServer;
 
 	public ArticleDAOImpl(final String restApiUrl) {
-		mapper = new ObjectMapper();
+		super(restApiUrl);
+
 		type = mapper.getTypeFactory().constructCollectionType(List.class,
 				Article.class);
-
-		RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(
-				restApiUrl).build();
-
-		appServer = restAdapter.create(AppServerService.class);
 	}
 
 	@Override

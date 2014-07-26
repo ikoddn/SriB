@@ -7,5 +7,5 @@ public interface CacheObjectDAO<T> {
 
 	CacheObject<T> get() throws DAOException;
 
-	void set(CacheObject<T> articleCache) throws DAOException;
+	void set(CacheObject<T> cacheObject) throws DAOException;
 }

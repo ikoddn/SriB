@@ -9,19 +9,19 @@ import no.srib.app.client.model.CacheObject;
 public enum ArticleCacheDAOImpl implements CacheObjectDAO<List<Article>> {
 	INSTANCE;
 
-	private CacheObject<List<Article>> articleCache;
+	private CacheObject<List<Article>> cacheObject;
 
 	private ArticleCacheDAOImpl() {
-		articleCache = null;
+		cacheObject = null;
 	}
 
 	@Override
 	public CacheObject<List<Article>> get() {
-		return articleCache;
+		return cacheObject;
 	}
 
 	@Override
-	public void set(final CacheObject<List<Article>> articleCache) {
-		this.articleCache = articleCache;
+	public void set(final CacheObject<List<Article>> cacheObject) {
+		this.cacheObject = cacheObject;
 	}
 }

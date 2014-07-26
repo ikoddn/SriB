@@ -11,11 +11,10 @@ import no.srib.app.client.adapter.ArticleListAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
-import no.srib.app.client.adapter.updater.AdapterUpdater;
-import no.srib.app.client.adapter.updater.ProgramNameAdapterUpdater;
 import no.srib.app.client.asynctask.ArticleAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask;
 import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
+import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
 import no.srib.app.client.dao.StreamScheduleDAO;
 import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.sharedpreferences.StreamScheduleDAOImpl;
@@ -32,10 +31,7 @@ import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.http.CurrentScheduleHttpResponse;
 import no.srib.app.client.http.PodcastHttpResponse;
-import no.srib.app.client.http.ProgramNameHttpResponse;
 import no.srib.app.client.model.Podcast;
-import no.srib.app.client.model.PodcastPrograms;
-import no.srib.app.client.model.ProgramName;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
 import no.srib.app.client.service.ServiceHandler;
@@ -90,8 +86,6 @@ public class MainActivity extends FragmentActivity {
 
 	private ConnectivityChangeReceiver connectivityChangeReceiver;
 
-	private ArticleListAdapter articleListAdapter;
-
 	private HttpResponseListener currentProgramResponse;
 
 	/**
@@ -113,6 +107,7 @@ public class MainActivity extends FragmentActivity {
 	private ServiceHandler<AudioPlayerService> audioPlayerService;
 	private ServiceHandler<StreamUpdaterService> streamUpdaterService;
 
+	private ArticleListAdapter articleListAdapter;
 	private PodcastGridAdapter podcastGridAdapter;
 	private ProgramSpinnerAdapter programSpinnerAdapter;
 
@@ -175,31 +170,25 @@ public class MainActivity extends FragmentActivity {
 		streamUpdaterService.bind(MainActivity.this);
 
 		articleListAdapter = new ArticleListAdapter(this);
+		podcastGridAdapter = new PodcastGridAdapter(this);
+		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
 
 		ArticleAsyncTask articleTask = new ArticleAsyncTask(this,
 				articleListAdapter);
 		articleTask.execute();
 
-		// Podcast Part
-		podcastGridAdapter = new PodcastGridAdapter(this);
-		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
+		PodcastProgramsAsyncTask podcastProgramsTask = new PodcastProgramsAsyncTask(
+				this, programSpinnerAdapter);
+		podcastProgramsTask.execute();
 
-		AdapterUpdater<ProgramName, PodcastPrograms> programNameAdapterUpdater = new ProgramNameAdapterUpdater(
-				programSpinnerAdapter);
-
-		HttpResponseListener programResponse = new ProgramNameHttpResponse(
-				programNameAdapterUpdater);
 		HttpResponseListener podcastResponse = new PodcastHttpResponse(
 				podcastGridAdapter);
 
-		HttpAsyncTask programTask = new HttpAsyncTask(programResponse);
 		HttpAsyncTask podcastTask = new HttpAsyncTask(podcastResponse);
 
-		String programTaskUrl = res.getString(R.string.url_podcastprograms);
 		String podcastTaskUrl = res.getString(R.string.getAllPodcast);
 
 		podcastTask.execute(podcastTaskUrl);
-		programTask.execute(programTaskUrl);
 	}
 
 	@Override

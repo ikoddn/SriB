@@ -8,4 +8,7 @@ public interface AppServerService {
 
 	@GET("/articles")
 	Response getArticles(@Query("q") String query);
+
+	@GET("/podcast/programs")
+	Response getPodcastPrograms();
 }

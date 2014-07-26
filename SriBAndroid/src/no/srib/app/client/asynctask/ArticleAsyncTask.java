@@ -5,19 +5,16 @@ import java.util.List;
 import no.srib.app.client.R;
 import no.srib.app.client.adapter.ListBasedAdapter;
 import no.srib.app.client.dao.ArticleDAO;
-import no.srib.app.client.dao.CacheObjectDAO;
 import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.memory.ArticleCacheDAOImpl;
 import no.srib.app.client.dao.retrofit.ArticleDAOImpl;
 import no.srib.app.client.model.Article;
-import no.srib.app.client.model.CacheObject;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 public class ArticleAsyncTask extends
-		AsyncTask<String, List<Article>, List<Article>> {
+		CacheAwareAsyncTask<String, List<Article>> {
 
 	private static final int CACHE_VALIDITY_SECONDS = 3600;
 
@@ -29,64 +26,41 @@ public class ArticleAsyncTask extends
 	public ArticleAsyncTask(final Context context,
 			final ListBasedAdapter<Article> adapter) {
 
+		super(ArticleCacheDAOImpl.INSTANCE, CACHE_VALIDITY_SECONDS);
+
 		this.context = context;
 		this.adapter = adapter;
 		exception = null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected List<Article> doInBackground(final String... queries) {
 		List<Article> result = null;
 		String query = null;
-		CacheObjectDAO<List<Article>> cacheDAO = ArticleCacheDAOImpl.INSTANCE;
 
 		if (queries != null && queries.length > 0) {
 			// Searching
 			query = queries[0];
 		} else {
 			// Not searching, we can check the cache
-			CacheObject<List<Article>> articleCache;
-
-			try {
-				articleCache = cacheDAO.get();
-			} catch (DAOException e) {
-				articleCache = null;
-			}
-
-			if (articleCache != null) {
-				result = articleCache.getData();
-
-				long diffSeconds = (System.currentTimeMillis() - articleCache
-						.getTimeMillis()) / 1000;
-
-				if (diffSeconds > CACHE_VALIDITY_SECONDS) {
-					publishProgress(result);
-					result = null;
-				}
-			}
+			result = checkCache();
 		}
 
 		if (result == null) {
 			String restApiUrl = context.getResources().getString(
 					R.string.url_restapi);
 
-			ArticleDAO articleDAO = new ArticleDAOImpl(restApiUrl);
+			ArticleDAO dao = new ArticleDAOImpl(restApiUrl);
 
 			try {
-				result = articleDAO.getList(query);
+				result = dao.getList(query);
 			} catch (DAOException e) {
 				this.exception = e;
 			}
 
 			// If query == null then the result is not a search result
 			if (query == null && result != null) {
-				final long now = System.currentTimeMillis();
-
-				try {
-					cacheDAO.set(new CacheObject<List<Article>>(result, now));
-				} catch (DAOException e) {
-				}
+				cache(result);
 			}
 		}
 
