@@ -40,7 +40,7 @@ public class ArticleMedia implements Serializable {
 
 	@Override
 	public String toString() {
-		return "NewsArticleMedia [id=" + id + ", altText=" + altText
-				+ ", sizes=" + sizes + "]";
+		return "ArticleMedia [id=" + id + ", altText=" + altText + ", sizes="
+				+ sizes + "]";
 	}
 }

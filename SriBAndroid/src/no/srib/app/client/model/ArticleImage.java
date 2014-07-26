@@ -48,7 +48,7 @@ public class ArticleImage implements Serializable {
 
 	@Override
 	public String toString() {
-		return "NewsArticleImage [height=" + height + ", width=" + width
+		return "ArticleImage [height=" + height + ", width=" + width
 				+ ", name=" + name + ", url=" + url + "]";
 	}
 }
