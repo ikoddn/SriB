@@ -11,11 +11,8 @@ public class Schedule {
 	private String program;
 
 	public Schedule() {
-
 	}
 
-	
-	
 	public Schedule(int id, int day, Time fromTime, Time toTime, String program) {
 		super();
 		this.id = id;
@@ -24,8 +21,6 @@ public class Schedule {
 		this.toTime = toTime;
 		this.program = program;
 	}
-
-
 
 	public int getId() {
 		return id;
@@ -66,6 +61,4 @@ public class Schedule {
 	public void setProgram(String program) {
 		this.program = program;
 	}
-	
-
 }

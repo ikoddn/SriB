@@ -2,6 +2,10 @@ package no.srib.app.client.service.audioplayer;
 
 import java.io.IOException;
 
+import no.srib.app.client.R;
+import no.srib.app.client.event.listener.AudioPlayerListener;
+import no.srib.app.client.model.Podcast;
+import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.BaseService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateHandler;
@@ -22,27 +26,48 @@ import android.util.Log;
  */
 public class AudioPlayerService extends BaseService {
 
-	public enum DataSourceType {
-		NONE,
-		LIVE_RADIO,
-		PODCAST
-	}
+	private String podcastNasUrl;
 
 	private DataSourceType dataSourceType;
 	private String dataSource;
 	private StateHandler stateHandler;
+	private AudioPlayerListener audioPlayerListener;
 	private MediaPlayer mediaPlayer;
+
+	private Podcast currentPodcast;
+	private StreamSchedule currentStream;
 
 	public AudioPlayerService() {
 		dataSourceType = DataSourceType.NONE;
 		dataSource = null;
 		stateHandler = new StateHandler();
 		mediaPlayer = new MediaPlayer();
+
+		currentPodcast = null;
+		currentStream = null;
+	}
+
+	public DataSourceType getDataSourceType() {
+		return dataSourceType;
+	}
+
+	public void setListener(final AudioPlayerListener audioPlayerListener) {
+		this.audioPlayerListener = audioPlayerListener;
+	}
+
+	public void setCurrentPodcast(final Podcast podcast) {
+		currentPodcast = podcast;
+	}
+
+	public void setCurrentStream(final StreamSchedule stream) {
+		currentStream = stream;
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		podcastNasUrl = getResources().getString(R.string.url_podcast_nas);
 
 		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
 		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
@@ -77,7 +102,7 @@ public class AudioPlayerService extends BaseService {
 	 *            - The URI
 	 * @throws AudioPlayerException
 	 */
-	public void setDataSource(String dataSource, DataSourceType dataSourceType)
+	private void setDataSource(String dataSource, DataSourceType dataSourceType)
 			throws AudioPlayerException {
 
 		State state = stateHandler.getState();
@@ -273,16 +298,37 @@ public class AudioPlayerService extends BaseService {
 		}
 	}
 
-	/**
-	 * Returns the current data source, or {@code null} if not set.
-	 * 
-	 * @return The current data source.
-	 */
-	public String getDataSource() {
-		return dataSource;
+	public void setCurrentPodcastAsSource() throws AudioPlayerException {
+		if (currentPodcast == null) {
+			throw new AudioPlayerException("Current podcast not set");
+		}
+
+		// TODO do this on server
+		String filepath = currentPodcast.getFilename();
+		int lastSlashIndex = filepath.lastIndexOf("\\");
+		String filename = filepath.substring(lastSlashIndex + 1);
+
+		String url = podcastNasUrl + filename;
+
+		if (!url.equals(dataSource)) {
+			setDataSource(url, DataSourceType.PODCAST);
+		}
+
+		audioPlayerListener.onSwitchToPodcast(currentPodcast);
 	}
 
-	public DataSourceType getDataSourceType() {
-		return dataSourceType;
+	public void setCurrentStreamAsSource() throws AudioPlayerException {
+		if (currentStream == null) {
+			throw new AudioPlayerException("Current stream not set");
+		}
+
+		String url = currentStream.getUrl();
+
+		if (!url.equals(dataSource)) {
+			setDataSource(url, DataSourceType.LIVE_RADIO);
+		}
+
+		audioPlayerListener.onSwitchToStreamSchedule(currentStream);
 	}
+
 }

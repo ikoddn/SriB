@@ -15,7 +15,7 @@ import android.content.Context;
 import android.util.Log;
 
 public class PodcastProgramsAsyncTask extends
-		CacheAwareAsyncTask<Void, PodcastPrograms> {
+		CacheAwareAsyncTask<Void, Void, PodcastPrograms> {
 
 	private static final int CACHE_VALIDITY_SECONDS = 3600;
 
@@ -23,6 +23,7 @@ public class PodcastProgramsAsyncTask extends
 	private final ProgramSpinnerAdapter adapter;
 
 	private Exception exception;
+	private PodcastPrograms cacheResult;
 
 	public PodcastProgramsAsyncTask(final Context context,
 			final ProgramSpinnerAdapter adapter) {
@@ -61,8 +62,14 @@ public class PodcastProgramsAsyncTask extends
 	}
 
 	@Override
-	protected void onProgressUpdate(final PodcastPrograms... cacheResult) {
-		updateAdapter(cacheResult[0]);
+	protected void onExpiredCache(final PodcastPrograms cacheResult) {
+		this.cacheResult = cacheResult;
+		publishProgress();
+	}
+
+	@Override
+	protected void onProgressUpdate(final Void... values) {
+		updateAdapter(cacheResult);
 	}
 
 	@Override

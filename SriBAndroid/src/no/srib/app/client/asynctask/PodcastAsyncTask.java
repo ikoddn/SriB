@@ -13,7 +13,7 @@ import android.content.Context;
 import android.util.Log;
 
 public class PodcastAsyncTask extends
-		CacheAwareAsyncTask<Integer, List<Podcast>> {
+		CacheAwareAsyncTask<Integer, Void, List<Podcast>> {
 
 	private static final int CACHE_VALIDITY_SECONDS = 3600;
 
@@ -21,6 +21,7 @@ public class PodcastAsyncTask extends
 	private final ListBasedAdapter<Podcast> adapter;
 
 	private Exception exception;
+	private List<Podcast> cacheResult;
 
 	public PodcastAsyncTask(final Context context,
 			final ListBasedAdapter<Podcast> adapter) {
@@ -30,6 +31,7 @@ public class PodcastAsyncTask extends
 		this.context = context;
 		this.adapter = adapter;
 		exception = null;
+		cacheResult = null;
 	}
 
 	@Override
@@ -74,8 +76,14 @@ public class PodcastAsyncTask extends
 	}
 
 	@Override
-	protected void onProgressUpdate(final List<Podcast>... cacheResult) {
-		adapter.setList(cacheResult[0]);
+	protected void onExpiredCache(final List<Podcast> cacheResult) {
+		this.cacheResult = cacheResult;
+		publishProgress();
+	}
+
+	@Override
+	protected void onProgressUpdate(final Void... values) {
+		adapter.setList(cacheResult);
 		adapter.notifyDataSetChanged();
 	}
 

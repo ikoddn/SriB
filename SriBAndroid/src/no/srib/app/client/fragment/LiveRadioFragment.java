@@ -7,7 +7,6 @@ import no.srib.app.client.util.FontFactory;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.DTImageView;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -30,10 +29,6 @@ import butterknife.OnClick;
 
 public class LiveRadioFragment extends BaseFragment {
 
-	private static final String PREFS_NAME = "prefsLiveRadio";
-	private static final String KEY_STATUS = "status";
-	private static final String KEY_STREAM = "stream";
-
 	@InjectView(R.id.dtimageview_liveradio_background) DTImageView background;
 	@InjectView(R.id.button_liveradio_info) ImageButton infoButton;
 	@InjectView(R.id.button_liveradio_playpause) ImageButton playPauseButton;
@@ -55,18 +50,20 @@ public class LiveRadioFragment extends BaseFragment {
 	private boolean pauseIcon;
 	private boolean podcastMode;
 	private CharSequence programName;
+	private CharSequence status;
+	private CharSequence time;
 
 	public LiveRadioFragment() {
 		pauseIcon = false;
 		podcastMode = false;
 		programName = null;
+		status = null;
+		time = null;
 	}
 
 	public void setSeekBarOnChangeListener(
 			OnSeekBarChangeListener seekBarListener) {
-		if (seekbar != null) {
-			seekbar.setOnSeekBarChangeListener(seekBarListener);
-		}
+		seekbar.setOnSeekBarChangeListener(seekBarListener);
 	}
 
 	public void setSeekBarProgress(int value) {
@@ -96,19 +93,21 @@ public class LiveRadioFragment extends BaseFragment {
 		return programNameTextView.getText();
 	}
 
-	public void setStatusText(CharSequence text) {
+	public void setStatusText(final CharSequence text) {
+		status = text;
+		
 		if (statusTextView != null) {
 			statusTextView.setText(text);
 		}
 	}
 
 	public void setStreamText(CharSequence text) {
-		if (streamTextView != null) {
-			streamTextView.setText(text);
-		}
+		streamTextView.setText(text);
 	}
 
-	public void setTimeText(CharSequence text) {
+	public void setTimeText(final CharSequence text) {
+		time = text;
+		
 		if (timeTextView != null) {
 			timeTextView.setText(text);
 		}
@@ -137,6 +136,14 @@ public class LiveRadioFragment extends BaseFragment {
 
 		if (programName != null) {
 			programNameTextView.setText(programName);
+		}
+		
+		if (status != null) {
+			statusTextView.setText(status);
+		}
+		
+		if (time != null) {
+			timeTextView.setText(time);
 		}
 
 		if (pauseIcon) {
@@ -344,41 +351,6 @@ public class LiveRadioFragment extends BaseFragment {
 		viewUtil.setWeight(R.id.seekbar_liveradio, hSeekBarWeight);
 		viewUtil.setWeight(R.id.view_liveradio_seekbar_hspace2,
 				hSeekBarSpace2Weight);
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-
-		SharedPreferences prefs = getActivity().getSharedPreferences(
-				PREFS_NAME, 0);
-
-		String status = prefs.getString(KEY_STATUS, null);
-		String stream = prefs.getString(KEY_STREAM, null);
-
-		if (status != null) {
-			setStatusText(status);
-		}
-
-		if (stream != null) {
-			setStreamText(stream);
-		}
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-
-		if (statusTextView != null && streamTextView != null) {
-			SharedPreferences prefs = getActivity().getSharedPreferences(
-					PREFS_NAME, 0);
-			SharedPreferences.Editor editor = prefs.edit();
-
-			editor.putString(KEY_STATUS, statusTextView.getText().toString());
-			editor.putString(KEY_STREAM, streamTextView.getText().toString());
-
-			editor.commit();
-		}
 	}
 
 	@Override

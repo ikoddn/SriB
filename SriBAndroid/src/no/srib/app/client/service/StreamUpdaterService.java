@@ -1,23 +1,17 @@
 package no.srib.app.client.service;
 
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import no.srib.app.client.asynctask.HttpAsyncTask;
-import no.srib.app.client.asynctask.HttpAsyncTask.HttpResponseListener;
+import no.srib.app.client.asynctask.StreamScheduleAsyncTask;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener.Status;
+import android.content.Context;
 import android.os.Handler;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class StreamUpdaterService extends BaseService {
 
 	private static final int MAX_TIMER_FAILS = 2;
-
-	private final ObjectMapper MAPPER;
 
 	private AtomicBoolean currentlyUpdating;
 	private AtomicBoolean updateScheduled;
@@ -25,10 +19,6 @@ public class StreamUpdaterService extends BaseService {
 	private Handler timerHandler;
 	private Runnable streamScheduleUpdater;
 	private OnStreamUpdateListener streamUpdateListener;
-
-	public StreamUpdaterService() {
-		MAPPER = new ObjectMapper();
-	}
 
 	@Override
 	public void onCreate() {
@@ -38,7 +28,7 @@ public class StreamUpdaterService extends BaseService {
 		updateScheduled = new AtomicBoolean(false);
 		timerFails = new AtomicInteger(0);
 		timerHandler = new Handler();
-		streamScheduleUpdater = null;
+		streamScheduleUpdater = new StreamScheduleUpdater();
 		streamUpdateListener = null;
 	}
 
@@ -54,10 +44,6 @@ public class StreamUpdaterService extends BaseService {
 		this.streamUpdateListener = streamUpdateListener;
 	}
 
-	public void setUpdateURL(final String updateURL) {
-		streamScheduleUpdater = new StreamScheduleUpdater(updateURL);
-	}
-
 	public boolean hasUpdateScheduled() {
 		return updateScheduled.get();
 	}
@@ -69,8 +55,7 @@ public class StreamUpdaterService extends BaseService {
 	}
 
 	public void updateAt(final long time) {
-		long currentTime = Calendar.getInstance().getTimeInMillis();
-		updateIn(time - currentTime);
+		updateIn(time - System.currentTimeMillis());
 	}
 
 	private void updateIn(final long delayParam) {
@@ -113,47 +98,32 @@ public class StreamUpdaterService extends BaseService {
 
 	private class StreamScheduleUpdater implements Runnable {
 
-		private String updateURL;
-
-		public StreamScheduleUpdater(String updateURL) {
-			this.updateURL = updateURL;
-		}
-
 		@Override
 		public void run() {
 			if (!currentlyUpdating.get()) {
 				currentlyUpdating.set(true);
-				HttpAsyncTask streamScheduleTask = new HttpAsyncTask(
-						new StreamScheduleResponseListener());
-				streamScheduleTask.execute(updateURL);
+
+				final Context context = getApplicationContext();
+				new StreamScheduleAsyncTask(context, StreamUpdaterService.this)
+						.execute();
 
 				streamUpdateListener.onStatus(Status.CONNECTING);
 			}
 		}
 	}
 
-	private class StreamScheduleResponseListener implements
-			HttpResponseListener {
+	public void onUpdateFailed() {
+		updateScheduled.set(false);
+		streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
+		// TODO or invalid response, or no Internet, or whatever
 
-		@Override
-		public void onResponse(int statusCode, String response) {
-			if (response == null) {
-				updateScheduled.set(false);
-				streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
-			} else {
-				try {
-					StreamSchedule streamSchedule = MAPPER.readValue(response,
-							StreamSchedule.class);
+		currentlyUpdating.set(false);
+	}
 
-					streamUpdateListener.onStreamUpdate(streamSchedule);
+	public void onUpdateSuccess(final StreamSchedule streamSchedule) {
+		streamUpdateListener.onStreamUpdate(streamSchedule);
+		updateAt(streamSchedule.getTime() * 1000);
 
-					updateAt(streamSchedule.getTime() * 1000);
-				} catch (IOException e) {
-					streamUpdateListener.onStatus(Status.INVALID_RESPONSE);
-				}
-			}
-
-			currentlyUpdating.set(false);
-		}
+		currentlyUpdating.set(false);
 	}
 }

@@ -10,7 +10,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
 
-public class ScheduleAsyncTask extends CacheAwareAsyncTask<Void, Schedule> {
+public class ScheduleAsyncTask extends
+		CacheAwareAsyncTask<Void, Void, Schedule> {
 
 	private final Context context;
 	private final TextView textView;
@@ -42,6 +43,7 @@ public class ScheduleAsyncTask extends CacheAwareAsyncTask<Void, Schedule> {
 
 			if (result != null) {
 				java.sql.Time time = result.getToTime();
+				// FIXME 1970
 				cache(result, time.getTime());
 			}
 		}
@@ -50,7 +52,7 @@ public class ScheduleAsyncTask extends CacheAwareAsyncTask<Void, Schedule> {
 	}
 
 	@Override
-	protected void onProgressUpdate(final Schedule... cacheResult) {
+	protected void onExpiredCache(final Schedule cacheResult) {
 	}
 
 	@Override
@@ -64,8 +66,7 @@ public class ScheduleAsyncTask extends CacheAwareAsyncTask<Void, Schedule> {
 		} else if (result == null) {
 			// TODO display StreamSchedule name?
 			textView.setText("204 No content");
-			Log.d("SriB",
-					"ScheduleAsyncTask onPostExecute(): result == null");
+			Log.d("SriB", "ScheduleAsyncTask onPostExecute(): result == null");
 		} else {
 			textView.setText(result.getProgram());
 		}

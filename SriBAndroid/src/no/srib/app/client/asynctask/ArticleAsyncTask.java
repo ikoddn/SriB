@@ -14,7 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class ArticleAsyncTask extends
-		CacheAwareAsyncTask<String, List<Article>> {
+		CacheAwareAsyncTask<String, Void, List<Article>> {
 
 	private static final int CACHE_VALIDITY_SECONDS = 3600;
 
@@ -22,6 +22,7 @@ public class ArticleAsyncTask extends
 	private final ListBasedAdapter<Article> adapter;
 
 	private Exception exception;
+	private List<Article> cacheResult;
 
 	public ArticleAsyncTask(final Context context,
 			final ListBasedAdapter<Article> adapter) {
@@ -31,6 +32,7 @@ public class ArticleAsyncTask extends
 		this.context = context;
 		this.adapter = adapter;
 		exception = null;
+		cacheResult = null;
 	}
 
 	@Override
@@ -70,8 +72,14 @@ public class ArticleAsyncTask extends
 	}
 
 	@Override
-	protected void onProgressUpdate(final List<Article>... cacheResult) {
-		adapter.setList(cacheResult[0]);
+	protected void onExpiredCache(final List<Article> cacheResult) {
+		this.cacheResult = cacheResult;
+		publishProgress();
+	}
+
+	@Override
+	protected void onProgressUpdate(final Void... values) {
+		adapter.setList(cacheResult);
 		adapter.notifyDataSetChanged();
 	}
 

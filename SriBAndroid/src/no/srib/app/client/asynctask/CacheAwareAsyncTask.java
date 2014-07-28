@@ -5,8 +5,8 @@ import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.model.CacheObject;
 import android.os.AsyncTask;
 
-public abstract class CacheAwareAsyncTask<Params, Result> extends
-		AsyncTask<Params, Result, Result> {
+public abstract class CacheAwareAsyncTask<Params, Progress, Result> extends
+		AsyncTask<Params, Progress, Result> {
 
 	private final CacheObjectDAO<Result> cacheDAO;
 
@@ -14,13 +14,11 @@ public abstract class CacheAwareAsyncTask<Params, Result> extends
 		this.cacheDAO = cacheDAO;
 	}
 
-	@Override
-	protected abstract void onProgressUpdate(Result... cacheResult);
+	protected abstract void onExpiredCache(final Result cacheResult);
 
 	@Override
 	protected abstract void onPostExecute(final Result result);
 
-	@SuppressWarnings("unchecked")
 	protected Result checkCache() {
 		Result result = null;
 		CacheObject<Result> cacheObject;
@@ -35,7 +33,7 @@ public abstract class CacheAwareAsyncTask<Params, Result> extends
 			result = cacheObject.getData();
 
 			if (System.currentTimeMillis() > cacheObject.getExpirationTime()) {
-				publishProgress(result);
+				onExpiredCache(result);
 				result = null;
 			}
 		}
