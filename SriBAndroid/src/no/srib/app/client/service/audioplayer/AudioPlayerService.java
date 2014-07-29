@@ -303,12 +303,7 @@ public class AudioPlayerService extends BaseService {
 			throw new AudioPlayerException("Current podcast not set");
 		}
 
-		// TODO do this on server
-		String filepath = currentPodcast.getFilename();
-		int lastSlashIndex = filepath.lastIndexOf("\\");
-		String filename = filepath.substring(lastSlashIndex + 1);
-
-		String url = podcastNasUrl + filename;
+		String url = podcastNasUrl + currentPodcast.getFilename();
 
 		if (!url.equals(dataSource)) {
 			setDataSource(url, DataSourceType.PODCAST);
