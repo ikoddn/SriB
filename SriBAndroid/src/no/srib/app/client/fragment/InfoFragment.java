@@ -1,6 +1,7 @@
 package no.srib.app.client.fragment;
 
 import no.srib.app.client.R;
+import no.srib.app.client.event.listener.OnInfoClickListener;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.DTImageView;
@@ -115,16 +116,8 @@ public class InfoFragment extends BaseFragment {
 		@Override
 		public void onClick(View button) {
 			if (infoClickListener != null) {
-				infoClickListener.onSribwwwClicked();
+				infoClickListener.onSribWebsiteClicked();
 			}
 		}
-	}
-
-	public interface OnInfoClickListener {
-		void onFacebookClicked();
-
-		void onSpotifyClicked();
-
-		void onSribwwwClicked();
 	}
 }

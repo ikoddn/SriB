@@ -16,11 +16,11 @@ import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
 import no.srib.app.client.asynctask.ScheduleAsyncTask;
 import no.srib.app.client.event.handler.AudioPlayerHandler;
 import no.srib.app.client.event.handler.ConnectivityChangedHandler;
+import no.srib.app.client.event.handler.InfoClickHandler;
 import no.srib.app.client.event.handler.PageChangeHandler;
 import no.srib.app.client.event.listener.OnSearchListener;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.InfoFragment;
-import no.srib.app.client.fragment.InfoFragment.OnInfoClickListener;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
@@ -40,7 +40,6 @@ import no.srib.app.client.util.BusProvider;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -384,30 +383,6 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	private class InfoClickListener implements OnInfoClickListener {
-
-		@Override
-		public void onFacebookClicked() {
-			openURL(R.string.url_facebook);
-		}
-
-		@Override
-		public void onSpotifyClicked() {
-			try {
-				// Try to open Spotify app
-				openURL(R.string.scheme_uri_spotify);
-			} catch (ActivityNotFoundException e) {
-				// Spotify app not installed, fall back to profile web site
-				openURL(R.string.url_spotify);
-			}
-		}
-
-		@Override
-		public void onSribwwwClicked() {
-			openURL(R.string.url_sribwww);
-		}
-	}
-
 	private class ListViewItemClickListener implements OnItemSelectedListener {
 
 		@Override
@@ -488,7 +463,7 @@ public class MainActivity extends FragmentActivity {
 
 	@Subscribe
 	public void onInfoFragmentReady(final InfoFragment fragment) {
-		fragment.setInfoClickListener(new InfoClickListener());
+		fragment.setInfoClickListener(new InfoClickHandler(this));
 	}
 
 	@Subscribe
