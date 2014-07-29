@@ -88,7 +88,9 @@ public class Podcast extends AbstractModel {
     }
 
     public void setFilename(String filename) {
-        this.filename = filename;
+        // Removing "w:\" or other file path from the filename
+        int lastSlashIndex = filename.lastIndexOf("\\");
+        this.filename = filename.substring(lastSlashIndex + 1);
     }
 
     @Column(insertable = false, updatable = false)
