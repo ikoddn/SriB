@@ -54,13 +54,13 @@
             android:visibility="invisible" />
 
         <ImageButton
-            android:id="@+id/button_info_sribwww"
+            android:id="@+id/button_info_sribwebsite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="67.0"
             android:adjustViewBounds="true"
             android:background="@null"
-            android:contentDescription="@string/imagebutton_info_sribwww_desc"
+            android:contentDescription="@string/imagebutton_info_sribwebsite_desc"
             android:scaleType="fitCenter"
             android:src="@drawable/link_sribwww" />
 
@@ -88,7 +88,7 @@
                 android:layout_marginTop="15dp" />
 
             <no.srib.app.client.view.DTImageView
-                android:id="@+id/dtImageView_info"
+                android:id="@+id/dtimageview_info"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_below="@id/textview_info1"
@@ -98,7 +98,7 @@
                 android:id="@+id/textview_info2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/dtImageView_info"
+                android:layout_below="@id/dtimageview_info"
                 android:layout_margin="15dp" />
         </RelativeLayout>
     </ScrollView>

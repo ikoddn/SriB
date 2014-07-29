@@ -35,7 +35,7 @@
     <!-- Info fragment -->
     <string name="imagebutton_info_facebook_desc">Facebook</string>
     <string name="imagebutton_info_spotify_desc">Spotify</string>
-    <string name="imagebutton_info_sribwww_desc">www</string>
+    <string name="imagebutton_info_sribwebsite_desc">Website</string>
     <string name="textView_info_1">
 <![CDATA[
 <h1>Om Studentradioen i Bergen</h1>
