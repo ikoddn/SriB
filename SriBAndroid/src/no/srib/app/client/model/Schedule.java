@@ -1,64 +1,35 @@
 package no.srib.app.client.model;
 
-import java.sql.Time;
+import java.io.Serializable;
 
-public class Schedule {
+public class Schedule implements Serializable {
 
-	private int id;
-	private int day;
-	private Time fromTime;
-	private Time toTime;
+	private static final long serialVersionUID = 1L;
+
 	private String program;
+	private long time;
 
-	public Schedule() {
+	protected Schedule() {
 	}
 
-	public Schedule(int id, int day, Time fromTime, Time toTime, String program) {
-		super();
-		this.id = id;
-		this.day = day;
-		this.fromTime = fromTime;
-		this.toTime = toTime;
+	public Schedule(final String program, final long time) {
 		this.program = program;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public int getDay() {
-		return day;
-	}
-
-	public void setDay(int day) {
-		this.day = day;
-	}
-
-	public Time getFromTime() {
-		return fromTime;
-	}
-
-	public void setFromTime(Time fromTime) {
-		this.fromTime = fromTime;
-	}
-
-	public Time getToTime() {
-		return toTime;
-	}
-
-	public void setToTime(Time toTime) {
-		this.toTime = toTime;
+		this.time = time;
 	}
 
 	public String getProgram() {
 		return program;
 	}
 
-	public void setProgram(String program) {
+	public void setProgram(final String program) {
 		this.program = program;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(final long time) {
+		this.time = time;
 	}
 }

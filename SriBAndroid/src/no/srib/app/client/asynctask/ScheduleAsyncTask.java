@@ -42,9 +42,8 @@ public class ScheduleAsyncTask extends
 			}
 
 			if (result != null) {
-				java.sql.Time time = result.getToTime();
-				// FIXME 1970
-				cache(result, time.getTime());
+				long expiration = result.getTime() * 1000;
+				cache(result, expiration);
 			}
 		}
 
