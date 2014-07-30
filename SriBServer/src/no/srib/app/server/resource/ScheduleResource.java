@@ -18,7 +18,7 @@ import no.srib.app.server.dao.interfaces.ScheduleDAO;
 import no.srib.app.server.model.jpa.Programname;
 import no.srib.app.server.model.jpa.Schedule;
 import no.srib.app.server.model.json.ScheduleBean;
-import no.srib.app.server.util.ModelUtil;
+import no.srib.app.server.util.TimeUtil;
 
 @Path("/schedule")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -53,16 +53,20 @@ public class ScheduleResource {
         ScheduleBean result = null;
 
         try {
-            Schedule schedule = scheduleDAO.getScheduleForTime(Calendar
-                    .getInstance());
+            Calendar calendar = Calendar.getInstance();
+
+            Schedule schedule = scheduleDAO.getScheduleForTime(calendar);
 
             if (schedule != null) {
-                result = ModelUtil.toScheduleBean(schedule);
+                Programname programName = programNameDAO.getById(schedule
+                        .getProgram());
 
-                int id = schedule.getProgram();
-                Programname programName = programNameDAO.getById(id);
+                TimeUtil.setDayOfWeekAndTimeGoForward(calendar,
+                        schedule.getDay(), schedule.getTotime());
+
                 String program = programName.getName();
-                result.setProgram(program);
+                long unixTime = calendar.getTimeInMillis() / 1000;
+                result = new ScheduleBean(program, unixTime);
             }
         } catch (DAOException e) {
             e.printStackTrace();
