@@ -1,6 +1,6 @@
 package no.srib.app.client.event.handler;
 
-import no.srib.app.client.receiver.ConnectivityChangeReceiver.OnConnectivityChangedListener;
+import no.srib.app.client.event.listener.OnConnectivityChangedListener;
 import no.srib.app.client.service.StreamUpdaterService;
 
 public class ConnectivityChangedHandler implements

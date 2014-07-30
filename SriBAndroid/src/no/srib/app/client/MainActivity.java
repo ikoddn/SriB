@@ -18,6 +18,7 @@ import no.srib.app.client.event.handler.AudioPlayerHandler;
 import no.srib.app.client.event.handler.ConnectivityChangedHandler;
 import no.srib.app.client.event.handler.InfoClickHandler;
 import no.srib.app.client.event.handler.PageChangeHandler;
+import no.srib.app.client.event.handler.PhoneStateHandler;
 import no.srib.app.client.event.listener.OnSearchListener;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.InfoFragment;
@@ -40,6 +41,7 @@ import no.srib.app.client.util.BusProvider;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -50,6 +52,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -162,7 +166,9 @@ public class MainActivity extends FragmentActivity {
 		super.onDestroy();
 
 		BusProvider.INSTANCE.get().unregister(this);
-		unregisterReceiver(connectivityChangeReceiver);
+		unregisterReceiver(connectivityChangeReceiver); // TODO is this correct
+														// if back button has
+														// been pressed?
 	}
 
 	private class StreamUpdateListener implements OnStreamUpdateListener {
@@ -234,55 +240,59 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public void onStateChanged(State state) {
 			LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = liveRadioSectionFragment
-					.getLiveRadioFragment();
-			AudioPlayerService audioservice = audioPlayerService.getService();
 
-			seekbarHandler.removeCallbacks(seekbarUpdater);
+			if (liveRadioSectionFragment != null) {
+				LiveRadioFragment fragment = liveRadioSectionFragment
+						.getLiveRadioFragment();
+				AudioPlayerService audioservice = audioPlayerService
+						.getService();
 
-			switch (state) {
-			case PAUSED:
-				fragment.setStatusText("paused");
-				fragment.setPlayIcon();
-				break;
-			case PREPARING:
-				fragment.setStatusText("preparing");
-				fragment.setTimeText("");
-				fragment.setPauseIcon();
-				break;
-			case STARTED:
-				fragment.setStatusText("started");
-				fragment.setPauseIcon();
+				seekbarHandler.removeCallbacks(seekbarUpdater);
 
-				switch (audioservice.getDataSourceType()) {
-				case LIVE_RADIO:
-					String liveText = getResources().getString(
-							R.string.textView_liveradio_time_live);
-					fragment.setTimeText(liveText);
+				switch (state) {
+				case PAUSED:
+					fragment.setStatusText("paused");
+					fragment.setPlayIcon();
 					break;
-				case PODCAST:
-					fragment.setMaxOnSeekBar(audioservice.getDuration());
-					seekbarHandler.postDelayed(seekbarUpdater, 0);
+				case PREPARING:
+					fragment.setStatusText("preparing");
+					fragment.setTimeText("");
+					fragment.setPauseIcon();
 					break;
-				case NONE:
-				default:
+				case STARTED:
+					fragment.setStatusText("started");
+					fragment.setPauseIcon();
+
+					switch (audioservice.getDataSourceType()) {
+					case LIVE_RADIO:
+						String liveText = getResources().getString(
+								R.string.textView_liveradio_time_live);
+						fragment.setTimeText(liveText);
+						break;
+					case PODCAST:
+						fragment.setMaxOnSeekBar(audioservice.getDuration());
+						seekbarHandler.postDelayed(seekbarUpdater, 0);
+						break;
+					case NONE:
+					default:
+						break;
+					}
+					break;
+				case STOPPED:
+					fragment.setStatusText("stopped");
+					fragment.setPlayIcon();
+					fragment.setTimeText("");
+					break;
+				case UNINITIALIZED:
+					fragment.setStatusText("uninitialized");
+					fragment.setTimeText("");
+					break;
+				case COMPLETED:
+					fragment.setStatusText("completed");
+					fragment.setPlayIcon();
+					fragment.setTimeText("");
 					break;
 				}
-				break;
-			case STOPPED:
-				fragment.setStatusText("stopped");
-				fragment.setPlayIcon();
-				fragment.setTimeText("");
-				break;
-			case UNINITIALIZED:
-				fragment.setStatusText("uninitialized");
-				fragment.setTimeText("");
-				break;
-			case COMPLETED:
-				fragment.setStatusText("completed");
-				fragment.setPlayIcon();
-				fragment.setTimeText("");
-				break;
 			}
 		}
 	}
@@ -434,6 +444,10 @@ public class MainActivity extends FragmentActivity {
 		service.setStateListener(new AudioPlayerStateListener());
 		service.setListener(new AudioPlayerHandler(this));
 
+		TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		manager.listen(new PhoneStateHandler(service),
+				PhoneStateListener.LISTEN_CALL_STATE);
+
 		readyComponents.put(Component.AUDIOPLAYER, true);
 		prepareLiveRadioIfReady();
 	}
@@ -442,10 +456,8 @@ public class MainActivity extends FragmentActivity {
 	public void onStreamUpdaterServiceReady(final StreamUpdaterService service) {
 		service.setStreamUpdateListener(new StreamUpdateListener());
 
-		connectivityChangeReceiver = new ConnectivityChangeReceiver();
-		connectivityChangeReceiver
-				.setConnectionChangedListener(new ConnectivityChangedHandler(
-						service));
+		connectivityChangeReceiver = new ConnectivityChangeReceiver(
+				new ConnectivityChangedHandler(service));
 
 		IntentFilter filter = new IntentFilter(
 				ConnectivityManager.CONNECTIVITY_ACTION);
