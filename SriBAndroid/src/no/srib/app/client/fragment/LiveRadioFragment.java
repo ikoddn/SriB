@@ -51,6 +51,7 @@ public class LiveRadioFragment extends BaseFragment {
 	private boolean podcastMode;
 	private CharSequence programName;
 	private CharSequence status;
+	private CharSequence stream;
 	private CharSequence time;
 
 	public LiveRadioFragment() {
@@ -58,6 +59,7 @@ public class LiveRadioFragment extends BaseFragment {
 		podcastMode = false;
 		programName = null;
 		status = null;
+		stream = null;
 		time = null;
 	}
 
@@ -101,8 +103,12 @@ public class LiveRadioFragment extends BaseFragment {
 		}
 	}
 
-	public void setStreamText(CharSequence text) {
-		streamTextView.setText(text);
+	public void setStreamText(final CharSequence text) {
+		stream = text;
+		
+		if (streamTextView != null) {
+			streamTextView.setText(text);
+		}
 	}
 
 	public void setTimeText(final CharSequence text) {
@@ -140,6 +146,10 @@ public class LiveRadioFragment extends BaseFragment {
 		
 		if (status != null) {
 			statusTextView.setText(status);
+		}
+		
+		if (stream != null) {
+			streamTextView.setText(stream);
 		}
 		
 		if (time != null) {
