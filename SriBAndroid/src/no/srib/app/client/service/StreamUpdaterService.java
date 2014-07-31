@@ -112,12 +112,19 @@ public class StreamUpdaterService extends BaseService {
 		}
 	}
 
-	public void onUpdateFailed() {
-		updateScheduled.set(false);
-		streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
-		// TODO or invalid response, or no Internet, or whatever
+	public void onNetworkAvailable() {
+		update();
+	}
 
-		currentlyUpdating.set(false);
+	public void onNetworkUnavailable() {
+		stopUpdating();
+		streamUpdateListener.onStatus(Status.NO_INTERNET);
+	}
+
+	public void onUpdateFailed() {
+		stopUpdating();
+		streamUpdateListener.onStatus(Status.SERVER_UNREACHABLE);
+		// TODO or invalid response, or whatever
 	}
 
 	public void onUpdateSuccess(final StreamSchedule streamSchedule) {

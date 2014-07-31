@@ -11,6 +11,7 @@ import no.srib.app.client.dao.memory.PodcastProgramsCacheDAOImpl;
 import no.srib.app.client.dao.retrofit.PodcastProgramsDAOImpl;
 import no.srib.app.client.model.PodcastPrograms;
 import no.srib.app.client.model.ProgramName;
+import no.srib.app.client.util.NetworkUtil;
 import android.content.Context;
 import android.util.Log;
 
@@ -39,7 +40,7 @@ public class PodcastProgramsAsyncTask extends
 	protected PodcastPrograms doInBackground(final Void... params) {
 		PodcastPrograms result = checkCache();
 
-		if (result == null) {
+		if (result == null && NetworkUtil.networkAvailable(context)) {
 			String restApiUrl = context.getResources().getString(
 					R.string.url_restapi);
 

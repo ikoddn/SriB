@@ -9,6 +9,7 @@ import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.memory.PodcastCacheDAOImpl;
 import no.srib.app.client.dao.retrofit.PodcastDAOImpl;
 import no.srib.app.client.model.Podcast;
+import no.srib.app.client.util.NetworkUtil;
 import android.content.Context;
 import android.util.Log;
 
@@ -45,7 +46,7 @@ public class PodcastAsyncTask extends
 			result = checkCache();
 		}
 
-		if (result == null) {
+		if (result == null && NetworkUtil.networkAvailable(context)) {
 			String restApiUrl = context.getResources().getString(
 					R.string.url_restapi);
 

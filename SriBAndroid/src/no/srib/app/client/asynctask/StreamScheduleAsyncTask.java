@@ -7,6 +7,7 @@ import no.srib.app.client.dao.retrofit.StreamScheduleDAOImpl;
 import no.srib.app.client.dao.sharedpreferences.StreamScheduleCacheDAOImpl;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.StreamUpdaterService;
+import no.srib.app.client.util.NetworkUtil;
 import android.content.Context;
 import android.util.Log;
 
@@ -31,7 +32,7 @@ public class StreamScheduleAsyncTask extends
 	protected StreamSchedule doInBackground(final Void... params) {
 		StreamSchedule result = checkCache();
 
-		if (result == null) {
+		if (result == null && NetworkUtil.networkAvailable(context)) {
 			String restApiUrl = context.getResources().getString(
 					R.string.url_restapi);
 

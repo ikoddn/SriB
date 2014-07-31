@@ -6,6 +6,7 @@ import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.memory.ScheduleCacheDAOImpl;
 import no.srib.app.client.dao.retrofit.ScheduleDAOImpl;
 import no.srib.app.client.model.Schedule;
+import no.srib.app.client.util.NetworkUtil;
 import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
@@ -29,7 +30,7 @@ public class ScheduleAsyncTask extends
 	protected Schedule doInBackground(final Void... params) {
 		Schedule result = checkCache();
 
-		if (result == null) {
+		if (result == null && NetworkUtil.networkAvailable(context)) {
 			String restApiUrl = context.getResources().getString(
 					R.string.url_restapi);
 
@@ -58,13 +59,15 @@ public class ScheduleAsyncTask extends
 	protected void onPostExecute(final Schedule result) {
 		if (exception != null) {
 			// TODO display user friendly message
-			textView.setText("Error");
+			// textView.setText("Error");
 			Log.d("SriB",
 					"ScheduleAsyncTask onPostExecute(): exception != null");
 			exception.printStackTrace();
 		} else if (result == null) {
 			// TODO display StreamSchedule name?
-			textView.setText("204 No content");
+			if (NetworkUtil.networkAvailable(context)) {
+				textView.setText("");
+			}
 			Log.d("SriB", "ScheduleAsyncTask onPostExecute(): result == null");
 		} else {
 			textView.setText(result.getProgram());

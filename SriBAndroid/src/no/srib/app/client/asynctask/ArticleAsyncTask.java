@@ -9,6 +9,7 @@ import no.srib.app.client.dao.exception.DAOException;
 import no.srib.app.client.dao.memory.ArticleCacheDAOImpl;
 import no.srib.app.client.dao.retrofit.ArticleDAOImpl;
 import no.srib.app.client.model.Article;
+import no.srib.app.client.util.NetworkUtil;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ public class ArticleAsyncTask extends
 	private final Context context;
 	private final ListBasedAdapter<Article> adapter;
 
+	private boolean searching;
 	private Exception exception;
 	private List<Article> cacheResult;
 
@@ -31,6 +33,7 @@ public class ArticleAsyncTask extends
 
 		this.context = context;
 		this.adapter = adapter;
+		searching = false;
 		exception = null;
 		cacheResult = null;
 	}
@@ -43,12 +46,13 @@ public class ArticleAsyncTask extends
 		if (queries != null && queries.length > 0) {
 			// Searching
 			query = queries[0];
+			searching = true;
 		} else {
 			// Not searching, we can check the cache
 			result = checkCache();
 		}
 
-		if (result == null) {
+		if (result == null && NetworkUtil.networkAvailable(context)) {
 			String restApiUrl = context.getResources().getString(
 					R.string.url_restapi);
 
@@ -89,8 +93,10 @@ public class ArticleAsyncTask extends
 			Log.d("SriB", "ArticleAsyncTask onPostExecute(): exception != null");
 			exception.printStackTrace();
 		} else if (result == null) {
-			Toast.makeText(context, R.string.toast_articles_nocontent,
-					Toast.LENGTH_SHORT).show();
+			if (searching) {
+				Toast.makeText(context, R.string.toast_articles_nocontent,
+						Toast.LENGTH_SHORT).show();
+			}
 		} else {
 			adapter.setList(result);
 			adapter.notifyDataSetChanged();

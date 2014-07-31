@@ -36,6 +36,7 @@ import no.srib.app.client.service.audioplayer.AudioPlayerService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.util.BusProvider;
+import no.srib.app.client.util.NetworkUtil;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
@@ -151,9 +152,7 @@ public class MainActivity extends FragmentActivity {
 		podcastGridAdapter = new PodcastGridAdapter(this);
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
 
-		new ArticleAsyncTask(this, articleListAdapter).execute();
-		new PodcastAsyncTask(this, podcastGridAdapter).execute();
-		new PodcastProgramsAsyncTask(this, programSpinnerAdapter).execute();
+		updateContent();
 	}
 
 	@Override
@@ -166,6 +165,27 @@ public class MainActivity extends FragmentActivity {
 														// been pressed?
 	}
 
+	public void updateContent() {
+		new ArticleAsyncTask(this, articleListAdapter).execute();
+		new PodcastAsyncTask(this, podcastGridAdapter).execute();
+		new PodcastProgramsAsyncTask(this, programSpinnerAdapter).execute();
+
+		LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+
+		if (sectionFragment != null) {
+			LiveRadioFragment liveRadio = sectionFragment
+					.getLiveRadioFragment();
+
+			if (liveRadio.isReady()) {
+				TextView textView = liveRadio.getProgramNameTextView();
+
+				if (textView != null) {
+					new ScheduleAsyncTask(textView).execute();
+				}
+			}
+		}
+	}
+
 	private class StreamUpdateListener implements OnStreamUpdateListener {
 
 		@Override
@@ -175,13 +195,21 @@ public class MainActivity extends FragmentActivity {
 			LiveRadioFragment liveRadio = liveRadioSectionFragment
 					.getLiveRadioFragment();
 
-			if (liveRadio != null && liveRadio.isReady()) {
+			if (liveRadio != null) {
 				switch (status) {
 				case NO_INTERNET:
+					liveRadioSectionFragment.replaceLoadingFragment();
 					liveRadio.setStreamText("No internet connection");
+					liveRadio.setProgramNameText(getResources().getString(
+							R.string.textview_liveradio_error_nointernet));
 					break;
 				case SERVER_UNREACHABLE:
+					liveRadioSectionFragment.replaceLoadingFragment();
 					liveRadio.setStreamText("Could not connect to server");
+					liveRadio
+							.setProgramNameText(getResources()
+									.getString(
+											R.string.textview_liveradio_error_serverunreachable));
 					break;
 				case INVALID_RESPONSE:
 					liveRadio.setStreamText("Invalid response from server");
@@ -191,6 +219,7 @@ public class MainActivity extends FragmentActivity {
 					break;
 				}
 			}
+
 		}
 
 		@Override
@@ -222,7 +251,11 @@ public class MainActivity extends FragmentActivity {
 				&& readyComponents.get(Component.STREAMUPDATER)
 				&& readyComponents.get(Component.LIVERADIOSECTION)) {
 
-			streamUpdater.update();
+			if (NetworkUtil.networkAvailable(this)) {
+				streamUpdater.onNetworkAvailable();
+			} else {
+				streamUpdater.onNetworkUnavailable();
+			}
 		}
 	}
 
@@ -443,7 +476,7 @@ public class MainActivity extends FragmentActivity {
 		streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
 
 		connectivityChangeReceiver = new ConnectivityChangeReceiver(
-				new ConnectivityChangedHandler(streamUpdater));
+				new ConnectivityChangedHandler(this, streamUpdater));
 
 		IntentFilter filter = new IntentFilter(
 				ConnectivityManager.CONNECTIVITY_ACTION);

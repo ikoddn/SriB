@@ -7,6 +7,8 @@
     <string name="imageView_item_divider_desc">Divider</string>
 
     <!-- Live radio fragment -->
+    <string name="textview_liveradio_error_nointernet">Ingen nettforbindelse</string>
+    <string name="textview_liveradio_error_serverunreachable">Ingen kontakt med server</string>
     <string name="textView_liveradio_time_live">LIVE</string>
     <string name="toast_liveradio_switch_to_podcast_attempt">Velg podcast fra siden til høyre.</string>
     <string name="imagebutton_liveradio_info_desc">Info</string>
