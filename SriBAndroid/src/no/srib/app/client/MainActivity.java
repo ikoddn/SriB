@@ -30,7 +30,7 @@ import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
-import no.srib.app.client.service.ServiceHandler;
+import no.srib.app.client.service.ServiceBinder;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
 import no.srib.app.client.service.audioplayer.AudioPlayerException;
@@ -94,8 +94,8 @@ public class MainActivity extends FragmentActivity {
 	 */
 	private ViewPager viewPager;
 
-	private ServiceHandler<AudioPlayerService> audioPlayerService;
-	private ServiceHandler<StreamUpdaterService> streamUpdaterService;
+	private AudioPlayerService audioPlayer;
+	private StreamUpdaterService streamUpdater;
 
 	private ArticleListAdapter articleListAdapter;
 	private PodcastGridAdapter podcastGridAdapter;
@@ -113,8 +113,8 @@ public class MainActivity extends FragmentActivity {
 
 		articleListAdapter = null;
 		viewPager = null;
-		audioPlayerService = null;
-		streamUpdaterService = null;
+		audioPlayer = null;
+		streamUpdater = null;
 
 		seekbarHandler = new Handler();
 		seekbarUpdater = new SeekbarUpdater();
@@ -143,14 +143,11 @@ public class MainActivity extends FragmentActivity {
 		viewPager.setOnPageChangeListener(new PageChangeHandler(
 				MainActivity.this, viewPager));
 
-		audioPlayerService = new ServiceHandler<AudioPlayerService>(
-				AudioPlayerService.class);
+		new ServiceBinder<AudioPlayerService>(AudioPlayerService.class)
+				.bind(this);
 
-		streamUpdaterService = new ServiceHandler<StreamUpdaterService>(
-				StreamUpdaterService.class);
-
-		audioPlayerService.bind(MainActivity.this);
-		streamUpdaterService.bind(MainActivity.this);
+		new ServiceBinder<StreamUpdaterService>(StreamUpdaterService.class)
+				.bind(this);
 
 		articleListAdapter = new ArticleListAdapter(this);
 		podcastGridAdapter = new PodcastGridAdapter(this);
@@ -200,7 +197,6 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public void onStreamUpdate(StreamSchedule streamSchedule) {
-			AudioPlayerService audioPlayer = audioPlayerService.getService();
 			audioPlayer.setCurrentStream(streamSchedule);
 
 			switch (audioPlayer.getDataSourceType()) {
@@ -228,9 +224,6 @@ public class MainActivity extends FragmentActivity {
 				&& readyComponents.get(Component.STREAMUPDATER)
 				&& readyComponents.get(Component.LIVERADIOSECTION)) {
 
-			StreamUpdaterService streamUpdater = streamUpdaterService
-					.getService();
-
 			streamUpdater.update();
 		}
 	}
@@ -244,8 +237,6 @@ public class MainActivity extends FragmentActivity {
 			if (liveRadioSectionFragment != null) {
 				LiveRadioFragment fragment = liveRadioSectionFragment
 						.getLiveRadioFragment();
-				AudioPlayerService audioservice = audioPlayerService
-						.getService();
 
 				seekbarHandler.removeCallbacks(seekbarUpdater);
 
@@ -263,14 +254,14 @@ public class MainActivity extends FragmentActivity {
 					fragment.setStatusText("started");
 					fragment.setPauseIcon();
 
-					switch (audioservice.getDataSourceType()) {
+					switch (audioPlayer.getDataSourceType()) {
 					case LIVE_RADIO:
 						String liveText = getResources().getString(
 								R.string.textView_liveradio_time_live);
 						fragment.setTimeText(liveText);
 						break;
 					case PODCAST:
-						fragment.setMaxOnSeekBar(audioservice.getDuration());
+						fragment.setMaxOnSeekBar(audioPlayer.getDuration());
 						seekbarHandler.postDelayed(seekbarUpdater, 0);
 						break;
 					case NONE:
@@ -301,8 +292,6 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public void onPlayPauseClicked() {
-			AudioPlayerService audioPlayer = audioPlayerService.getService();
-
 			switch (audioPlayer.getState()) {
 			case PAUSED:
 			case PREPARING:
@@ -337,7 +326,6 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public void onStopClicked() {
-			AudioPlayerService audioPlayer = audioPlayerService.getService();
 			audioPlayer.stop();
 		}
 
@@ -367,9 +355,6 @@ public class MainActivity extends FragmentActivity {
 				TextView textView = fragment.getProgramNameTextView();
 
 				new ScheduleAsyncTask(textView).execute();
-
-				AudioPlayerService audioPlayer = audioPlayerService
-						.getService();
 
 				boolean autoPlay = audioPlayer.getState() == State.STARTED;
 
@@ -424,7 +409,6 @@ public class MainActivity extends FragmentActivity {
 		public void onItemClick(AdapterView<?> adapter, View view,
 				int position, long id) {
 
-			AudioPlayerService audioPlayer = audioPlayerService.getService();
 			Podcast podcast = (Podcast) view.getTag();
 
 			audioPlayer.setCurrentPodcast(podcast);
@@ -441,11 +425,13 @@ public class MainActivity extends FragmentActivity {
 
 	@Subscribe
 	public void onAudioPlayerServiceReady(final AudioPlayerService service) {
-		service.setStateListener(new AudioPlayerStateListener());
-		service.setListener(new AudioPlayerHandler(this));
+		audioPlayer = service;
+
+		audioPlayer.setStateListener(new AudioPlayerStateListener());
+		audioPlayer.setListener(new AudioPlayerHandler(this));
 
 		TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		manager.listen(new PhoneStateHandler(service),
+		manager.listen(new PhoneStateHandler(audioPlayer),
 				PhoneStateListener.LISTEN_CALL_STATE);
 
 		readyComponents.put(Component.AUDIOPLAYER, true);
@@ -454,10 +440,12 @@ public class MainActivity extends FragmentActivity {
 
 	@Subscribe
 	public void onStreamUpdaterServiceReady(final StreamUpdaterService service) {
-		service.setStreamUpdateListener(new StreamUpdateListener());
+		streamUpdater = service;
+
+		streamUpdater.setStreamUpdateListener(new StreamUpdateListener());
 
 		connectivityChangeReceiver = new ConnectivityChangeReceiver(
-				new ConnectivityChangedHandler(service));
+				new ConnectivityChangedHandler(streamUpdater));
 
 		IntentFilter filter = new IntentFilter(
 				ConnectivityManager.CONNECTIVITY_ACTION);
@@ -486,8 +474,6 @@ public class MainActivity extends FragmentActivity {
 		TextView textView = fragment.getProgramNameTextView();
 
 		new ScheduleAsyncTask(textView).execute();
-
-		AudioPlayerService audioPlayer = audioPlayerService.getService();
 
 		if (audioPlayer != null) {
 			switch (audioPlayer.getState()) {
@@ -591,8 +577,7 @@ public class MainActivity extends FragmentActivity {
 		public void onStopTrackingTouch(final SeekBar seekBar) {
 			seekbarHandler.postDelayed(seekbarUpdater, SEEKBAR_UPDATE_INTERVAL);
 
-			AudioPlayerService service = audioPlayerService.getService();
-			service.seekTo(progress);
+			audioPlayer.seekTo(progress);
 		}
 
 		private String fromMsToTime(final int ms) {
@@ -607,16 +592,14 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public void run() {
-			AudioPlayerService service = audioPlayerService.getService();
-
-			if (service.getState() == State.STARTED) {
+			if (audioPlayer.getState() == State.STARTED) {
 				LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
 
 				if (sectionFragment != null) {
 					LiveRadioFragment fragment = sectionFragment
 							.getLiveRadioFragment();
 
-					fragment.setSeekBarProgress(service.getProgress());
+					fragment.setSeekBarProgress(audioPlayer.getProgress());
 					seekbarHandler.postDelayed(seekbarUpdater,
 							SEEKBAR_UPDATE_INTERVAL);
 				}

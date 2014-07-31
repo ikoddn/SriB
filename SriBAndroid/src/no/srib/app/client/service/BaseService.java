@@ -9,7 +9,7 @@ public abstract class BaseService extends Service {
 
 	private final IBinder BINDER;
 
-	public BaseService() {
+	protected BaseService() {
 		BINDER = new BaseBinder();
 	}
 
