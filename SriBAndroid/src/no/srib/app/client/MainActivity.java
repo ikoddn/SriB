@@ -1,7 +1,5 @@
 package no.srib.app.client;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -14,12 +12,12 @@ import no.srib.app.client.asynctask.ArticleAsyncTask;
 import no.srib.app.client.asynctask.PodcastAsyncTask;
 import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
 import no.srib.app.client.asynctask.ScheduleAsyncTask;
+import no.srib.app.client.event.handler.ArticleSearchHandler;
 import no.srib.app.client.event.handler.AudioPlayerHandler;
 import no.srib.app.client.event.handler.ConnectivityChangedHandler;
 import no.srib.app.client.event.handler.InfoClickHandler;
 import no.srib.app.client.event.handler.PageChangeHandler;
 import no.srib.app.client.event.handler.PhoneStateHandler;
-import no.srib.app.client.event.listener.OnSearchListener;
 import no.srib.app.client.fragment.ArticleListFragment;
 import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
@@ -458,7 +456,8 @@ public class MainActivity extends FragmentActivity {
 	@Subscribe
 	public void onArticleListFragmentReady(final ArticleListFragment fragment) {
 		fragment.setArticleListAdapter(articleListAdapter);
-		fragment.setSearchListener(new ArticleSearch());
+		fragment.setSearchListener(new ArticleSearchHandler(this,
+				articleListAdapter));
 	}
 
 	@Subscribe
@@ -469,7 +468,8 @@ public class MainActivity extends FragmentActivity {
 	@Subscribe
 	public void onLiveRadioFragmentReady(final LiveRadioFragment fragment) {
 		fragment.setOnLiveRadioClickListener(new LiveRadioClickListener());
-		fragment.setSeekBarOnChangeListener(new SeekBarChangeListener());
+		fragment.setSeekBarOnChangeListener(new SeekBarChangeListener(fragment
+				.getTimeTextView()));
 
 		TextView textView = fragment.getProgramNameTextView();
 
@@ -550,9 +550,11 @@ public class MainActivity extends FragmentActivity {
 	private class SeekBarChangeListener implements OnSeekBarChangeListener {
 
 		private int progress;
+		private TextView timeTextView;
 
-		public SeekBarChangeListener() {
+		public SeekBarChangeListener(final TextView timeTextView) {
 			progress = 0;
+			this.timeTextView = timeTextView;
 		}
 
 		@Override
@@ -561,11 +563,8 @@ public class MainActivity extends FragmentActivity {
 
 			this.progress = progress;
 
-			LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-			LiveRadioFragment fragment = sectionFragment.getLiveRadioFragment();
-
 			String timeString = fromMsToTime(progress);
-			fragment.setTimeText(timeString);
+			timeTextView.setText(timeString);
 		}
 
 		@Override
@@ -639,25 +638,5 @@ public class MainActivity extends FragmentActivity {
 
 	private static String getFragmentTag(int viewPagerId, int index) {
 		return "android:switcher:" + viewPagerId + ":" + index;
-	}
-
-	private class ArticleSearch implements OnSearchListener {
-
-		@Override
-		public void onSearch(final String query) {
-			try {
-				String urlEncodedQuery = URLEncoder.encode(query, "UTF-8");
-
-				new ArticleAsyncTask(MainActivity.this, articleListAdapter)
-						.execute(urlEncodedQuery);
-			} catch (UnsupportedEncodingException e) {
-			}
-		}
-
-		@Override
-		public void restorePreSearchData() {
-			new ArticleAsyncTask(MainActivity.this, articleListAdapter)
-					.execute();
-		}
 	}
 }

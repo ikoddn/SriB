@@ -90,9 +90,9 @@ public class LiveRadioFragment extends BaseFragment {
 	public TextView getProgramNameTextView() {
 		return programNameTextView;
 	}
-
-	public CharSequence getProgramNameText() {
-		return programNameTextView.getText();
+	
+	public TextView getTimeTextView() {
+		return timeTextView;
 	}
 
 	public void setStatusText(final CharSequence text) {
