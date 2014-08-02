@@ -42,7 +42,6 @@ public class UpdateUrl extends HttpServlet {
                 String url = request.getParameter("url");
                 String name = request.getParameter("name");
                 String idString = request.getParameter("id");
-                System.out.println(idString);
 
                 try {
                     new URL(url);

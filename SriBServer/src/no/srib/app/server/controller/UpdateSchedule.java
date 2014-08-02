@@ -34,6 +34,7 @@ public class UpdateSchedule extends HttpServlet {
     HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         HttpSession ses = request.getSession(false);
+
         if (ses != null && ses.getAttribute("loggedIn") != null
                 && ses.getAttribute("loggedIn").equals("true")) {
             ses.setAttribute("errorUpdate", Boolean.valueOf(false));
@@ -48,8 +49,7 @@ public class UpdateSchedule extends HttpServlet {
             String fromTimeString = request.getParameter("fromTime");
             String dayString = request.getParameter("day");
             String programString = request.getParameter("program");
-            System.out.println(fromTimeString + " " + toTimeString + " "
-                    + dayString + " " + programString);
+
             if (fromTimeString != null && toTimeString != null
                     && dayString != null && programString != null) {
 
@@ -77,8 +77,6 @@ public class UpdateSchedule extends HttpServlet {
                         program);
 
                 if (request.getParameter("add") != null) {
-                    System.out.println("legger til");
-
                     try {
                         scheduleDAO.add(sch);
                     } catch (DAOException e) {

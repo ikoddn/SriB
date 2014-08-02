@@ -73,7 +73,6 @@ public class ProgramnameDAOImpl extends AbstractModelDAOImpl<Programname>
             em.flush();
         } catch (PersistenceException e) {
             if (e.getCause() instanceof DatabaseException) {
-                System.out.println("yololololo");
                 throw new DuplicateEntryException();
             } else {
                 throw new DAOException();

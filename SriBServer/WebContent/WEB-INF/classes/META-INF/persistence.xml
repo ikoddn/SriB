@@ -8,17 +8,13 @@
 	<persistence-unit name="srib" transaction-type="JTA">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<jta-data-source>SriB-Resource</jta-data-source>
+		<class>no.srib.app.server.model.jpa.Backenduser</class>
+		<class>no.srib.app.server.model.jpa.Definition</class>
 		<class>no.srib.app.server.model.jpa.Podcast</class>
 		<class>no.srib.app.server.model.jpa.Programinfo</class>
-		<class>no.srib.app.server.model.jpa.Definition</class>
-		<class>no.srib.app.server.model.jpa.Streamurl</class>
-		<class>no.srib.app.server.model.jpa.Backenduser</class>
-		<class>no.srib.app.server.model.jpa.Schedule</class>
-		<class>no.srib.app.server.model.jpa.Streamurlschedule</class>
 		<class>no.srib.app.server.model.jpa.Programname</class>
-
-		<properties>
-			<property name="eclipselink.logging.level" value="FINE" />
-		</properties>
+		<class>no.srib.app.server.model.jpa.Schedule</class>
+		<class>no.srib.app.server.model.jpa.Streamurl</class>
+		<class>no.srib.app.server.model.jpa.Streamurlschedule</class>
 	</persistence-unit>
 </persistence>
