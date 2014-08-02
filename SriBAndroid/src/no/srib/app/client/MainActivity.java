@@ -151,6 +151,11 @@ public class MainActivity extends FragmentActivity {
 		articleListAdapter = new ArticleListAdapter(this);
 		podcastGridAdapter = new PodcastGridAdapter(this);
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 
 		updateContent();
 	}

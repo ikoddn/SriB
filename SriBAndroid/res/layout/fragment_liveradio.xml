@@ -14,13 +14,15 @@
     <TextView
         android:id="@+id/textview_liveradio_status"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/textview_liveradio_stream"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_liveradio_status" />
+        android:layout_below="@id/textview_liveradio_status"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/vlayout_liveradio"
