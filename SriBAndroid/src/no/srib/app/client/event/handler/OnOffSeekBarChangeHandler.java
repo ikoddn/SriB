@@ -50,6 +50,10 @@ public class OnOffSeekBarChangeHandler implements OnSeekBarChangeListener {
 
 		if (currentlyOn) {
 			seekBar.setProgress(overHalf ? max : 0);
+
+			if (progress == 0) {
+				onProgressChanged(seekBar, 0, false);
+			}
 		} else {
 			if (overHalf) {
 				Toast.makeText(seekBar.getContext(),
