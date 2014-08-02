@@ -458,7 +458,9 @@ public class LiveRadioFragment extends BaseFragment {
 
 		@Override
 		public void onToggled(final boolean on) {
-			liveRadioClickListener.onRadioPodcastSwitchToggled(on);
+			if (liveRadioClickListener != null) {
+				liveRadioClickListener.onRadioPodcastSwitchToggled(on);
+			}
 		}
 	}
 
