@@ -9,21 +9,20 @@ import no.srib.app.client.model.Schedule;
 import no.srib.app.client.util.NetworkUtil;
 import android.content.Context;
 import android.util.Log;
-import android.widget.TextView;
 
 public class ScheduleAsyncTask extends
 		CacheAwareAsyncTask<Void, Void, Schedule> {
 
 	private final Context context;
-	private final TextView textView;
+	private final Schedule schedule;
 
 	private Exception exception;
 
-	public ScheduleAsyncTask(final TextView textView) {
+	public ScheduleAsyncTask(final Context context, final Schedule schedule) {
 		super(ScheduleCacheDAOImpl.INSTANCE);
 
-		context = textView.getContext();
-		this.textView = textView;
+		this.context = context;
+		this.schedule = schedule;
 	}
 
 	@Override
@@ -65,12 +64,10 @@ public class ScheduleAsyncTask extends
 			exception.printStackTrace();
 		} else if (result == null) {
 			// TODO display StreamSchedule name?
-			if (NetworkUtil.networkAvailable(context)) {
-				textView.setText("");
-			}
+			schedule.setProgram("");
 			Log.d("SriB", "ScheduleAsyncTask onPostExecute(): result == null");
 		} else {
-			textView.setText(result.getProgram());
+			schedule.setProgram(result.getProgram());
 		}
 	}
 }

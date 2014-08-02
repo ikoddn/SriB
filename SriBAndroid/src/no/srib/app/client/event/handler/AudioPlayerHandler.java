@@ -25,7 +25,6 @@ public class AudioPlayerHandler implements AudioPlayerListener {
 
 		LiveRadioFragment fragment = liveRadioSectionFragment
 				.getLiveRadioFragment();
-		fragment.setProgramNameText(podcast.getProgram());
 		fragment.setPodcastMode();
 
 		activity.getViewPager().setCurrentItem(
@@ -41,7 +40,7 @@ public class AudioPlayerHandler implements AudioPlayerListener {
 
 		LiveRadioFragment liveRadio = liveRadioSectionFragment
 				.getLiveRadioFragment();
-		
+
 		liveRadio.setLiveRadioMode();
 		if (liveRadio.isReady()) {
 			liveRadio.setStreamText(streamSchedule.getName());

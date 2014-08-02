@@ -9,7 +9,7 @@ public class Schedule implements Serializable {
 	private String program;
 	private long time;
 
-	protected Schedule() {
+	public Schedule() {
 	}
 
 	public Schedule(final String program, final long time) {

@@ -26,6 +26,7 @@ import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.model.Podcast;
+import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
 import no.srib.app.client.service.ServiceBinder;
@@ -99,6 +100,7 @@ public class MainActivity extends FragmentActivity {
 	private ArticleListAdapter articleListAdapter;
 	private PodcastGridAdapter podcastGridAdapter;
 	private ProgramSpinnerAdapter programSpinnerAdapter;
+	private Schedule schedule;
 
 	private Handler seekbarHandler;
 	private Runnable seekbarUpdater;
@@ -114,6 +116,8 @@ public class MainActivity extends FragmentActivity {
 		viewPager = null;
 		audioPlayer = null;
 		streamUpdater = null;
+
+		schedule = new Schedule();
 
 		seekbarHandler = new Handler();
 		seekbarUpdater = new SeekbarUpdater();
@@ -174,21 +178,7 @@ public class MainActivity extends FragmentActivity {
 		new ArticleAsyncTask(this, articleListAdapter).execute();
 		new PodcastAsyncTask(this, podcastGridAdapter).execute();
 		new PodcastProgramsAsyncTask(this, programSpinnerAdapter).execute();
-
-		LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-
-		if (sectionFragment != null) {
-			LiveRadioFragment liveRadio = sectionFragment
-					.getLiveRadioFragment();
-
-			if (liveRadio.isReady()) {
-				TextView textView = liveRadio.getProgramNameTextView();
-
-				if (textView != null) {
-					new ScheduleAsyncTask(textView).execute();
-				}
-			}
-		}
+		new ScheduleAsyncTask(this, schedule).execute();
 	}
 
 	private class StreamUpdateListener implements OnStreamUpdateListener {
@@ -264,6 +254,45 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
+	private void setProgramNameText() {
+		String programName = null;
+
+		LiveRadioSectionFragment liveRadioSectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
+
+		if (liveRadioSectionFragment != null) {
+			LiveRadioFragment fragment = liveRadioSectionFragment
+					.getLiveRadioFragment();
+
+			switch (audioPlayer.getDataSourceType()) {
+			case LIVE_RADIO:
+				String liveText = getResources().getString(
+						R.string.textView_liveradio_time_live);
+				fragment.setTimeText(liveText);
+
+				if (schedule == null || schedule.getProgram() == null
+						|| schedule.getProgram().trim().isEmpty()) {
+					programName = audioPlayer.getCurrentStream().getName();
+				} else {
+					programName = schedule.getProgram();
+				}
+				break;
+			case PODCAST:
+				fragment.setMaxOnSeekBar(audioPlayer.getDuration());
+				seekbarHandler.postDelayed(seekbarUpdater, 0);
+
+				programName = audioPlayer.getCurrentPodcast().getProgram();
+				break;
+			case NONE:
+			default:
+				break;
+			}
+
+			if (programName != null) {
+				fragment.setProgramNameText(programName);
+			}
+		}
+	}
+
 	public class AudioPlayerStateListener implements StateListener {
 
 		@Override
@@ -285,25 +314,16 @@ public class MainActivity extends FragmentActivity {
 					fragment.setStatusText("preparing");
 					fragment.setTimeText("");
 					fragment.setPauseIcon();
+
+					String buffering = getResources().getString(
+							R.string.textview_liveradio_buffering);
+					fragment.setProgramNameText(buffering);
 					break;
 				case STARTED:
 					fragment.setStatusText("started");
 					fragment.setPauseIcon();
 
-					switch (audioPlayer.getDataSourceType()) {
-					case LIVE_RADIO:
-						String liveText = getResources().getString(
-								R.string.textView_liveradio_time_live);
-						fragment.setTimeText(liveText);
-						break;
-					case PODCAST:
-						fragment.setMaxOnSeekBar(audioPlayer.getDuration());
-						seekbarHandler.postDelayed(seekbarUpdater, 0);
-						break;
-					case NONE:
-					default:
-						break;
-					}
+					setProgramNameText();
 					break;
 				case STOPPED:
 					fragment.setStatusText("stopped");
@@ -384,13 +404,6 @@ public class MainActivity extends FragmentActivity {
 		public void onRadioPodcastSwitchToggled(final boolean podcast) {
 			if (!podcast) {
 				seekbarHandler.removeCallbacks(seekbarUpdater);
-
-				LiveRadioSectionFragment sectionFragment = (LiveRadioSectionFragment) getFragment(SectionsPagerAdapter.LIVERADIO_SECTION_FRAGMENT);
-				LiveRadioFragment fragment = sectionFragment
-						.getLiveRadioFragment();
-				TextView textView = fragment.getProgramNameTextView();
-
-				new ScheduleAsyncTask(textView).execute();
 
 				boolean autoPlay = audioPlayer.getState() == State.STARTED;
 
@@ -509,11 +522,9 @@ public class MainActivity extends FragmentActivity {
 		fragment.setSeekBarOnChangeListener(new SeekBarChangeListener(fragment
 				.getTimeTextView()));
 
-		TextView textView = fragment.getProgramNameTextView();
-
-		new ScheduleAsyncTask(textView).execute();
-
 		if (audioPlayer != null) {
+			setProgramNameText();
+
 			switch (audioPlayer.getState()) {
 			case PREPARING:
 			case STARTED:

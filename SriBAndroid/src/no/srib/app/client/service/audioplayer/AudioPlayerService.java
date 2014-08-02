@@ -55,8 +55,16 @@ public class AudioPlayerService extends BaseService {
 		this.audioPlayerListener = audioPlayerListener;
 	}
 
+	public Podcast getCurrentPodcast() {
+		return currentPodcast;
+	}
+
 	public void setCurrentPodcast(final Podcast podcast) {
 		currentPodcast = podcast;
+	}
+
+	public StreamSchedule getCurrentStream() {
+		return currentStream;
 	}
 
 	public void setCurrentStream(final StreamSchedule stream) {
@@ -325,5 +333,4 @@ public class AudioPlayerService extends BaseService {
 
 		audioPlayerListener.onSwitchToStreamSchedule(currentStream);
 	}
-
 }
