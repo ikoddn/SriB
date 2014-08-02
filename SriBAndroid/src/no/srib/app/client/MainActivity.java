@@ -265,10 +265,6 @@ public class MainActivity extends FragmentActivity {
 
 			switch (audioPlayer.getDataSourceType()) {
 			case LIVE_RADIO:
-				String liveText = getResources().getString(
-						R.string.textView_liveradio_time_live);
-				fragment.setTimeText(liveText);
-
 				if (schedule == null || schedule.getProgram() == null
 						|| schedule.getProgram().trim().isEmpty()) {
 					programName = audioPlayer.getCurrentStream().getName();
@@ -277,9 +273,6 @@ public class MainActivity extends FragmentActivity {
 				}
 				break;
 			case PODCAST:
-				fragment.setMaxOnSeekBar(audioPlayer.getDuration());
-				seekbarHandler.postDelayed(seekbarUpdater, 0);
-
 				programName = audioPlayer.getCurrentPodcast().getProgram();
 				break;
 			case NONE:
@@ -323,7 +316,23 @@ public class MainActivity extends FragmentActivity {
 					fragment.setStatusText("started");
 					fragment.setPauseIcon();
 
+					switch (audioPlayer.getDataSourceType()) {
+					case LIVE_RADIO:
+						String liveText = getResources().getString(
+								R.string.textView_liveradio_time_live);
+						fragment.setTimeText(liveText);
+						break;
+					case PODCAST:
+						fragment.setMaxOnSeekBar(audioPlayer.getDuration());
+						seekbarHandler.postDelayed(seekbarUpdater, 0);
+						break;
+					case NONE:
+					default:
+						break;
+					}
+
 					setProgramNameText();
+
 					break;
 				case STOPPED:
 					fragment.setStatusText("stopped");
@@ -338,6 +347,12 @@ public class MainActivity extends FragmentActivity {
 					fragment.setStatusText("completed");
 					fragment.setPlayIcon();
 					fragment.setTimeText("");
+
+					if (!NetworkUtil.networkAvailable(MainActivity.this)) {
+						String error = getResources().getString(
+								R.string.textview_liveradio_error_nointernet);
+						fragment.setProgramNameText(error);
+					}
 					break;
 				}
 			}
