@@ -90,14 +90,14 @@ public class LiveRadioFragment extends BaseFragment {
 	public TextView getProgramNameTextView() {
 		return programNameTextView;
 	}
-	
+
 	public TextView getTimeTextView() {
 		return timeTextView;
 	}
 
 	public void setStatusText(final CharSequence text) {
 		status = text;
-		
+
 		if (statusTextView != null) {
 			statusTextView.setText(text);
 		}
@@ -105,7 +105,7 @@ public class LiveRadioFragment extends BaseFragment {
 
 	public void setStreamText(final CharSequence text) {
 		stream = text;
-		
+
 		if (streamTextView != null) {
 			streamTextView.setText(text);
 		}
@@ -113,7 +113,7 @@ public class LiveRadioFragment extends BaseFragment {
 
 	public void setTimeText(final CharSequence text) {
 		time = text;
-		
+
 		if (timeTextView != null) {
 			timeTextView.setText(text);
 		}
@@ -143,15 +143,15 @@ public class LiveRadioFragment extends BaseFragment {
 		if (programName != null) {
 			programNameTextView.setText(programName);
 		}
-		
+
 		if (status != null) {
 			statusTextView.setText(status);
 		}
-		
+
 		if (stream != null) {
 			streamTextView.setText(stream);
 		}
-		
+
 		if (time != null) {
 			timeTextView.setText(time);
 		}
@@ -493,6 +493,9 @@ public class LiveRadioFragment extends BaseFragment {
 			Drawable thumb = res.getDrawable(R.drawable.liveradio_spoleslider);
 			Drawable thumbScaled = ImageUtil.resize(thumb, seekbarWidth,
 					seekbarLayout.getHeight(), res);
+			thumbScaled.setBounds(0, 0, thumbScaled.getIntrinsicWidth(),
+					thumbScaled.getIntrinsicHeight());
+
 			seekbar.setThumb(thumbScaled);
 			seekbar.setThumbOffset(0);
 			seekbar.setPadding(0, 0, 0, 0);
@@ -500,9 +503,13 @@ public class LiveRadioFragment extends BaseFragment {
 			seekbarLayout = rootView
 					.findViewById(R.id.hlayout_liveradio_radiopodcastswitch);
 			seekbarWidth = (int) (radioPodcastWidthFactor * width);
+
 			thumb = res.getDrawable(R.drawable.liveradio_npslider);
 			thumbScaled = ImageUtil.resize(thumb, seekbarWidth,
 					seekbarLayout.getHeight(), res);
+			thumbScaled.setBounds(0, 0, thumbScaled.getIntrinsicWidth(),
+					thumbScaled.getIntrinsicHeight());
+
 			radioPodcastSwitch.setThumb(thumbScaled);
 			radioPodcastSwitch.setThumbOffset(0);
 			radioPodcastSwitch.setPadding(0, 0, 0, 0);
