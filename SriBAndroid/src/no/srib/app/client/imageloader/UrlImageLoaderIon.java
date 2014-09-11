@@ -18,8 +18,11 @@ class UrlImageLoaderIon implements UrlImageLoader {
 			final int width, final String url, final Drawable placeholder) {
 
 		if (height > 0 && width > 0) {
-			Ion.with(imageView).resize(width, height).placeholder(placeholder)
-					.error(placeholder).load(url);
+			Ion.with(imageView)
+					.resize(width, height)
+					.placeholder(placeholder)
+					.error(placeholder)
+					.load(url);
 		} else {
 			Log.d("SriB", "HERE");
 		}

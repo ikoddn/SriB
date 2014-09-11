@@ -25,10 +25,12 @@ import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
+import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.receiver.ConnectivityChangeReceiver;
+import no.srib.app.client.notification.NotificationService;
 import no.srib.app.client.service.ServiceBinder;
 import no.srib.app.client.service.StreamUpdaterService;
 import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
@@ -36,6 +38,7 @@ import no.srib.app.client.service.audioplayer.AudioPlayerException;
 import no.srib.app.client.service.audioplayer.AudioPlayerService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
+import no.srib.app.client.util.AudioMetaUtil;
 import no.srib.app.client.util.BusProvider;
 import no.srib.app.client.util.NetworkUtil;
 
@@ -100,10 +103,12 @@ public class MainActivity extends FragmentActivity {
 	private ArticleListAdapter articleListAdapter;
 	private PodcastGridAdapter podcastGridAdapter;
 	private ProgramSpinnerAdapter programSpinnerAdapter;
-	private Schedule schedule;
+	public static Schedule schedule; // TODO: share this in a better way
 
 	private Handler seekbarHandler;
 	private Runnable seekbarUpdater;
+
+	private NotificationService notification;
 
 	public MainActivity() {
 		readyComponents = new EnumMap<Component, Boolean>(Component.class);
@@ -155,11 +160,24 @@ public class MainActivity extends FragmentActivity {
 		articleListAdapter = new ArticleListAdapter(this);
 		podcastGridAdapter = new PodcastGridAdapter(this);
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
+		UrlImageLoaderSimple.init(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+//		if(notification != null)
+//			notification.show();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		// start the notification when audioPlayer is ready
+//		if(notification != null)
+//			notification.hide();
 
 		updateContent();
 	}
@@ -167,6 +185,10 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		audioPlayer.stopSelf();
+		streamUpdater.stopSelf();
+		notification.destroy();
 
 		BusProvider.INSTANCE.get().unregister(this);
 		unregisterReceiver(connectivityChangeReceiver); // TODO is this correct
@@ -263,22 +285,7 @@ public class MainActivity extends FragmentActivity {
 			LiveRadioFragment fragment = liveRadioSectionFragment
 					.getLiveRadioFragment();
 
-			switch (audioPlayer.getDataSourceType()) {
-			case LIVE_RADIO:
-				if (schedule == null || schedule.getProgram() == null
-						|| schedule.getProgram().trim().isEmpty()) {
-					programName = audioPlayer.getCurrentStream().getName();
-				} else {
-					programName = schedule.getProgram();
-				}
-				break;
-			case PODCAST:
-				programName = audioPlayer.getCurrentPodcast().getProgram();
-				break;
-			case NONE:
-			default:
-				break;
-			}
+			programName = AudioMetaUtil.getProgramName(audioPlayer);
 
 			if (programName != null) {
 				fragment.setProgramNameText(programName);
@@ -490,6 +497,8 @@ public class MainActivity extends FragmentActivity {
 	@Subscribe
 	public void onAudioPlayerServiceReady(final AudioPlayerService service) {
 		audioPlayer = service;
+
+		notification = new NotificationService(this, service);
 
 		audioPlayer.setStateListener(new AudioPlayerStateListener());
 		audioPlayer.setListener(new AudioPlayerHandler(this));

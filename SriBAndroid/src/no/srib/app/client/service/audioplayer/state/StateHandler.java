@@ -1,5 +1,8 @@
 package no.srib.app.client.service.audioplayer.state;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class prevents the assignment of {@code state} without calling the
  * {@code onStateChanged} on the {@code StateListener}.
@@ -10,11 +13,11 @@ package no.srib.app.client.service.audioplayer.state;
 public class StateHandler {
 
 	private State state;
-	private StateListener stateListener;
+	private List<StateListener> stateListener;
 
 	public StateHandler() {
 		state = State.UNINITIALIZED;
-		stateListener = null;
+		stateListener = new ArrayList<>();
 	}
 
 	public State getState() {
@@ -25,11 +28,13 @@ public class StateHandler {
 		this.state = state;
 
 		if (stateListener != null) {
-			stateListener.onStateChanged(state);
+			for(StateListener listener: stateListener) {
+				listener.onStateChanged(state);
+			}
 		}
 	}
 
-	public void setStateListener(StateListener stateListener) {
-		this.stateListener = stateListener;
+	public void addStateListener(StateListener stateListener) {
+		this.stateListener.add(stateListener);
 	}
 }

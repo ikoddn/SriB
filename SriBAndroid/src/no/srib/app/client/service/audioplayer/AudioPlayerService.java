@@ -10,6 +10,8 @@ import no.srib.app.client.service.BaseService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateHandler;
 import no.srib.app.client.service.audioplayer.state.StateListener;
+
+import android.app.NotificationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -26,6 +28,8 @@ import android.util.Log;
  */
 public class AudioPlayerService extends BaseService {
 
+	private static AudioPlayerService playerService;
+
 	private String podcastNasUrl;
 
 	private DataSourceType dataSourceType;
@@ -37,6 +41,10 @@ public class AudioPlayerService extends BaseService {
 	private Podcast currentPodcast;
 	private StreamSchedule currentStream;
 
+	static public AudioPlayerService getService() {
+		return playerService;
+	}
+
 	public AudioPlayerService() {
 		dataSourceType = DataSourceType.NONE;
 		dataSource = null;
@@ -45,6 +53,7 @@ public class AudioPlayerService extends BaseService {
 
 		currentPodcast = null;
 		currentStream = null;
+		playerService = this;
 	}
 
 	public DataSourceType getDataSourceType() {
@@ -71,7 +80,7 @@ public class AudioPlayerService extends BaseService {
 		currentStream = stream;
 	}
 
-	@Override
+    @Override
 	public void onCreate() {
 		super.onCreate();
 
@@ -203,7 +212,7 @@ public class AudioPlayerService extends BaseService {
 	 *            - The {@code StateListener} implementation
 	 */
 	public void setStateListener(StateListener stateListener) {
-		stateHandler.setStateListener(stateListener);
+		stateHandler.addStateListener(stateListener);
 	}
 
 	public int getDuration() {
