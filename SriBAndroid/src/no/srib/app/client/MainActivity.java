@@ -545,6 +545,7 @@ public class MainActivity extends FragmentActivity {
 
 			if(true) return;
 
+
 			audioPlayer.setCurrentPodcast(podcast);
 
 			try {

@@ -24,6 +24,18 @@
                 android:id="@+id/textView_podcastItem_programname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/download_podcast"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/podcast_download"
+                android:scaleType="fitCenter"
+                android:layout_toLeftOf="@+id/linearLayout_podcastItem_text"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                />
         </LinearLayout>
 
         <ImageView

@@ -5,6 +5,7 @@ prefs.xml
 /SriBServer/.classpath
 
 # eclipse project files
+.classpath
 /SriBServer/.settings/org.eclipse.wst.common.component
 /SriBServer/.settings/org.eclipse.wst.common.project.facet.core.
 
