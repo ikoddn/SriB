@@ -1,52 +1,9 @@
 package no.srib.app.client;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import no.srib.app.client.adapter.ArticleListAdapter;
-import no.srib.app.client.adapter.PodcastGridAdapter;
-import no.srib.app.client.adapter.ProgramSpinnerAdapter;
-import no.srib.app.client.adapter.SectionsPagerAdapter;
-import no.srib.app.client.asynctask.ArticleAsyncTask;
-import no.srib.app.client.asynctask.PodcastAsyncTask;
-import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
-import no.srib.app.client.asynctask.ScheduleAsyncTask;
-import no.srib.app.client.event.handler.ArticleSearchHandler;
-import no.srib.app.client.event.handler.AudioPlayerHandler;
-import no.srib.app.client.event.handler.ConnectivityChangedHandler;
-import no.srib.app.client.event.handler.InfoClickHandler;
-import no.srib.app.client.event.handler.PageChangeHandler;
-import no.srib.app.client.event.handler.PhoneStateHandler;
-import no.srib.app.client.fragment.ArticleListFragment;
-import no.srib.app.client.fragment.InfoFragment;
-import no.srib.app.client.fragment.LiveRadioFragment;
-import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
-import no.srib.app.client.fragment.LiveRadioSectionFragment;
-import no.srib.app.client.fragment.PodcastFragment;
-import no.srib.app.client.fragment.SectionFragment;
-import no.srib.app.client.imageloader.UrlImageLoaderSimple;
-import no.srib.app.client.model.Podcast;
-import no.srib.app.client.model.Schedule;
-import no.srib.app.client.model.StreamSchedule;
-import no.srib.app.client.receiver.ConnectivityChangeReceiver;
-import no.srib.app.client.notification.NotificationService;
-import no.srib.app.client.service.ServiceBinder;
-import no.srib.app.client.service.StreamUpdaterService;
-import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
-import no.srib.app.client.service.audioplayer.AudioPlayerException;
-import no.srib.app.client.service.audioplayer.AudioPlayerService;
-import no.srib.app.client.service.audioplayer.state.State;
-import no.srib.app.client.service.audioplayer.state.StateListener;
-import no.srib.app.client.util.AudioMetaUtil;
-import no.srib.app.client.util.BusProvider;
-import no.srib.app.client.util.NetworkUtil;
-
-import org.apache.commons.lang3.time.DurationFormatUtils;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -69,9 +26,64 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import no.srib.app.client.adapter.ArticleListAdapter;
+import no.srib.app.client.adapter.PodcastGridAdapter;
+import no.srib.app.client.adapter.ProgramSpinnerAdapter;
+import no.srib.app.client.adapter.SectionsPagerAdapter;
+import no.srib.app.client.asynctask.ArticleAsyncTask;
+import no.srib.app.client.asynctask.PodcastAsyncTask;
+import no.srib.app.client.asynctask.PodcastProgramsAsyncTask;
+import no.srib.app.client.asynctask.ScheduleAsyncTask;
+import no.srib.app.client.db.DataSource;
+import no.srib.app.client.event.ManualExitEvent;
+import no.srib.app.client.event.handler.ArticleSearchHandler;
+import no.srib.app.client.event.handler.AudioPlayerHandler;
+import no.srib.app.client.event.handler.ConnectivityChangedHandler;
+import no.srib.app.client.event.handler.InfoClickHandler;
+import no.srib.app.client.event.handler.PageChangeHandler;
+import no.srib.app.client.event.handler.PhoneStateHandler;
+import no.srib.app.client.fragment.ArticleListFragment;
+import no.srib.app.client.fragment.InfoFragment;
+import no.srib.app.client.fragment.LiveRadioFragment;
+import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
+import no.srib.app.client.fragment.LiveRadioSectionFragment;
+import no.srib.app.client.fragment.LocalPodcastFragment;
+import no.srib.app.client.fragment.PodcastFragment;
+import no.srib.app.client.fragment.SectionFragment;
+import no.srib.app.client.imageloader.UrlImageLoaderSimple;
+import no.srib.app.client.model.Podcast;
+import no.srib.app.client.model.Schedule;
+import no.srib.app.client.model.StreamSchedule;
+import no.srib.app.client.notification.NotificationService;
+import no.srib.app.client.receiver.ConnectivityChangeReceiver;
+import no.srib.app.client.service.ServiceBinder;
+import no.srib.app.client.service.StreamUpdaterService;
+import no.srib.app.client.service.StreamUpdaterService.OnStreamUpdateListener;
+import no.srib.app.client.service.audioplayer.AudioPlayerException;
+import no.srib.app.client.service.audioplayer.AudioPlayerService;
+import no.srib.app.client.service.audioplayer.DataSourceType;
+import no.srib.app.client.service.audioplayer.state.State;
+import no.srib.app.client.service.audioplayer.state.StateListener;
+import no.srib.app.client.util.AudioMetaUtil;
+import no.srib.app.client.util.BusProvider;
+import no.srib.app.client.util.Logger;
+import no.srib.app.client.util.NetworkUtil;
+//import no.srib.app.client.util.PodcastDownloader;
+import no.srib.app.client.view.CircleIshPageIndicator;
+
 public class MainActivity extends FragmentActivity {
 
 	private static final int SEEKBAR_UPDATE_INTERVAL = 1000;
+	private SharedPreferences sharedPref;
+	private CircleIshPageIndicator viewPageIndicator;
 
 	enum Component {
 		AUDIOPLAYER,
@@ -102,13 +114,15 @@ public class MainActivity extends FragmentActivity {
 
 	private ArticleListAdapter articleListAdapter;
 	private PodcastGridAdapter podcastGridAdapter;
+	private PodcastGridAdapter localPodcastAdapter;
 	private ProgramSpinnerAdapter programSpinnerAdapter;
 	public static Schedule schedule; // TODO: share this in a better way
 
 	private Handler seekbarHandler;
 	private Runnable seekbarUpdater;
 
-	private NotificationService notification;
+//	private NotificationService notification;
+//	private static MainActivity mainActivity;
 
 	public MainActivity() {
 		readyComponents = new EnumMap<Component, Boolean>(Component.class);
@@ -151,6 +165,11 @@ public class MainActivity extends FragmentActivity {
 		viewPager.setOnPageChangeListener(new PageChangeHandler(
 				MainActivity.this, viewPager));
 
+		viewPageIndicator = (CircleIshPageIndicator)findViewById(R.id.indicator);
+		viewPageIndicator.setViewPager(viewPager);
+		viewPageIndicator.setCurrentItem(1);
+		DataSource.inst(this);
+
 		new ServiceBinder<AudioPlayerService>(AudioPlayerService.class)
 				.bind(this);
 
@@ -159,8 +178,15 @@ public class MainActivity extends FragmentActivity {
 
 		articleListAdapter = new ArticleListAdapter(this);
 		podcastGridAdapter = new PodcastGridAdapter(this);
+		localPodcastAdapter = new PodcastGridAdapter(this);
+
+//		PodcastGridAdapter localPodcasts = new PodcastGridAdapter(this);
+		localPodcastAdapter.setList(DataSource.podcast().getAllLocalPodcasts());
+
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
 		UrlImageLoaderSimple.init(this);
+		sharedPref = getSharedPreferences(
+				getString(R.string.podcast_preference_file), Context.MODE_PRIVATE);
 	}
 
 	@Override
@@ -186,14 +212,8 @@ public class MainActivity extends FragmentActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 
-		audioPlayer.stopSelf();
-		streamUpdater.stopSelf();
-		notification.destroy();
-
-		BusProvider.INSTANCE.get().unregister(this);
-		unregisterReceiver(connectivityChangeReceiver); // TODO is this correct
-														// if back button has
-														// been pressed?
+		// TODO: How do we shut down the notification here??????
+		exitCleanup();
 	}
 
 	public void updateContent() {
@@ -293,6 +313,34 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
+	private void clearPodcastPosition() {
+		if(audioPlayer.getDataSourceType() == DataSourceType.PODCAST) {
+			sharedPref
+					.edit()
+					.remove("podcast:" + audioPlayer.getCurrentPodcast().getRefnr() + ":pos")
+					.apply();
+		}
+	}
+
+	private void savePodcastPosition() {
+		if(audioPlayer.getDataSourceType() == DataSourceType.PODCAST
+				&& audioPlayer.getProgress() > 0) {
+			sharedPref
+					.edit()
+					.putInt("podcast:" + audioPlayer.getCurrentPodcast().getRefnr() + ":pos"
+							, audioPlayer.getProgress())
+					.apply();
+		}
+	}
+
+	private void seekSavedPodcastPosition() {
+		if(audioPlayer.getDataSourceType() == DataSourceType.PODCAST) {
+			int t = sharedPref.getInt("podcast:" + audioPlayer.getCurrentPodcast().getRefnr() + ":pos", 0);
+			if(Math.abs(t - audioPlayer.getProgress()) > 5000)
+				audioPlayer.seekTo(sharedPref.getInt("podcast:" + audioPlayer.getCurrentPodcast().getRefnr() + ":pos", 0));
+		}
+	}
+
 	public class AudioPlayerStateListener implements StateListener {
 
 		@Override
@@ -307,6 +355,8 @@ public class MainActivity extends FragmentActivity {
 
 				switch (state) {
 				case PAUSED:
+					// save position on pause
+					savePodcastPosition();
 					fragment.setStatusText("paused");
 					fragment.setPlayIcon();
 					break;
@@ -330,6 +380,7 @@ public class MainActivity extends FragmentActivity {
 						fragment.setTimeText(liveText);
 						break;
 					case PODCAST:
+						seekSavedPodcastPosition();
 						fragment.setMaxOnSeekBar(audioPlayer.getDuration());
 						seekbarHandler.postDelayed(seekbarUpdater, 0);
 						break;
@@ -342,6 +393,8 @@ public class MainActivity extends FragmentActivity {
 
 					break;
 				case STOPPED:
+					// save position on stopped
+					savePodcastPosition();
 					fragment.setStatusText("stopped");
 					fragment.setPlayIcon();
 					fragment.setTimeText("");
@@ -351,6 +404,7 @@ public class MainActivity extends FragmentActivity {
 					fragment.setTimeText("");
 					break;
 				case COMPLETED:
+					clearPodcastPosition();
 					fragment.setStatusText("completed");
 					fragment.setPlayIcon();
 					fragment.setTimeText("");
@@ -425,9 +479,13 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public void onRadioPodcastSwitchToggled(final boolean podcast) {
 			if (!podcast) {
+
 				seekbarHandler.removeCallbacks(seekbarUpdater);
 
 				boolean autoPlay = audioPlayer.getState() == State.STARTED;
+
+				if(autoPlay)
+					savePodcastPosition();
 
 				try {
 					audioPlayer.setCurrentStreamAsSource();
@@ -480,7 +538,12 @@ public class MainActivity extends FragmentActivity {
 		public void onItemClick(AdapterView<?> adapter, View view,
 				int position, long id) {
 
+			// save position
+			savePodcastPosition();
 			Podcast podcast = (Podcast) view.getTag();
+			podcast.download();
+
+			if(true) return;
 
 			audioPlayer.setCurrentPodcast(podcast);
 
@@ -495,10 +558,11 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	@Subscribe
+	@SuppressWarnings("UnusedDeclaration")
 	public void onAudioPlayerServiceReady(final AudioPlayerService service) {
 		audioPlayer = service;
 
-		notification = new NotificationService(this, service);
+		NotificationService.init(this, service);
 
 		audioPlayer.setStateListener(new AudioPlayerStateListener());
 		audioPlayer.setListener(new AudioPlayerHandler(this));
@@ -512,6 +576,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	@Subscribe
+	@SuppressWarnings("UnusedDeclaration")
 	public void onStreamUpdaterServiceReady(final StreamUpdaterService service) {
 		streamUpdater = service;
 
@@ -603,6 +668,11 @@ public class MainActivity extends FragmentActivity {
 
 		readyComponents.put(Component.LIVERADIOSECTION, true);
 		prepareLiveRadioIfReady();
+	}
+
+	@Subscribe
+	public void onLocalPodcastFragmentReady(final LocalPodcastFragment fragment) {
+		fragment.setGridArrayAdapter(localPodcastAdapter);
 	}
 
 	@Subscribe
@@ -711,5 +781,36 @@ public class MainActivity extends FragmentActivity {
 
 	private static String getFragmentTag(int viewPagerId, int index) {
 		return "android:switcher:" + viewPagerId + ":" + index;
+	}
+
+	/**
+	 * Exit the app, used mainly from notification area
+	 *
+	 * @param e
+	 */
+	@Subscribe
+	@SuppressWarnings("UnusedDeclaration")
+	public void exitApp(@Nullable ManualExitEvent e) {
+		savePodcastPosition();
+		android.os.Process.killProcess(android.os.Process.myPid());
+	}
+
+	/**
+	 * Shut down all services, remove notification and unregister connectivity
+	 * broadcast receiver
+	 */
+	private void exitCleanup() {
+		if(seekbarHandler != null)
+			seekbarHandler.removeCallbacks(seekbarUpdater);
+
+		try {
+			BusProvider.INSTANCE.get().unregister(this);
+			unregisterReceiver(connectivityChangeReceiver); // TODO is this correct
+															// if back button has
+															// been pressed?
+		}
+		catch (IllegalArgumentException e) {
+			Logger.i("MainActivity already unregistered");
+		}
 	}
 }

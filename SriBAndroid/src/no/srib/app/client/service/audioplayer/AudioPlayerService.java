@@ -10,8 +10,13 @@ import no.srib.app.client.service.BaseService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateHandler;
 import no.srib.app.client.service.audioplayer.state.StateListener;
+import no.srib.app.client.util.AudioMetaUtil;
+import no.srib.app.client.util.Hash;
+import no.srib.app.client.util.Logger;
 
 import android.app.NotificationManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -247,8 +252,8 @@ public class AudioPlayerService extends BaseService {
 
 		@Override
 		public void onPrepared(MediaPlayer mediaPlayer) {
-			mediaPlayer.start();
 			stateHandler.setState(State.STARTED);
+			mediaPlayer.start();
 		}
 	}
 
@@ -341,5 +346,9 @@ public class AudioPlayerService extends BaseService {
 		}
 
 		audioPlayerListener.onSwitchToStreamSchedule(currentStream);
+	}
+
+	public void removeStateHandlers() {
+		stateHandler.removeListeners();
 	}
 }

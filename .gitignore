@@ -16,6 +16,7 @@ prefs.xml
 .DS_Store
 
 # Compiled Binaries
+/Design/out
 /SriBAndroid/out
 /SriBAndroid/bin
 /SriBAndroid/gen

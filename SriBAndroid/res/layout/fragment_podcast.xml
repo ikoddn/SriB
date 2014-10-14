@@ -3,31 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
+	<!--
+	 Changed these margins to make this fragment the same style as article fragment
+	 android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
+	-->
 
     <Spinner
         android:id="@+id/spinner_podcast_program"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:padding="0dp" />
+        />
+	<!--
+	   android:layout_margin="0dp"
+	   android:padding="0dp"
+	-->
 
-    <GridView
-        android:id="@+id/gridView_podcast_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/spinner_podcast_program"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:horizontalSpacing="10dp"
-        android:numColumns="2"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" >
-    </GridView>
+    <include
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/spinner_podcast_program"
+		layout="@layout/gridview_podcasts" />
 
 </RelativeLayout>

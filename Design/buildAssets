@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Requires imagemagick and pngcrush installed in path
+# Author: Jostein Eriksen <jostein@jekkit.no>
+cd "$(dirname "$0")"
+function processDir () {
+	echo "processing: $1"
+	# check if filelists exists
+	if [ -f "$1/android.list" ]; then
+	   imageFile=""
+	   convertOptions=""
+	   while read line
+		do
+			# skip empty lines
+			if [ -z "$line" ]; then
+			    continue
+			fi 
+			# skip comments
+			if [[ $line == $'#'* ]]; then
+				continue
+			fi
+			if [[ $line == file:* ]]; then
+				IFS=':' read -a array <<< "$line"
+				imageFile="${array[1]}"
+				convertOptions=""
+				echo "assigning imageFile to: $imageFile"
+				continue;
+			fi
+			if [[ $line == options:* ]]; then
+				IFS=':' read -a array <<< "$line"
+				convertOptions="${array[1]}"
+				echo "setting options to: $convertOptions"
+				continue;
+			fi
+
+
+			IFS='=' read -a array <<< "$line"
+			dpi="${array[0]}"
+			size="${array[1]}"
+
+			outDir="./out/android/drawable-$dpi/"
+			if [ ! -d "$outDir" ]; then
+				echo "making dirs: $outDir"
+			  	mkdir -p "$outDir"
+			fi
+
+			tmpFile="tmp.png"
+			convert "$filename/$imageFile" -quality 96 -depth 8 -strip -resize $size $convertOptions "$tmpFile"
+			pngcrush -reduce -brute "$tmpFile" "$outDir$imageFile"
+			rm "$tmpFile"
+ 		done < $1/android.list
+	fi
+	for filename in $1/*; do
+		basename=${filename##*/}
+		if [[ $basename == .* ]]; then
+			continue
+		fi
+		if [ ! -d "$filename" ]; then
+		  	continue
+		fi
+		processDir $filename
+	done
+}
+processDir "."

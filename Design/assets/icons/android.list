@@ -1,0 +1,46 @@
+file:ic_notification.png
+mdpi=32x32
+hdpi=48x48
+xhdpi=64x64
+xxhdpi=96x96
+
+file:ic_launcher.png
+options:-colors 256
+mdpi=48x48
+hdpi=72x72
+xhdpi=96x96
+xxhdpi=144x144
+xxxhdpi=192x192
+
+file:notification_default_art.png
+options:-colors 256
+mdpi=86x86
+hdpi=129x129
+xhdpi=172x172
+xxhdpi=256x256
+
+file:ic_notification_pause.png
+options:-colors 256
+mdpi=64x64
+hdpi=96x96
+xhdpi=128x128
+xxhdpi=192x192
+
+file:ic_notification_play.png
+options:-colors 256
+mdpi=64x64
+hdpi=96x96
+xhdpi=128x128
+xxhdpi=192x192
+
+file:ic_viewpager_selected.png
+mdpi=10x10
+hdpi=15x15
+xhdpi=20x20
+xxhdpi=30x30
+
+file:ic_viewpager.png
+mdpi=10x10
+hdpi=15x15
+xhdpi=20x20
+xxhdpi=30x30

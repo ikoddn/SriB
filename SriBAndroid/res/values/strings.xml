@@ -58,5 +58,6 @@
     </string>
     <string name="notificationImage">NotificationImage</string>
 	<string name="pause">Pause</string>
+	<string name="podcast_preference_file">com.example.myapp.PODCAST_PREFERENCE_FILE</string>
 
 </resources>

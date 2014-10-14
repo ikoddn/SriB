@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.GridView;
@@ -40,9 +41,8 @@ public class ViewUtil {
 		}
 	}
 
-	public static int dpiToPixels(final Resources resources, final int dpi) {
-		float scale = resources.getDisplayMetrics().density;
-		return (int) (dpi * scale + 0.5f);
+	public static int dipToPixels(final Resources resources, final int dip) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, resources.getDisplayMetrics());
 	}
 
 	@SuppressLint("NewApi")

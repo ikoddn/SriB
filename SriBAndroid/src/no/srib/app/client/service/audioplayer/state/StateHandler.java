@@ -34,6 +34,10 @@ public class StateHandler {
 		}
 	}
 
+	public void removeListeners() {
+		stateListener.clear();
+	}
+
 	public void addStateListener(StateListener stateListener) {
 		this.stateListener.add(stateListener);
 	}

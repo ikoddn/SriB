@@ -10,7 +10,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
 		android:scaleType="fitCenter"
-		android:src="@drawable/podcast_default_art"
+		android:src="@drawable/notification_default_art"
         android:contentDescription="@string/notificationImage" />
 
 	<LinearLayout
@@ -43,7 +43,7 @@
         android:id="@+id/button_playpause"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/liveradio_play_notification"
+        android:src="@drawable/ic_notification_play"
 		android:scaleType="fitCenter"
         android:layout_toLeftOf="@+id/button_close"
         android:layout_centerVertical="true"

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="no.srib.app.client.MainActivity$PlaceholderFragment" >
+
+	<com.tomdignan.nifty.NiftyTextView
+		android:id="@+id/title"
+		style="@style/AppTheme"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:padding="11dp"
+		android:layout_margin="0dp"
+		android:text="Nedlastede podcaster" />
+
+	<View
+		android:id="@+id/title_divider"
+		android:layout_width="fill_parent"
+		android:layout_height="1dip"
+		android:background="#ffb3b3b3"
+		android:layout_below="@+id/title"
+		/>
+
+	<include
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/title_divider"
+		layout="@layout/gridview_podcasts" />
+
+</RelativeLayout>

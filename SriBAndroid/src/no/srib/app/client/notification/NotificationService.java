@@ -4,40 +4,44 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
-import android.widget.Toast;
+
+import com.squareup.otto.Subscribe;
+
+import org.jetbrains.annotations.Nullable;
 
 import no.srib.app.client.MainActivity;
 import no.srib.app.client.R;
-import no.srib.app.client.imageloader.UrlImageLoader;
-import no.srib.app.client.imageloader.UrlImageLoaderProvider;
+import no.srib.app.client.event.ManualExitEvent;
 import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.service.audioplayer.AudioPlayerService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.util.AudioMetaUtil;
-import no.srib.app.client.util.BitmapUtil;
 import no.srib.app.client.util.BusProvider;
-import no.srib.app.client.view.ImageViewWithCallback;
 
 /**
  * @author Jostein Eriksen
  */
 public class NotificationService implements NotificationHandler {
-	private final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_DEFAULT_ART = R.drawable.notification_default_art;
+	private static final int NOTIFICATION_ICON_SMALL = R.drawable.ic_notification;
 
 	private final Context context;
-	private final NotificationManager notificationManager;
+	private static NotificationManager notificationManager;
 	private final NotificationCompat.Builder notificationBuilder;
 	private final RemoteViews contentView;
 	private final AudioPlayerService audioService;
-
+	private static NotificationService notification;
 
 	public NotificationService(Context context, AudioPlayerService audioService) {
 		this.context = context;
 		this.audioService = audioService;
+		notification = this;
+
 		audioService.setStateListener(new AudioPlayerStateListener());
 
 		contentView = new RemoteViews(context.getPackageName(), R.layout.notification_small);
@@ -57,17 +61,36 @@ public class NotificationService implements NotificationHandler {
 
 		notificationBuilder = new NotificationCompat.Builder(context)
 				.setContent(contentView)
-				.setSmallIcon(R.drawable.app_icon)
+				.setSmallIcon(NOTIFICATION_ICON_SMALL)
 				.setOngoing(true)
-				.setContentIntent(contentPendingIntent)
-				;
+				.setContentIntent(contentPendingIntent);
+
+		setNotificationText("Pause", "Studentradioen i Bergen");
 
 		notificationManager =
-				(NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		update();
+	}
+
+	public static NotificationService getNotificationService() {
+		return notification;
+	}
+
+	private void setNotificationText(String title, String content) {
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			notificationBuilder.setContentText(content);
+			notificationBuilder.setContentTitle(title);
+		}
+		else {
+			contentView.setTextViewText(R.id.notification_title, title);
+			contentView.setTextViewText(R.id.notification_text, content);
+		}
 	}
 
 	@Override
 	public void update() {
+//		System.out.println("Update notification called");
 		notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
 	}
 
@@ -82,13 +105,13 @@ public class NotificationService implements NotificationHandler {
 		public void onStateChanged(State state) {
 			switch (state) {
 				case PAUSED:
-					contentView.setImageViewResource(R.id.button_playpause, R.drawable.liveradio_play_notification);
+					contentView.setImageViewResource(R.id.button_playpause, R.drawable.ic_notification_play);
 					break;
 				case PREPARING:
-					contentView.setImageViewResource(R.id.button_playpause, R.drawable.liveradio_pause_notification);
+					contentView.setImageViewResource(R.id.button_playpause, R.drawable.ic_notification_pause);
 					break;
 				case STARTED:
-					contentView.setImageViewResource(R.id.button_playpause, R.drawable.liveradio_pause_notification);
+					contentView.setImageViewResource(R.id.button_playpause, R.drawable.ic_notification_pause);
 					String programName = "";
 					switch (audioService.getDataSourceType()) {
 						case LIVE_RADIO:
@@ -96,22 +119,24 @@ public class NotificationService implements NotificationHandler {
 									R.string.textView_liveradio_time_live);
 
 							programName = AudioMetaUtil.getProgramName(audioService);
-							contentView.setTextViewText(R.id.notification_title, liveText);
-							contentView.setTextViewText(R.id.notification_text, programName);
-							contentView.setImageViewResource(R.id.notification_image, R.drawable.podcast_default_art);
+							setNotificationText(liveText, programName);
+//							contentView.setTextViewText(R.id.notification_title, liveText);
+//							contentView.setTextViewText(R.id.notification_text, programName);
+							contentView.setImageViewResource(R.id.notification_image, NOTIFICATION_DEFAULT_ART);
 							break;
 
 						case PODCAST:
 							programName = AudioMetaUtil.getProgramName(audioService);
-							contentView.setTextViewText(R.id.notification_title, "Podcast");
-							contentView.setTextViewText(R.id.notification_text, programName);
+							setNotificationText("Podcast", programName);
+//							contentView.setTextViewText(R.id.notification_title, "Podcast");
+//							contentView.setTextViewText(R.id.notification_text, programName);
 
 							String imageUrl = audioService.getCurrentPodcast().getImageUrl();
 							if(imageUrl != null && !imageUrl.equals("")) {
-								UrlImageLoaderSimple.INSTANCE.loadUrl(NotificationService.this, R.id.notification_image, imageUrl, R.drawable.podcast_default_art);
+								UrlImageLoaderSimple.INSTANCE.loadUrl(NotificationService.this, R.id.notification_image, imageUrl, NOTIFICATION_DEFAULT_ART);
 							}
 							else {
-								contentView.setImageViewResource(R.id.notification_image, R.drawable.podcast_default_art);
+								contentView.setImageViewResource(R.id.notification_image, NOTIFICATION_DEFAULT_ART);
 							}
 
 							break;
@@ -122,28 +147,46 @@ public class NotificationService implements NotificationHandler {
 
 					break;
 				case STOPPED:
-					contentView.setImageViewResource(R.id.button_playpause, R.drawable.liveradio_play_notification);
+					contentView.setImageViewResource(R.id.button_playpause, R.drawable.ic_notification_play);
 					break;
 				case UNINITIALIZED:
 					break;
 				case COMPLETED:
-					contentView.setImageViewResource(R.id.button_playpause, R.drawable.liveradio_play_notification);
+					contentView.setImageViewResource(R.id.button_playpause, R.drawable.ic_notification_play);
 					break;
 			}
 			update();
 		}
 	}
 
-	public void hide() {
+	public static void hide(Context context) {
+
+		if(notificationManager == null)
+			initManager(context);
 		notificationManager.cancel(NOTIFICATION_ID);
+	}
+
+	public static void init(Context context, AudioPlayerService service) {
+		if(notification == null)
+			new NotificationService(context, service);
+	}
+
+	/**
+	 *
+	 * @param context
+	 */
+	private static void initManager(Context context) {
+		notificationManager =
+				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	public void show() {
 		update();
 	}
 
-	public void destroy() {
+	@Subscribe
+	public void destroy(@Nullable ManualExitEvent e) {
 		BusProvider.INSTANCE.get().unregister(this);
-		hide();
+		hide(context);
 	}
 }

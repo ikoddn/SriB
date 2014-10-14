@@ -16,6 +16,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="searchViewSearchIcon">@drawable/article_search_icon</item>
         <item name="android:dropDownListViewStyle">@style/mySpinnerStyle</item>
+		<item name="typeface">fonts/clairehandbold.ttf</item>
     </style>
 
     <style name="mySpinnerStyle" parent="android:style/Widget.ListView.DropDown">
@@ -23,6 +24,7 @@
         <item name="android:dividerHeight">0px</item>
     </style>
 
+	<!-- Notification -->
     <style name="NotificationText">
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
@@ -31,4 +33,16 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+	<!-- ViewPageIndicator -->
+	<style name="StyledIndicators" parent="Theme.AppCompat.Light">
+		<item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
+	</style>
+
+	<style name="CustomCirclePageIndicator">
+		<item name="fillColor">#ff1900ff</item>
+		<item name="strokeColor">#ffff0013</item>
+		<item name="strokeWidth">2dp</item>
+		<item name="radius">10dp</item>
+		<item name="centered">true</item>
+	</style>
 </resources>

@@ -1,0 +1,6 @@
+file:app_icon_design.png
+options:-colors 256
+mdpi=200x200
+hdpi=300x300
+xhdpi=400x400
+xxhdpi=600x600

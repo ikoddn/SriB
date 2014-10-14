@@ -4,7 +4,7 @@ import no.srib.app.client.R;
 import no.srib.app.client.event.listener.OnInfoClickListener;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.ViewUtil;
-import no.srib.app.client.view.DTImageView;
+
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -21,7 +22,7 @@ import butterknife.OnClick;
 
 public class InfoFragment extends BaseFragment {
 
-	@InjectView(R.id.dtimageview_info) DTImageView image;
+	@InjectView(R.id.dtimageview_info) ImageView image;
 	@InjectView(R.id.button_info_facebook) ImageButton facebookButton;
 	@InjectView(R.id.button_info_spotify) ImageButton spotifyButton;
 	@InjectView(R.id.button_info_sribwebsite) ImageButton sribWebsiteButton;
@@ -58,15 +59,15 @@ public class InfoFragment extends BaseFragment {
 		infoText2.setText(Html.fromHtml(getString(R.string.textView_info_2)));
 
 		if (imageBitmap == null) {
-			final int imageSizeDPI = 200;
-			int imageSizePixels = ViewUtil.dpiToPixels(res, imageSizeDPI);
+			final int imageSizeDIP = 200;
+			int imageSizePixels = ViewUtil.dipToPixels(res, imageSizeDIP);
 			Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(res,
-					R.drawable.app_icon, imageSizePixels, imageSizePixels);
+					R.drawable.app_icon_design, imageSizePixels, imageSizePixels);
 			imageBitmap = Bitmap.createScaledBitmap(bitmap, imageSizePixels,
 					imageSizePixels, true);
 		}
 
-		image.setBitmap(imageBitmap);
+		image.setImageBitmap(imageBitmap);
 
 		return rootView;
 	}
@@ -75,10 +76,10 @@ public class InfoFragment extends BaseFragment {
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (image != null) {
-			image.cleanup();
-			imageBitmap = null;
-		}
+//		if (image != null) {
+//			image.cleanup();
+//			imageBitmap = null;
+//		}
 	}
 
 	@Override

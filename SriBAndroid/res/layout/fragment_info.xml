@@ -87,7 +87,7 @@
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="15dp" />
 
-            <no.srib.app.client.view.DTImageView
+            <ImageView
                 android:id="@+id/dtimageview_info"
                 android:layout_width="200dp"
                 android:layout_height="200dp"

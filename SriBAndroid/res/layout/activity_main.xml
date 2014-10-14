@@ -1,7 +1,28 @@
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="no.srib.app.client.MainActivity" />
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
+	<android.support.v4.view.ViewPager
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/pager"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		tools:context="no.srib.app.client.MainActivity" />
+
+	<no.srib.app.client.view.CircleIshPageIndicator
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/indicator"
+		android:padding="10dip"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		app:radius="4dp"
+		app:fillColor="#FF888888"
+		app:pageColor="#ffffffff"
+		app:strokeColor="#FF000000"
+		app:strokeWidth="1dp"
+		/>
+</LinearLayout>
