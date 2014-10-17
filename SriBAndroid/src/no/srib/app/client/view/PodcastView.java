@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,7 +52,7 @@ public class PodcastView extends LinearLayout {
     @InjectView(R.id.textView_podcastItem_programname)
     TextView programNameTextView;
     @InjectView(R.id.download_podcast)
-    ImageButton button;
+    ImageView button;
     private String DownloadUrl = "http://podcast.srib.no:8080/podcast";
     private String fileName = "SRIB.podcast";
     private int viewWidth;
