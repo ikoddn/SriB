@@ -29,16 +29,27 @@
                 android:layout_height="wrap_content"
 
                 />
-
-
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/bar1"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:max = "100"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_margin="5dp"
+            android:layout_below="@+id/download_podcast"
+            />
+
+
+
+
     <ImageView
         android:id="@+id/download_podcast"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/podcast_download"
         android:scaleType="fitCenter"
-        android:layout_centerVertical="true"
         android:layout_marginRight="1dp"
         android:background="@null"
         />
@@ -55,6 +66,10 @@
             android:scaleType="fitCenter"
             android:src="@drawable/podcast_download"
             android:visibility="invisible" />
+        
+
+
+            />
     </RelativeLayout>
 
     <no.srib.app.client.view.SquareImageView

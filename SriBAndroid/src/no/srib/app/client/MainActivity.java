@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -29,8 +30,8 @@ import com.squareup.otto.Subscribe;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InterruptedIOException;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -76,79 +77,111 @@ import no.srib.app.client.util.AudioMetaUtil;
 import no.srib.app.client.util.BusProvider;
 import no.srib.app.client.util.Logger;
 import no.srib.app.client.util.NetworkUtil;
-//import no.srib.app.client.util.PodcastDownloader;
 import no.srib.app.client.view.CircleIshPageIndicator;
 
+//import no.srib.app.client.util.PodcastDownloader;
 public class MainActivity extends FragmentActivity {
 
-	private static final int SEEKBAR_UPDATE_INTERVAL = 1000;
-	private SharedPreferences sharedPref;
-	private CircleIshPageIndicator viewPageIndicator;
 
-	enum Component {
-		AUDIOPLAYER,
-		STREAMUPDATER,
-		LIVERADIOSECTION
-	}
+    private ProgressBar bar;
+    private int status;
+    private Handler handler;
+    private static final int SEEKBAR_UPDATE_INTERVAL = 1000;
+    private SharedPreferences sharedPref;
+    private CircleIshPageIndicator viewPageIndicator;
 
-	private Map<Component, Boolean> readyComponents;
+    enum Component {
+        AUDIOPLAYER,
+        STREAMUPDATER,
+        LIVERADIOSECTION
+    }
 
-	private ConnectivityChangeReceiver connectivityChangeReceiver;
+    private Map<Component, Boolean> readyComponents;
 
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
-	 * derivative, which will keep every loaded fragment in memory. If this
-	 * becomes too memory intensive, it may be best to switch to a
-	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-	 */
-	private SectionsPagerAdapter sectionsPagerAdapter;
+    private ConnectivityChangeReceiver connectivityChangeReceiver;
 
-	/**
-	 * The {@link ViewPager} that will host the section contents.
-	 */
-	private ViewPager viewPager;
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
+     * derivative, which will keep every loaded fragment in memory. If this
+     * becomes too memory intensive, it may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    private SectionsPagerAdapter sectionsPagerAdapter;
 
-	private AudioPlayerService audioPlayer;
-	private StreamUpdaterService streamUpdater;
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    private ViewPager viewPager;
 
-	private ArticleListAdapter articleListAdapter;
-	private PodcastGridAdapter podcastGridAdapter;
-	private PodcastGridAdapter localPodcastAdapter;
-	private ProgramSpinnerAdapter programSpinnerAdapter;
-	public static Schedule schedule; // TODO: share this in a better way
+    private AudioPlayerService audioPlayer;
+    private StreamUpdaterService streamUpdater;
 
-	private Handler seekbarHandler;
-	private Runnable seekbarUpdater;
+    private ArticleListAdapter articleListAdapter;
+    private PodcastGridAdapter podcastGridAdapter;
+    private PodcastGridAdapter localPodcastAdapter;
+    private ProgramSpinnerAdapter programSpinnerAdapter;
+    public static Schedule schedule; // TODO: share this in a better way
+
+    private Handler seekbarHandler;
+    private Runnable seekbarUpdater;
 
 //	private NotificationService notification;
 //	private static MainActivity mainActivity;
 
-	public MainActivity() {
-		readyComponents = new EnumMap<Component, Boolean>(Component.class);
-		Component[] components = Component.values();
-		for (Component component : components) {
-			readyComponents.put(component, false);
-		}
+    public MainActivity() {
+        readyComponents = new EnumMap<Component, Boolean>(Component.class);
+        Component[] components = Component.values();
+        for (Component component : components) {
+            readyComponents.put(component, false);
+        }
 
-		articleListAdapter = null;
-		viewPager = null;
-		audioPlayer = null;
-		streamUpdater = null;
+        articleListAdapter = null;
+        viewPager = null;
+        audioPlayer = null;
+        streamUpdater = null;
 
-		schedule = new Schedule();
+        schedule = new Schedule();
 
-		seekbarHandler = new Handler();
-		seekbarUpdater = new SeekbarUpdater();
-	}
+        seekbarHandler = new Handler();
+        seekbarUpdater = new SeekbarUpdater();
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		BusProvider.INSTANCE.get().register(this);
+        setContentView(R.layout.activity_main);
+        bar = (ProgressBar) findViewById((R.id.bar1));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (status < 100) {
+                    status += 1;
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            bar.setProgress(status);
+                        }
+                        //try {
+                        //   Thread.sleep(200);
+                        //} catch(InterruptedIOException e) {
+                        //  e.printStackTrace();
+                        //}
+                    });
+                }
+
+
+            }
+        }).start();
+
+    }
+
+    ,
+
+                BusProvider.INSTANCE.get().register(this);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
 		// Create the adapter that will return a fragment for each of the three
@@ -188,8 +221,11 @@ public class MainActivity extends FragmentActivity {
 		sharedPref = getSharedPreferences(
 				getString(R.string.podcast_preference_file), Context.MODE_PRIVATE);
 	}
+    @Override
 
-	@Override
+
+
+    @Override
 	protected void onPause() {
 		super.onPause();
 
@@ -814,4 +850,4 @@ public class MainActivity extends FragmentActivity {
 			Logger.i("MainActivity already unregistered");
 		}
 	}
-}
+    }
