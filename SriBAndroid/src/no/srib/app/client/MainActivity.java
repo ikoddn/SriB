@@ -23,6 +23,7 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
+import no.srib.app.client.adapter.ListBasedAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
@@ -56,7 +58,6 @@ import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
-import no.srib.app.client.fragment.LocalPodcastFragment;
 import no.srib.app.client.fragment.PodcastFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.imageloader.UrlImageLoaderSimple;
@@ -117,11 +118,10 @@ public class MainActivity extends FragmentActivity {
     private AudioPlayerService audioPlayer;
     private StreamUpdaterService streamUpdater;
 
-    private ArticleListAdapter articleListAdapter;
-    private PodcastGridAdapter podcastGridAdapter;
-    private PodcastGridAdapter localPodcastAdapter;
-    private ProgramSpinnerAdapter programSpinnerAdapter;
-    public static Schedule schedule; // TODO: share this in a better way
+	private ArticleListAdapter articleListAdapter;
+	private PodcastGridAdapter podcastGridAdapter;
+	private ProgramSpinnerAdapter programSpinnerAdapter;
+	public static Schedule schedule; // TODO: share this in a better way
 
     private Handler seekbarHandler;
     private Runnable seekbarUpdater;
@@ -150,36 +150,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-        bar = (ProgressBar) findViewById((R.id.bar1));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (status < 100) {
-                    status += 1;
-
-                    handler.post(new Runnable() {
-                        public void run() {
-                            bar.setProgress(status);
-                        }
-                        //try {
-                        //   Thread.sleep(200);
-                        //} catch(InterruptedIOException e) {
-                        //  e.printStackTrace();
-                        //}
-                    });
-                }
-
-
-            }
-        }).start();
-
-    }
-
-    ,
-
-                BusProvider.INSTANCE.get().register(this);
+    	BusProvider.INSTANCE.get().register(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
@@ -211,17 +182,12 @@ public class MainActivity extends FragmentActivity {
 
 		articleListAdapter = new ArticleListAdapter(this);
 		podcastGridAdapter = new PodcastGridAdapter(this);
-		localPodcastAdapter = new PodcastGridAdapter(this);
-
-//		PodcastGridAdapter localPodcasts = new PodcastGridAdapter(this);
-		localPodcastAdapter.setList(DataSource.podcast().getAllLocalPodcasts());
 
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
 		UrlImageLoaderSimple.init(this);
 		sharedPref = getSharedPreferences(
 				getString(R.string.podcast_preference_file), Context.MODE_PRIVATE);
 	}
-    @Override
 
 
 
@@ -555,8 +521,15 @@ public class MainActivity extends FragmentActivity {
 				programId = (int) parent.getItemIdAtPosition(position);
 			}
 
-			new PodcastAsyncTask(MainActivity.this, podcastGridAdapter)
-					.execute(programId);
+			// position 2 == downloaded podcasts
+			if (position == 1) {
+				podcastGridAdapter.setList(DataSource.podcast().getAllLocalPodcasts());
+				podcastGridAdapter.notifyDataSetChanged();
+			}
+			else {
+				new PodcastAsyncTask(MainActivity.this, podcastGridAdapter)
+						.execute(programId);
+			}
 
 			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
 			GridView grid = fragment.getGridView();
@@ -705,11 +678,6 @@ public class MainActivity extends FragmentActivity {
 
 		readyComponents.put(Component.LIVERADIOSECTION, true);
 		prepareLiveRadioIfReady();
-	}
-
-	@Subscribe
-	public void onLocalPodcastFragmentReady(final LocalPodcastFragment fragment) {
-		fragment.setGridArrayAdapter(localPodcastAdapter);
 	}
 
 	@Subscribe

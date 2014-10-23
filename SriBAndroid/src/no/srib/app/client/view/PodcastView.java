@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -33,10 +34,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import no.srib.app.client.util.Logger;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
 
@@ -45,72 +46,16 @@ public class PodcastView extends LinearLayout {
     private static final int DEFAULT_IMAGE_ID = R.drawable.podcast_default_art;
     private static final int FONT_ID = R.string.font_clairehandbold;
 
-    @InjectView(R.id.imageView_podcastItem_art)
-    ImageView imageView;
-    @InjectView(R.id.textView_podcastItem_date)
-    TextView dateTextView;
-    @InjectView(R.id.textView_podcastItem_programname)
-    TextView programNameTextView;
-    @InjectView(R.id.download_podcast)
-    ImageView button;
+    @InjectView(R.id.imageView_podcastItem_art) ImageView imageView;
+    @InjectView(R.id.textView_podcastItem_date) TextView dateTextView;
+    @InjectView(R.id.textView_podcastItem_programname) TextView programNameTextView;
+    @InjectView(R.id.download_podcast) ImageView button;
+	@InjectView(R.id.podcastDownloadProgressBar) ProgressBar progressBar;
+
     private String DownloadUrl = "http://podcast.srib.no:8080/podcast";
     private String fileName = "SRIB.podcast";
     private int viewWidth;
     private Drawable defaultImage;
-    //DownloadDatabase(DownloadUrl,fileName);
-
-    private class Background extends AsyncTask<URL, Void, Void> {
-
-        @Override
-        protected Void doInBackground(URL... urls) {
-            Log.i("doInBackground", "does");
-            try {
-                File root = android.os.Environment.getExternalStorageDirectory();
-                File dir = new File(root.getAbsolutePath() + "/mnt/sdcard/SRIB/podcast");
-
-                if (dir.exists() == false) {
-                    dir.mkdirs();
-                }
-                URL url = new URL("http://podcast.srib.no:8080/podcast.txt");
-                File file = new File(dir, fileName);
-
-                long startTime = System.currentTimeMillis();
-                Log.i("DownloadManager", "URL" + url);
-                Log.i("DownloadManager", "File name" + fileName);
-                URLConnection urlConnect = url.openConnection();
-                //urlconnect.setReadTimeout(TIMEOUT_CONNECTION);
-                InputStream input = urlConnect.getInputStream();
-                BufferedInputStream buffinst = new BufferedInputStream(input);
-
-                ByteArrayBuffer baf = new ByteArrayBuffer(5000);
-                int current = 0;
-                while ((current = buffinst.read()) != -1) {
-                    baf.append((byte) current);
-                }
-
-
-                FileOutputStream fileOut = new FileOutputStream(file);
-                fileOut.write(baf.toByteArray());
-                fileOut.flush();
-                fileOut.close();
-                buffinst.close();
-                Log.i("DownloadManager", "download is ready in" + (System.currentTimeMillis() - startTime) / 1000 + "seconds");
-                int index = fileName.lastIndexOf('.');
-                if (index >= 0) {
-                    fileName = fileName.substring(0, index);
-                }
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //Log.i("DownloadManager", "Error" + e);
-            //e.printStackTrace();
-            Log.i("help" , "help");
-            return null;
-
-        }
-    }
 
         public PodcastView(final Context context) {
 
@@ -135,18 +80,7 @@ public class PodcastView extends LinearLayout {
             LayoutInflater.from(context).inflate(R.layout.griditem_podcast, this,
                     true);
             ButterKnife.inject(this);
-            button.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View arg0) {
-                    ((Podcast)getTag()).download();
-
-
-                }
-
-            });
             //button.setOnClickListener();
-
 
             Resources resources = context.getResources();
             defaultImage = resources.getDrawable(DEFAULT_IMAGE_ID);
@@ -162,7 +96,24 @@ public class PodcastView extends LinearLayout {
             dateTextView.setText(formattedDate);
             programNameTextView.setText(podcast.getProgram());
 
-            final String imageUrl = podcast.getImageUrl();
+			// TODO: if this is downloading... register with the podcast downloader somehow
+//			if(podcast.isLocal() && !podcast.isCompletelyDownloaded()) {
+			Logger.i("inital update progressbar for: " + podcast.getProgram());
+			updateProgressBar(podcast.getPercentDownloaded());
+			podcast.registerProgressBar(this);
+//			}
+
+			button.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    podcast.download();
+                }
+
+            });
+
+
+			final String imageUrl = podcast.getImageUrl();
 
             if (imageUrl == null || imageUrl.trim().isEmpty()) {
                 imageView.setImageDrawable(defaultImage);
@@ -173,6 +124,12 @@ public class PodcastView extends LinearLayout {
                         imageUrl, defaultImage);
             }
         }
+
+		public void updateProgressBar(int percent) {
+			//TODO: update the progress bar
+			Logger.i("updating progressbar: " + percent);
+			progressBar.setProgress(percent);
+		}
     }
 
 

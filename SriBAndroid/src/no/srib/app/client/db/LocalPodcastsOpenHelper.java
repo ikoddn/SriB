@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LocalPodcastsOpenHelper extends SQLiteOpenHelper {
 	static private final String DB_NAME = "podcasts.db";
-	static private final int DB_VERSION = 1;
+	static private final int DB_VERSION = 2;
 
 	public LocalPodcastsOpenHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -22,11 +22,16 @@ public class LocalPodcastsOpenHelper extends SQLiteOpenHelper {
 		database.execSQL("CREATE TABLE `podcasts` (" +
 				"`id` TEXT PRIMARY KEY," +
 				"`podcast` TEXT NOT NULL, " +
-				"`size` INTEGER NOT NULL)");
+				"`size` INTEGER NOT NULL, " +
+				"`created` DATETIME DEFAULT CURRENT_TIMESTAMP)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+		if(oldVersion <= 1) {
+			// SORRY you will loose all your podcasts
+			db.execSQL("DROP TABLE `podcasts`");
+			onCreate(db);
+		}
 	}
 }

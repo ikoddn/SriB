@@ -18,7 +18,10 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 	}
 
 	private static final int TYPE_COUNT = Type.values().length;
-	private static final int[] GENERAL_ITEM_IDS = { R.string.spinner_podcast_default };
+	private static final int[] GENERAL_ITEM_IDS = {
+			R.string.spinner_podcast_all,
+			R.string.spinner_podcast_downloaded
+	};
 	private static final int[] SUBHEADER_IDS = {
 			R.string.spinner_podcast_newer, R.string.spinner_podcast_older };
 
@@ -146,7 +149,8 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 
 			if (mustInflate) {
 				view = new DividerView(context);
-			} else {
+			}
+			else {
 				view = (DividerView) convertView;
 			}
 
@@ -189,6 +193,10 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 			resultView.setTag(itemViewType);
 		}
 
+		// hide the choose program item
+//		if(position == 0)
+//			resultView.setVisibility(View.GONE);
+
 		return resultView;
 	}
 
@@ -212,7 +220,10 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 			text = getItem(position).getName();
 		}
 
-		view.showText(text);
+		if(position == 0)
+			view.showText(context.getResources().getString(R.string.spinner_podcast_default));
+		else
+			view.showText(text);
 
 		return view;
 	}

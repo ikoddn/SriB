@@ -55,7 +55,7 @@ public class PodcastDataSource {
 	}
 
 	public void addPodcast(Podcast podcast, long size) {
-		database.execSQL("INSERT OR IGNORE INTO `podcasts` VALUES (?, ?, ?);",
+		database.execSQL("INSERT OR IGNORE INTO `podcasts` (`id`, `podcast`, `size`) VALUES (?, ?, ?);",
 				new String[] {Integer.toString(podcast.getRefnr()),
 						SerializationHelper.serialize(podcast),
 						Long.toString(size)});
@@ -90,8 +90,8 @@ public class PodcastDataSource {
 		cursor.moveToFirst();
 		long size = -1;
 		while (!cursor.isAfterLast()) {
-			cursor.moveToNext();
 			size = cursor.getLong(0);
+			cursor.moveToNext();
 		}
 
 		// Make sure to close the cursor
@@ -104,7 +104,7 @@ public class PodcastDataSource {
 	public List<Podcast> getAllLocalPodcasts() {
 		List<Podcast> values = new ArrayList<>();
 
-		Cursor cursor = database.rawQuery("SELECT `podcast` FROM `podcasts`", new String[0]);
+		Cursor cursor = database.rawQuery("SELECT `podcast` FROM `podcasts` ORDER BY `created` DESC", new String[0]);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			String podcast = cursor.getString(0);

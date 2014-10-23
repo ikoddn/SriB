@@ -26,6 +26,8 @@
 
     <!-- Podcast fragment -->
     <string name="spinner_podcast_default">Velg program</string>
+	<string name="spinner_podcast_all">Alle podcaster</string>
+	<string name="spinner_podcast_downloaded">Nedlastede podcaster</string>
     <string name="spinner_podcast_newer">Aktuelle program</string>
     <string name="spinner_podcast_older">Eldre program</string>
     <string name="imageView_podcastItem_art_desc">Podcast art</string>

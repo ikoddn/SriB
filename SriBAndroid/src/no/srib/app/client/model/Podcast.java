@@ -1,7 +1,10 @@
 package no.srib.app.client.model;
 
 import android.os.AsyncTask;
+import android.view.View;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.Expose;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +18,14 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import no.srib.app.client.R;
 import no.srib.app.client.db.DataSource;
 import no.srib.app.client.db.PodcastDataSource;
 import no.srib.app.client.util.Logger;
+import no.srib.app.client.view.PodcastView;
 
 public class Podcast implements Serializable {
 	public static final long serialVersionUID = 1L;
@@ -40,21 +46,48 @@ public class Podcast implements Serializable {
 	// members used for downloaded podcasts
 	private boolean isLocal;
 	private File localFile;
-	/**
-	 * This member holds the total file size reported by the podcast nas server
-	 * Not the downloaded file size
-	 */
-	private long fullFileSize;
-	
-	
+	private long downloadedBytes;
+	private long totalBytes;
+
+	private transient Map<View, View> progressBars = new HashMap<>();
+	private transient AsyncTask downloaderTask;
+
 	public Podcast() {
 		// TODO Auto-generated constructor stub
+		File file = new File(localDir, refnr + ".mp3");
+
+		if(file.exists()) {
+			Logger.i("file exists settting initial size: " + file.length());
+			downloadedBytes = file.length();
+		}
+	}
+
+	private void readObject(java.io.ObjectInputStream stream)
+			throws IOException, ClassNotFoundException {
+		stream.defaultReadObject();
+		init();
+		progressBars = new HashMap<>();
+	}
+
+	public int getPercentDownloaded() {
+		if(totalBytes == 0)
+			return 0;
+
+		return (int)(((float)downloadedBytes / (float)totalBytes) * 100);
 	}
 
 
-	public Podcast(int refnr, int createdate, int createtime, int duration,
-			String filename, String program, int programId, String remark,
-			String title, String imageUrl) {
+	@JsonCreator
+	public Podcast(@JsonProperty("refnr") int refnr,
+				   @JsonProperty("createdate") int createdate,
+				   @JsonProperty("createtime") int createtime,
+				   @JsonProperty("duration") int duration,
+				   @JsonProperty("filename") String filename,
+				   @JsonProperty("program") String program,
+				   @JsonProperty("programId") int programId,
+				   @JsonProperty("remark") String remark,
+				   @JsonProperty("title") String title,
+				   @JsonProperty("imageUrl") String imageUrl) {
 		super();
 		this.refnr = refnr;
 		this.createdate = createdate;
@@ -66,12 +99,30 @@ public class Podcast implements Serializable {
 		this.remark = remark;
 		this.title = title;
 		this.imageUrl = imageUrl;
-		this.fullFileSize = DataSource.podcast().getFileSize(this);
-		this.isLocal = this.fullFileSize != -1;
+		this.totalBytes = DataSource.podcast().getFileSize(this);
+		this.isLocal = this.totalBytes != -1;
+		init();
 	}
 
+	public void init() {
+		File file = new File(localDir, refnr + ".mp3");
+
+		if(file.exists()) {
+			Logger.i("file exists settting initial size: " + file.length());
+			downloadedBytes = file.length();
+		}
+	}
+
+	public boolean isCompletelyDownloaded() { return downloadedBytes - totalBytes <= 0; }
+
+	public boolean isLocal() { return isLocal; }
+
 	public void download() {
-		new DownloadPodcastTask().execute(this);
+		downloaderTask = new DownloadPodcastTask().execute(this);
+	}
+
+	public void pauseDownload() {
+		downloaderTask.cancel(true);
 	}
 
 	public String getImageUrl() {
@@ -179,7 +230,11 @@ public class Podcast implements Serializable {
 		return getProgram() + " " + getTitle();
 	}
 
-	private static class DownloadPodcastTask extends AsyncTask<Podcast, Void, Void> {
+	public void registerProgressBar(PodcastView podcastView) {
+		progressBars.put(podcastView, podcastView);
+	}
+
+	private class DownloadPodcastTask extends AsyncTask<Podcast, Void, Void> {
 
 		/**
 		 * Download and cache the images
@@ -188,9 +243,6 @@ public class Podcast implements Serializable {
 		protected Void doInBackground(@NotNull Podcast ... podcasts) {
 			// There is actually only one image
 			for (Podcast podcast : podcasts) {
-
-				// if our task has been cancelled then let's stop processing
-				if(isCancelled()) return null;
 
 				try {
 					URL url = new URL(nasUrl +
@@ -207,19 +259,19 @@ public class Podcast implements Serializable {
 
 					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-					long downloaded = 0;
 					if(file.exists())
-						downloaded = file.length();
+						downloadedBytes = file.length();
 
-					Logger.i("already downloed is: " + downloaded);
-					connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
+					Logger.i("already downloed is: " + downloadedBytes);
+					connection.setRequestProperty("Range", "bytes=" + downloadedBytes + "-");
 
 					connection.connect();
 					int fileSize = connection.getContentLength();
+					totalBytes = fileSize;
+
 					Logger.i("Podcast length is: " + fileSize);
 					podcast.isLocal = true;
-					podcast.fullFileSize = fileSize;
-					DataSource.podcast().addPodcast(podcast, fileSize + downloaded);
+					DataSource.podcast().addPodcast(podcast, fileSize + downloadedBytes);
 
 					InputStream input = connection.getInputStream();
 					FileOutputStream out = new FileOutputStream(file, file.exists());
@@ -227,10 +279,26 @@ public class Podcast implements Serializable {
 					byte[] buffer = new byte[bufferSize];
 					int len;
 					int readSize = 0;
+					int prevPercent = 0;
 					while ((len = input.read(buffer)) != -1) {
 						readSize += len;
-						Logger.i("read: " + readSize + "/" + fileSize);
+//						Logger.i("read: " + readSize + "/" + fileSize);
+						downloadedBytes += len;
+						int percent = (int)(((float)downloadedBytes / (float)totalBytes) * 100);
+						if(percent != prevPercent) {
+							prevPercent = percent;
+							for (Map.Entry<View, View> v : progressBars.entrySet()) {
+								((PodcastView) v.getValue()).updateProgressBar((int) percent);
+							}
+						}
+						// TODO: how do we update the progress bar from here?
 						out.write(buffer, 0, len);
+						// if our task has been cancelled then let's stop processing
+						if(isCancelled()) {
+							out.flush();
+							out.close();
+							return null;
+						}
 					}
 
 					out.flush();
