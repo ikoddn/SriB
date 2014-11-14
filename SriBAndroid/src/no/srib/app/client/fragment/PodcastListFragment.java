@@ -14,12 +14,12 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 import android.widget.Spinner;
 
-public class PodcastFragment extends BaseFragment {
+public class PodcastListFragment extends BaseFragment {
 
 	private GridView podcastGridView;
 	private Spinner programSpinner;
 
-	public PodcastFragment() {
+	public PodcastListFragment() {
 		podcastGridView = null;
 		programSpinner = null;
 	}

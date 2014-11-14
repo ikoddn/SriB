@@ -1,6 +1,7 @@
 package no.srib.app.client.model;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.View;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,10 +21,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import no.srib.app.client.R;
 import no.srib.app.client.db.DataSource;
 import no.srib.app.client.db.PodcastDataSource;
+import no.srib.app.client.fragment.PodcastActivity;
 import no.srib.app.client.util.Logger;
 import no.srib.app.client.view.PodcastView;
 
@@ -45,12 +48,16 @@ public class Podcast implements Serializable {
 
 	// members used for downloaded podcasts
 	private boolean isLocal;
-	private File localFile;
+//	private transient File localFile;
 	private long downloadedBytes;
 	private long totalBytes;
 
-	private transient Map<View, View> progressBars = new HashMap<>();
+//	private transient Map<View, PodcastActivity> progressBars = new HashMap<>();
 	private transient AsyncTask downloaderTask;
+	private transient PodcastActivity progressBar;
+	private boolean downloading = false;
+	private transient Runnable postDownloadCallback;
+	private boolean queued = false;
 
 	public Podcast() {
 		// TODO Auto-generated constructor stub
@@ -66,7 +73,7 @@ public class Podcast implements Serializable {
 			throws IOException, ClassNotFoundException {
 		stream.defaultReadObject();
 		init();
-		progressBars = new HashMap<>();
+//		progressBars = new HashMap<>();
 	}
 
 	public int getPercentDownloaded() {
@@ -111,6 +118,9 @@ public class Podcast implements Serializable {
 			Logger.i("file exists settting initial size: " + file.length());
 			downloadedBytes = file.length();
 		}
+
+		this.downloading = false;
+		queued = false;
 	}
 
 	public boolean isCompletelyDownloaded() { return downloadedBytes - totalBytes <= 0; }
@@ -118,7 +128,11 @@ public class Podcast implements Serializable {
 	public boolean isLocal() { return isLocal; }
 
 	public void download() {
-		downloaderTask = new DownloadPodcastTask().execute(this);
+		downloaderTask = new DownloadPodcastTask();
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			downloaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this);
+		else
+			downloaderTask.execute(this);
 	}
 
 	public void pauseDownload() {
@@ -230,19 +244,69 @@ public class Podcast implements Serializable {
 		return getProgram() + " " + getTitle();
 	}
 
-	public void registerProgressBar(PodcastView podcastView) {
-		progressBars.put(podcastView, podcastView);
+	public void registerProgressBar(PodcastActivity podcastView) {
+		progressBar = podcastView;
+//		progressBars.put(podcastView, podcastView);
 	}
 
-	private class DownloadPodcastTask extends AsyncTask<Podcast, Void, Void> {
+	public void unregisterProgressBar() {
+		progressBar = null;
+	}
+
+	public void deletePodcast() {
+		if(downloading) {
+			postDownloadCallback = new Runnable() {
+				@Override
+				public void run() {
+					deletePodcast();
+				}
+			};
+			pauseDownload();
+			return;
+		}
+
+		File file = new File(localDir, getRefnr() + ".mp3");
+
+		boolean fileDeleted = false;
+		if(file.exists())
+			fileDeleted = file.delete();
+
+		if(fileDeleted)
+			downloadedBytes = 0;
+
+		Logger.d("file was deleted: " + (fileDeleted? "true": "false"));
+
+		DataSource.podcast().delete(this);
+
+		if(progressBar != null)
+			progressBar.updateProgressBar(0, this);
+	}
+
+	public boolean isDownloading() {
+		return downloading;
+	}
+
+	public boolean isQueued() {
+		return queued;
+	}
+
+	private class DownloadPodcastTask extends AsyncTask<Object, Void, Void> {
 
 		/**
 		 * Download and cache the images
 		 */
 		@Override
-		protected Void doInBackground(@NotNull Podcast ... podcasts) {
+		protected Void doInBackground(@NotNull Object... podcasts) {
 			// There is actually only one image
-			for (Podcast podcast : podcasts) {
+			for (Object t : podcasts) {
+
+				Podcast podcast = (Podcast) t;
+
+				podcast.queued = true;
+				float percent = (((float)downloadedBytes / (float)totalBytes) * 100);
+
+				if(progressBar != null)
+					progressBar.updateProgressBar(percent, podcast);
 
 				try {
 					URL url = new URL(nasUrl +
@@ -279,34 +343,47 @@ public class Podcast implements Serializable {
 					byte[] buffer = new byte[bufferSize];
 					int len;
 					int readSize = 0;
-					int prevPercent = 0;
+					float prevPercent = -1;
+					podcast.downloading = true;
+					podcast.queued = false;
 					while ((len = input.read(buffer)) != -1) {
 						readSize += len;
 //						Logger.i("read: " + readSize + "/" + fileSize);
 						downloadedBytes += len;
-						int percent = (int)(((float)downloadedBytes / (float)totalBytes) * 100);
-						if(percent != prevPercent) {
+						percent = (((float)downloadedBytes / (float)totalBytes) * 100);
+						if((int)percent != (int)prevPercent) {
 							prevPercent = percent;
-							for (Map.Entry<View, View> v : progressBars.entrySet()) {
-								((PodcastView) v.getValue()).updateProgressBar((int) percent);
-							}
+							if(progressBar != null)
+								progressBar.updateProgressBar(percent, podcast);
+//							for (Map.Entry<View, PodcastActivity> v : progressBars.entrySet()) {
+//								((PodcastActivity) v.getValue()).updateProgressBar((int) percent);
+//							}
 						}
 						// TODO: how do we update the progress bar from here?
 						out.write(buffer, 0, len);
 						// if our task has been cancelled then let's stop processing
 						if(isCancelled()) {
-							out.flush();
-							out.close();
-							return null;
+							Logger.d("breaking out of download loop");
+							break;
 						}
 					}
+					podcast.downloading = false;
+					progressBar.updateProgressBar(percent, podcast);
 
 					out.flush();
 					out.close();
 				} catch (IOException e) {
+					podcast.downloading = false;
+					progressBar.updateProgressBar(percent, podcast);
 					e.printStackTrace();
 				}
 			}
+
+			if(postDownloadCallback != null) {
+				postDownloadCallback.run();
+				postDownloadCallback = null;
+			}
+
 			return null;
 		}
 	}

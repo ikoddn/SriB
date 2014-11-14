@@ -61,5 +61,10 @@
     <string name="notificationImage">NotificationImage</string>
 	<string name="pause">Pause</string>
 	<string name="podcast_preference_file">com.example.myapp.PODCAST_PREFERENCE_FILE</string>
+	<string name="podcast_image_alt">Bilde av podcast</string>
+	<string name="buttonPlayPodcastDescription">Knapp for å spille av podcast</string>
+	<string name="buttonDownloadPodcastDescription">Knapp for å laste ned podcast</string>
+	<string name="buttonPausePodcastDownloadDescription">Knapp for å pause nedlastingen</string>
+	<string name="buttonDeletePodcastDescription">Knapp for å slette nedlastet podcast</string>
 
 </resources>

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import no.srib.app.client.model.Podcast;
+import no.srib.app.client.util.Logger;
 import no.srib.app.client.util.ViewUtil;
 import no.srib.app.client.view.PodcastView;
 
@@ -41,6 +42,7 @@ public class PodcastGridAdapter extends ListBasedAdapter<Podcast> {
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
 
+		Logger.i("getting view at position: " + position);
 		PodcastView view;
 
 		if (convertView == null) {

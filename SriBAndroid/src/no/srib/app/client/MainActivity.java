@@ -23,7 +23,6 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
@@ -31,13 +30,11 @@ import com.squareup.otto.Subscribe;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InterruptedIOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import no.srib.app.client.adapter.ArticleListAdapter;
-import no.srib.app.client.adapter.ListBasedAdapter;
 import no.srib.app.client.adapter.PodcastGridAdapter;
 import no.srib.app.client.adapter.ProgramSpinnerAdapter;
 import no.srib.app.client.adapter.SectionsPagerAdapter;
@@ -58,7 +55,8 @@ import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
-import no.srib.app.client.fragment.PodcastFragment;
+import no.srib.app.client.fragment.PodcastActivity;
+import no.srib.app.client.fragment.PodcastListFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.model.Podcast;
@@ -82,7 +80,7 @@ import no.srib.app.client.view.CircleIshPageIndicator;
 
 //import no.srib.app.client.util.PodcastDownloader;
 public class MainActivity extends FragmentActivity {
-
+	private static MainActivity inst;
 
     private ProgressBar bar;
     private int status;
@@ -150,6 +148,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		inst = this;
     	BusProvider.INSTANCE.get().register(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -531,7 +530,7 @@ public class MainActivity extends FragmentActivity {
 						.execute(programId);
 			}
 
-			PodcastFragment fragment = (PodcastFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
+			PodcastListFragment fragment = (PodcastListFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
 			GridView grid = fragment.getGridView();
 			grid.smoothScrollToPosition(0);
 		}
@@ -541,30 +540,44 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
+	public static Podcast clickedPodcast;
 	private class GridViewItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View view,
 				int position, long id) {
 
+			clickedPodcast = (Podcast) view.getTag();
+
+			Intent intent = new Intent(MainActivity.this, PodcastActivity.class);
+			MainActivity.this.startActivity(intent);
+
+//			if(true) return;
 			// save position
-			savePodcastPosition();
-			Podcast podcast = (Podcast) view.getTag();
-			podcast.download();
+//			savePodcastPosition();
+//			Podcast podcast = (Podcast) view.getTag();
+//			podcast.download();
+//
+//			if(true) return;
 
-			if(true) return;
 
 
-			audioPlayer.setCurrentPodcast(podcast);
-
-			try {
-				audioPlayer.setCurrentPodcastAsSource();
-			} catch (AudioPlayerException e) {
-				e.printStackTrace();
-			}
-
-			audioPlayer.start();
 		}
+	}
+
+	static public void setPodcastAudioSource(Podcast podcast) {
+		// save position
+		inst.savePodcastPosition();
+
+		inst.audioPlayer.setCurrentPodcast(podcast);
+
+		try {
+			inst.audioPlayer.setCurrentPodcastAsSource();
+		} catch (AudioPlayerException e) {
+			e.printStackTrace();
+		}
+
+		inst.audioPlayer.start();
 	}
 
 	@Subscribe
@@ -681,7 +694,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	@Subscribe
-	public void onPodcastFragmentReady(final PodcastFragment fragment) {
+	public void onPodcastFragmentReady(final PodcastListFragment fragment) {
 		fragment.setGridArrayAdapter(podcastGridAdapter);
 		fragment.setSpinnerListAdapter(programSpinnerAdapter);
 		fragment.setPodcastClickedListener(new GridViewItemClickListener());

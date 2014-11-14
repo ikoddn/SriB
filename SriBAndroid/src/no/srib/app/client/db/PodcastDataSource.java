@@ -37,7 +37,8 @@ public class PodcastDataSource {
 	}
 
 	public File getLocalDir() {
-		return context.getExternalFilesDir("podcasts");
+		return context.getExternalCacheDir();
+//		return context.getExternalFilesDir("podcasts");
 	}
 
 	public String getNasUrl() {

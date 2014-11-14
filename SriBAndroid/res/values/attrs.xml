@@ -5,4 +5,14 @@
         <attr name="usingHeight" format="boolean" />
     </declare-styleable>
 
+	<declare-styleable name="TextViewPlus">
+		<attr name="assetFont" format="string"/>
+	</declare-styleable>
+
+	<declare-styleable name="ParalaxScrollView">
+		<attr name="paralaxBackgroundImage" format="reference"/>
+		<attr name="paralaxFactor" format="float"/>
+		<attr name="paddingFactor" format="float"/>
+	</declare-styleable>
+
 </resources>

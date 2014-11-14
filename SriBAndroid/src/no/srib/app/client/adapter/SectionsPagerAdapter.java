@@ -3,7 +3,8 @@ package no.srib.app.client.adapter;
 import no.srib.app.client.R;
 import no.srib.app.client.fragment.ArticleSectionFragment;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
-import no.srib.app.client.fragment.PodcastFragment;
+import no.srib.app.client.fragment.PodcastListFragment;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -33,7 +34,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter implements IconPa
 		case LIVERADIO_SECTION_FRAGMENT:
 			return new LiveRadioSectionFragment();
 		case PODCAST_FRAGMENT:
-			return new PodcastFragment();
+			return new PodcastListFragment();
 		case ARTICLE_SECTION_FRAGMENT:
 			return new ArticleSectionFragment();
 		default:
