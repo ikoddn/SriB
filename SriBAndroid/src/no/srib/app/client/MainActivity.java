@@ -55,7 +55,7 @@ import no.srib.app.client.fragment.InfoFragment;
 import no.srib.app.client.fragment.LiveRadioFragment;
 import no.srib.app.client.fragment.LiveRadioFragment.OnLiveRadioClickListener;
 import no.srib.app.client.fragment.LiveRadioSectionFragment;
-import no.srib.app.client.fragment.PodcastActivity;
+import no.srib.app.client.activities.PodcastActivity;
 import no.srib.app.client.fragment.PodcastListFragment;
 import no.srib.app.client.fragment.SectionFragment;
 import no.srib.app.client.imageloader.UrlImageLoaderSimple;

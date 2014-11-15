@@ -32,7 +32,7 @@
         </activity>
 
 		<activity
-			android:name="no.srib.app.client.fragment.PodcastActivity"
+			android:name=".activities.PodcastActivity"
 			>
 
 		</activity>

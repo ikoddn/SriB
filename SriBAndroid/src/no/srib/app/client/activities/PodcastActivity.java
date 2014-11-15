@@ -1,6 +1,5 @@
-package no.srib.app.client.fragment;
+package no.srib.app.client.activities;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,6 +21,7 @@ import no.srib.app.client.R;
 import no.srib.app.client.imageloader.UrlImageLoader;
 import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.model.Podcast;
+import no.srib.app.client.service.PodcastManager;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.Logger;
 import no.srib.app.client.util.UI;
@@ -55,6 +54,9 @@ public class PodcastActivity extends Activity {
 		setContentView(rootView);
 
 		final Podcast podcast = MainActivity.clickedPodcast;
+		// release the static instance to be sure we can release the view hierarchy
+		MainActivity.clickedPodcast = null;
+
 		if(podcast == null)
 			return;
 
@@ -89,8 +91,18 @@ public class PodcastActivity extends Activity {
 			textPodcastName.setText(podcast.getTitle());
 			textPodcastDescription.setText(podcast.getRemark());
 
-			updateProgressBar(podcast.getPercentDownloaded(), podcast);
-			podcast.registerProgressBar(this);
+			final PodcastManager podcastManager = PodcastManager.getInstance();
+			PodcastManager.PodcastLocalInfo podcastInfo = podcastManager
+					.getLocalInfo(podcast);
+
+			podcastInfo.setDatachangeListener(new PodcastManager.OnDataChangeListener() {
+				@Override
+				public void dataChanged(PodcastManager.PodcastLocalInfo podcastInfo) {
+					updateUI(podcastInfo);
+				}
+			});
+
+			updateUI(podcastInfo);
 
 			buttonPlay.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -102,133 +114,115 @@ public class PodcastActivity extends Activity {
 			buttonDownload.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					podcast.download();
+					podcastManager.downloadPodcast(podcast);
 				}
 			});
 
 			buttonDelete.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					podcast.deletePodcast();
+					podcastManager.deletePodcast(podcast);
 				}
 			});
 
 			buttonStopDownload.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					podcast.pauseDownload();
+					podcastManager.cancelDownload(podcast);
 				}
 			});
 		}
 	}
 
-	public void updateProgressBar(final float percent, final Podcast podcast) {
-		//TODO: update the progress bar
-		Logger.i("updating progressbar: " + percent);
+	public void updateUI(final PodcastManager.PodcastLocalInfo podcastInfo) {
+		Logger.i("updating UI");
 
 		UI.runOnUI(new Runnable() {
 			@Override
 			public void run() {
-				// it is downloading or fully downloaded
-				if(podcast.isQueued()) {
+				// if it is queued, queued message should show
+				float downloadedPercent = podcastInfo.getDownloadedPercent();
+
+				if(podcastInfo.isQueued()) {
 					if(queText.getVisibility() != View.VISIBLE) {
-						Logger.d("showing que text");
 						queText.setVisibility(View.VISIBLE);
+						Logger.i("Showing queue text");
 					}
 
 					if(buttonDownload.getVisibility() != View.GONE) {
-						Logger.d("hiding download");
-						queText.setVisibility(View.GONE);
+						Logger.i("Hiding download button");
+						buttonDownload.setVisibility(View.GONE);
 					}
+
 					if(buttonStopDownload.getVisibility() != View.VISIBLE) {
-						Logger.d("showing que text");
-						queText.setVisibility(View.VISIBLE);
+						Logger.i("Showing cancel button");
+						buttonStopDownload.setVisibility(View.VISIBLE);
 					}
 				}
-				if(percent > 0) {
-					Logger.d("percent is more than 0");
-					// show delete
+				// else queued message should be hidden
+				else if(!podcastInfo.isQueued() && queText.getVisibility() != View.GONE) {
+					Logger.i("Hiding queue text");
+					queText.setVisibility(View.GONE);
+				}
+
+				// if downloaded percent is more than 0 you should show; delete button and progress bar
+				if(downloadedPercent > 0) {
 					if(buttonDelete.getVisibility() != View.VISIBLE) {
-						Logger.d("showing delete");
+						Logger.i("Showing delete button");
 						buttonDelete.setVisibility(View.VISIBLE);
 					}
 
-					if(podcast.isDownloading() && queText.getVisibility() == View.VISIBLE) {
-						Logger.d("hiding que text");
-						queText.setVisibility(View.GONE);
-					}
-
-					// show stop downloading if downloading
-					Logger.d("podcast.isDownloading: " + (podcast.isDownloading()? "true": "false"));
-					if(podcast.isDownloading() && buttonStopDownload.getVisibility() != View.VISIBLE) {
-						Logger.d("showing stop download");
-						buttonStopDownload.setVisibility(View.VISIBLE);
-					}
-					else if(!podcast.isDownloading() && buttonStopDownload.getVisibility() != View.GONE) {
-						Logger.d("hiding stop download");
-						buttonStopDownload.setVisibility(View.GONE);
-
-					}
-
-					// hide download button if downloading
-					if(podcast.isDownloading() && buttonDownload.getVisibility() != View.GONE) {
-						Logger.d("hiding download button");
-						buttonDownload.setVisibility(View.GONE);
-					}
-					else if(!podcast.isDownloading() && buttonDownload.getVisibility() != View.VISIBLE) {
-						Logger.d("showing download button");
-						buttonDownload.setVisibility(View.VISIBLE);
-					}
-
-					// if fully downloaded
-					if(percent >= 100) {
-						Logger.d("percent is 100");
-						// hide download button
-						if(buttonDownload.getVisibility() != View.GONE) {
-							Logger.d("hiding download button");
-							buttonDownload.setVisibility(View.GONE);
-						}
-
-						// hide stop download button
-						if(buttonStopDownload.getVisibility() != View.GONE) {
-							Logger.d("hiding stop download button");
-							buttonStopDownload.setVisibility(View.GONE);
-						}
-					}
-
 					if(progressBar.getVisibility() != View.VISIBLE) {
-						Logger.d("showing progress bar");
+						Logger.i("Showing progress bar");
 						progressBar.setVisibility(View.VISIBLE);
 					}
 				}
-				else if(percent <= 0) {
-					Logger.d("percent is 0");
-					// hide delete
-					if(buttonDelete.getVisibility() != View.GONE) {
-						Logger.d("hide delete");
-						buttonDelete.setVisibility(View.GONE);
+				// else; hide delete button and progress bar
+				else {
+					if(progressBar.getVisibility() != View.GONE) {
+						Logger.i("Hiding progress bar");
+						progressBar.setVisibility(View.GONE);
 					}
 
-					// show download button
-					if(buttonDownload.getVisibility() != View.VISIBLE) {
-						Logger.d("show download");
+					if(buttonDelete.getVisibility() != View.GONE) {
+						Logger.i("Hiding delete button");
+						buttonDelete.setVisibility(View.GONE);
+					}
+				}
+				// if fully downloaded hide download button
+				if(downloadedPercent >= 100 && buttonDownload.getVisibility() != View.GONE) {
+					Logger.i("Hiding download button");
+					buttonDownload.setVisibility(View.GONE);
+				}
+
+				// if podcast is downloading show cancel button and hide download button
+				if(podcastInfo.isDownloading()) {
+					if(buttonDownload.getVisibility() != View.GONE) {
+						Logger.i("Hiding download button");
+						buttonDownload.setVisibility(View.GONE);
+					}
+
+					if(buttonStopDownload.getVisibility() != View.VISIBLE) {
+						Logger.i("Showing cancel button");
+						buttonStopDownload.setVisibility(View.VISIBLE);
+					}
+				}
+				//else hide cancel button and show download button
+				else if(!podcastInfo.isQueued()){
+					if(buttonDownload.getVisibility() != View.VISIBLE
+							&& downloadedPercent < 100) {
+						Logger.i("Showing download button");
 						buttonDownload.setVisibility(View.VISIBLE);
 					}
 
-					// hide stop download button
 					if(buttonStopDownload.getVisibility() != View.GONE) {
-						Logger.d("hide stop download");
+						Logger.i("Hiding cancel button");
 						buttonStopDownload.setVisibility(View.GONE);
-					}
-
-					// hide progress bar
-					if(progressBar.getVisibility() != View.GONE) {
-						Logger.d("hide progressbar");
-						progressBar.setVisibility(View.GONE);
 					}
 				}
 
-				progressBar.setProgress((int) percent);
+				Logger.i("Setting progress bar to: " + podcastInfo.getDownloadedPercent());
+				progressBar.setProgress((int) podcastInfo.getDownloadedPercent());
 			}
 		});
 	}

@@ -7,16 +7,12 @@ import no.srib.app.client.event.listener.AudioPlayerListener;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.BaseService;
+import no.srib.app.client.service.PodcastManager;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateHandler;
 import no.srib.app.client.service.audioplayer.state.StateListener;
-import no.srib.app.client.util.AudioMetaUtil;
-import no.srib.app.client.util.Hash;
 import no.srib.app.client.util.Logger;
 
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -325,7 +321,16 @@ public class AudioPlayerService extends BaseService {
 			throw new AudioPlayerException("Current podcast not set");
 		}
 
-		String url = podcastNasUrl + currentPodcast.getFilename();
+		PodcastManager.PodcastLocalInfo podcastMeta = PodcastManager.getInstance().getLocalInfo(currentPodcast);
+
+		String url = "";
+		if(podcastMeta.getDownloadedPercent() > 0)
+			url = podcastMeta.getLocalFile().toString();
+		else
+			url = podcastNasUrl + currentPodcast.getFilename();
+
+		Logger.d("the url for podcast is: " + url);
+
 
 		if (!url.equals(dataSource)) {
 			setDataSource(url, DataSourceType.PODCAST);
