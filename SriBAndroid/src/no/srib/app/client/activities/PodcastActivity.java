@@ -40,6 +40,9 @@ public class PodcastActivity extends Activity {
 	@InjectView(R.id.textviewPodcastDescription) 	TextView textPodcastDescription;
 	@InjectView(R.id.queText) 						TextView queText;
     @InjectView(R.id.buttonPodcastPause)            ImageView buttonPause;
+    @InjectView(R.id.Microphone)                    ImageView Microphone;
+    @InjectView(R.id.Articles)                      ImageView Articles;
+    @InjectView(R.id.buttonBack)                    ImageView buttonBack;
 
 	private Drawable defaultPodcastImage;
 
@@ -111,6 +114,13 @@ public class PodcastActivity extends Activity {
                     MainActivity.setPodcastAudioSource(podcast);
                     buttonPlay.setVisibility(View.INVISIBLE);
                     buttonPause.setVisibility(View.VISIBLE);
+                }
+            });
+
+            buttonBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
                 }
             });
 
