@@ -13,11 +13,18 @@ import no.srib.app.client.service.audioplayer.state.StateHandler;
 import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.util.Logger;
 
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.RemoteControlClient;
 import android.os.Binder;
 import android.util.Log;
 
@@ -41,6 +48,31 @@ public class AudioPlayerService extends BaseService {
 
 	private Podcast currentPodcast;
 	private StreamSchedule currentStream;
+	private AudioManager audioManager;
+	private ComponentName mediaButtonEventReceiver;
+	private RemoteControlClient remoteControlClient;
+
+	private AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+		public void onAudioFocusChange(int focusChange) {
+			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+				// Pause playback
+				Logger.d("audio focus loss transient");
+				pause();
+			}
+			else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+				// Resume playback
+				Logger.d("audio focus gain");
+				start();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+				Logger.d("audio focus loss");
+				audioManager.unregisterMediaButtonEventReceiver(mediaButtonEventReceiver);
+				audioManager.abandonAudioFocus(afChangeListener);
+				// Stop playback
+				stop();
+			}
+		}
+	};
+
 
 	static public AudioPlayerService getService() {
 		return playerService;
@@ -90,6 +122,9 @@ public class AudioPlayerService extends BaseService {
 		mediaPlayer.setOnPreparedListener(new MediaPlayerPreparedListener());
 		mediaPlayer.setOnCompletionListener(new MediaPlayerCompletedListener());
 		mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
+
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+		mediaButtonEventReceiver = new ComponentName(getPackageName(), AudioPlayerBroadcastReceiver.class.getName());
 	}
 
 	private void uninitializeMediaPlayer() {
@@ -152,17 +187,61 @@ public class AudioPlayerService extends BaseService {
 	 * Starts the audio player.
 	 */
 	public void start() {
-		switch (stateHandler.getState()) {
-		case STOPPED:
-			mediaPlayer.prepareAsync();
-			stateHandler.setState(State.PREPARING);
-			break;
-		case PAUSED:
-			mediaPlayer.start();
-			stateHandler.setState(State.STARTED);
-			break;
-		default:
-			break;
+		// Request audio focus for playback
+		int result = audioManager.requestAudioFocus(afChangeListener,
+				// Use the music stream.
+				AudioManager.STREAM_MUSIC,
+				// Request permanent focus.
+				AudioManager.AUDIOFOCUS_GAIN);
+
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			Logger.d("audio focus granted");
+
+			// register stuff...
+			audioManager.registerMediaButtonEventReceiver(mediaButtonEventReceiver);
+
+			// build the PendingIntent for the remote control client
+			Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+			mediaButtonIntent.setComponent(mediaButtonEventReceiver);
+
+			// create and register the remote control client
+			PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0);
+			remoteControlClient = new RemoteControlClient(mediaPendingIntent);
+			remoteControlClient.setTransportControlFlags(
+//				RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE
+//						| RemoteControlClient.FLAG_KEY_MEDIA_NEXT
+//						| RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS
+					RemoteControlClient.FLAG_KEY_MEDIA_PLAY
+							| RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
+			);
+			audioManager.registerRemoteControlClient(remoteControlClient);
+
+			RemoteControlClient.MetadataEditor editor = remoteControlClient.editMetadata(true);
+			Bitmap dummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.podcsat_art_design_placeholder);
+
+			editor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, dummyAlbumArt);
+			editor.putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, (long)1000);
+			editor.putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "Artist");
+			editor.putString(MediaMetadataRetriever.METADATA_KEY_TITLE, "Title");
+			editor.apply();
+
+			remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+			// Start playback.
+			switch (stateHandler.getState()) {
+				case STOPPED:
+					mediaPlayer.prepareAsync();
+					stateHandler.setState(State.PREPARING);
+					break;
+				case PAUSED:
+					mediaPlayer.start();
+					stateHandler.setState(State.STARTED);
+					break;
+				default:
+					break;
+			}
+		}
+		else {
+			Logger.d("audio focus not granted");
 		}
 	}
 
@@ -170,6 +249,8 @@ public class AudioPlayerService extends BaseService {
 	 * Pauses the audio player.
 	 */
 	public void pause() {
+		audioManager.abandonAudioFocus(afChangeListener);
+		remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
 		switch (stateHandler.getState()) {
 		case STARTED:
 			mediaPlayer.pause();
@@ -184,6 +265,8 @@ public class AudioPlayerService extends BaseService {
 	 * Stops the audio player.
 	 */
 	public void stop() {
+		audioManager.abandonAudioFocus(afChangeListener);
+		remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
 		switch (stateHandler.getState()) {
 		case COMPLETED:
 		case STARTED:

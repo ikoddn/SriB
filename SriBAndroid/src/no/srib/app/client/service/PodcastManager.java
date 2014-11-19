@@ -164,7 +164,10 @@ public class PodcastManager extends BaseService {
 		private Runnable postDownloadCallback;
 		private DownloadPodcastTask downloadTask;
 		// week reference; we do not want to retain view hierarchy because of a data listener
-		private WeakReference<OnDataChangeListener> dataChangeListener;
+		// TODO: this must be unregistered in some way when it is not needed anymore
+		// but weak reference is fucking up on some phones
+//		private WeakReference<OnDataChangeListener> dataChangeListener;
+		private OnDataChangeListener dataChangeListener;
 
 		public PodcastLocalInfo(Podcast podcast) {
 			podcastId = podcast.getRefnr();
@@ -185,12 +188,16 @@ public class PodcastManager extends BaseService {
 		}
 
 		public void setDatachangeListener(OnDataChangeListener listener) {
-			dataChangeListener = new WeakReference<>(listener);
+			dataChangeListener = listener;
 		}
 
 		public void dataChanged() {
-			if(dataChangeListener != null && dataChangeListener.get() != null)
-				dataChangeListener.get().dataChanged(this);
+			// weak
+//			if(dataChangeListener != null && dataChangeListener.get() != null)
+//				dataChangeListener.get().dataChanged(this);
+			// strong
+			if(dataChangeListener != null)
+				dataChangeListener.dataChanged(this);
 		}
 	}
 

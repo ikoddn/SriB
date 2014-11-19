@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LoadingFragment extends BaseFragment {
@@ -59,8 +60,9 @@ public class LoadingFragment extends BaseFragment {
 		public void onGlobalLayout() {
 			ViewUtil.removeOnGlobalLayoutListener(rootView, this);
 
-			int height = rootView.getHeight();
+//			int height = rootView.getHeight();
 			int width = rootView.getWidth();
+			int height = (int) (width * 1.23466666666667);
 
 			Resources res = getResources();
 
@@ -71,9 +73,11 @@ public class LoadingFragment extends BaseFragment {
 						height, true);
 			}
 
-			background = (DTImageView) rootView
-					.findViewById(R.id.dtImageView_loading_background);
-			background.setBitmap(backgroundBitmap);
+			((ImageView) rootView.findViewById(R.id.dtImageView_loading_background)).setImageBitmap(backgroundBitmap);
+
+//			background = (DTImageView) rootView
+//					.findViewById(R.id.dtImageView_loading_background);
+//			background.setBitmap(backgroundBitmap);
 		}
 	}
 }

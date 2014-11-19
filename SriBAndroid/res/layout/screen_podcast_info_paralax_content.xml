@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/contentContainer"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingTop="270dp"
+	>
+
+	<RelativeLayout
+		android:id="@+id/content"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/white"
+		android:layout_marginTop="22dp"
+		android:paddingTop="30dp"
+		>
+
+		<no.srib.app.client.view.TextViewPlus
+			android:id="@+id/textviewPodcastName"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			style="@style/textTitle"
+			android:text="Immaturus' radioteater - Mitt liv som hørespill "
+			/>
+
+		<no.srib.app.client.view.TextViewPlus
+			android:id="@+id/textviewPodcastDescription"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/textviewPodcastName"
+
+			style="@style/textParagraph"
+			android:text="En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. EOF"
+			/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/controlsRow"
+		android:gravity="top"
+		>
+		<no.srib.app.client.view.TextViewPlus
+			android:id="@+id/queText"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/buttonPodcastStopDownload"
+
+			style="@style/textParagraph"
+			android:text="Står i kø for å laste ned"
+			android:layout_marginTop="14dp"
+			android:paddingLeft="5dp"
+			android:paddingRight="10dp"
+			android:visibility="gone"
+			/>
+
+		<ProgressBar
+			android:id="@+id/progressbarPodcast"
+			android:layout_width="fill_parent"
+			android:layout_height="20dp"
+			android:max = "100"
+			android:layout_toLeftOf="@+id/buttonPodcastDelete"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:visibility="gone"
+			android:layout_marginTop="14dp"
+			android:paddingLeft="5dp"
+			android:paddingRight="10dp"
+			/>
+
+		<ImageView
+			android:id="@+id/buttonPodcastPlay"
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:contentDescription="@string/buttonPlayPodcastDescription"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:layout_marginRight="20dp"
+			android:layout_marginEnd="20dp"
+			android:src="@drawable/ic_button_round_play"
+			/>
+
+		<ImageView
+			android:id="@+id/buttonPodcastPause"
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:layout_marginRight="20dp"
+			android:layout_marginEnd="20dp"
+			android:src="@drawable/ic_button_round_pause"
+			android:visibility="invisible"
+			/>
+
+		<ImageView
+			android:id="@+id/buttonPodcastDownload"
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:src="@drawable/ic_button_round_download"
+			android:layout_toLeftOf="@+id/buttonPodcastPlay"
+			android:layout_marginRight="10dp"
+			android:layout_marginEnd="10dp"
+			android:contentDescription="@string/buttonDownloadPodcastDescription"
+			android:visibility="visible"
+
+			/>
+
+		<ImageView
+			android:id="@+id/buttonPodcastDelete"
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:src="@drawable/ic_button_round_trash"
+			android:layout_toLeftOf="@id/buttonPodcastStopDownload"
+			android:contentDescription="@string/buttonDeletePodcastDescription"
+			android:layout_marginRight="10dp"
+			android:layout_marginEnd="10dp"
+			android:visibility="gone"
+			/>
+
+		<ImageView
+			android:id="@+id/buttonPodcastStopDownload"
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:src="@drawable/ic_button_round_cancel"
+			android:layout_toLeftOf="@id/buttonPodcastDownload"
+			android:contentDescription="@string/buttonPausePodcastDownloadDescription"
+			android:layout_marginRight="10dp"
+			android:layout_marginEnd="10dp"
+			android:visibility="gone"
+			/>
+
+		<ImageView
+			android:id="@+id/buttonBack"
+			android:src="@drawable/Back_Button"
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:visibility="invisible"
+			/>
+		<ImageView
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:id="@+id/Microphone"
+			android:src="@drawable/Microphone"
+			android:visibility="invisible"
+			/>
+		<ImageView
+			android:layout_width="45dp"
+			android:layout_height="45dp"
+			android:id="@+id/Articles"
+			android:src="@drawable/Artikkel_Bilde"
+			android:visibility="invisible"
+			/>
+	</RelativeLayout>
+</RelativeLayout>

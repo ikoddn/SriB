@@ -34,133 +34,135 @@
 			srib:paddingFactor="2.4916666"
 			>
 
-			<RelativeLayout
-				android:id="@+id/contentContainer"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:paddingTop="240dp"
-				>
+			<include layout="@layout/screen_podcast_info_paralax_content" />
 
-				<RelativeLayout
-					android:id="@+id/content"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:background="@color/white"
-					android:layout_marginTop="22dp"
-					android:paddingTop="30dp"
-					>
+			<!--<RelativeLayout-->
+				<!--android:id="@+id/contentContainer"-->
+				<!--android:layout_width="match_parent"-->
+				<!--android:layout_height="match_parent"-->
+				<!--android:paddingTop="240dp"-->
+				<!-->-->
 
-					<no.srib.app.client.view.TextViewPlus
-						android:id="@+id/textviewPodcastName"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						style="@style/textTitle"
-						android:text="Immaturus' radioteater - Mitt liv som hørespill "
-						/>
+				<!--<RelativeLayout-->
+					<!--android:id="@+id/content"-->
+					<!--android:layout_width="match_parent"-->
+					<!--android:layout_height="match_parent"-->
+					<!--android:background="@color/white"-->
+					<!--android:layout_marginTop="22dp"-->
+					<!--android:paddingTop="30dp"-->
+					<!-->-->
 
-					<no.srib.app.client.view.TextViewPlus
-						android:id="@+id/textviewPodcastDescription"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_below="@id/textviewPodcastName"
-						style="@style/textParagraph"
-						android:text="En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. EOF"
-						/>
+					<!--<no.srib.app.client.view.TextViewPlus-->
+						<!--android:id="@+id/textviewPodcastName"-->
+						<!--android:layout_width="match_parent"-->
+						<!--android:layout_height="wrap_content"-->
+						<!--style="@style/textTitle"-->
+						<!--android:text="Immaturus' radioteater - Mitt liv som hørespill "-->
+						<!--/>-->
 
-					<no.srib.app.client.view.TextViewPlus
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_below="@id/textviewPodcastDescription"
-						style="@style/textParagraph"
-						android:text="En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. EOF"
-						/>
-				</RelativeLayout>
+					<!--<no.srib.app.client.view.TextViewPlus-->
+						<!--android:id="@+id/textviewPodcastDescription"-->
+						<!--android:layout_width="match_parent"-->
+						<!--android:layout_height="wrap_content"-->
+						<!--android:layout_below="@id/textviewPodcastName"-->
+						<!--style="@style/textParagraph"-->
+						<!--android:text="En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. EOF"-->
+						<!--/>-->
 
-				<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/controlsRow"
-					android:gravity="top"
-					>
-					<no.srib.app.client.view.TextViewPlus
-						android:id="@+id/queText"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_toLeftOf="@+id/buttonPodcastStopDownload"
+					<!--<no.srib.app.client.view.TextViewPlus-->
+						<!--android:layout_width="match_parent"-->
+						<!--android:layout_height="wrap_content"-->
+						<!--android:layout_below="@id/textviewPodcastDescription"-->
+						<!--style="@style/textParagraph"-->
+						<!--android:text="En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. En liten gjeng fra radioteateret + gjest er klare for å servere dagens hørespill. Og det du skal få høre er en skildring av hvordan radioteater kan endre ens liv. Immaturus' radioteater er et samarbeidsprosjekt mellom Studentteateret Immaturus og Studentradioen i Bergen. Tanken bak programmet er å levere ny og gammel dramatikk til våre lyttere, men også å være en plattform for studenter som ønsker å prøve seg på regi, manus, skuespill og teknikk. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. EOF"-->
+						<!--/>-->
+				<!--</RelativeLayout>-->
 
-						style="@style/textParagraph"
-						android:text="Står i kø for å laste ned"
-						android:layout_marginTop="14dp"
-						android:paddingLeft="5dp"
-						android:paddingRight="10dp"
-						android:visibility="gone"
-						/>
+				<!--<RelativeLayout-->
+					<!--android:layout_width="match_parent"-->
+					<!--android:layout_height="wrap_content"-->
+					<!--android:id="@+id/controlsRow"-->
+					<!--android:gravity="top"-->
+					<!-->-->
+					<!--<no.srib.app.client.view.TextViewPlus-->
+						<!--android:id="@+id/queText"-->
+						<!--android:layout_width="match_parent"-->
+						<!--android:layout_height="wrap_content"-->
+						<!--android:layout_toLeftOf="@+id/buttonPodcastStopDownload"-->
 
-					<ProgressBar
-						android:id="@+id/progressbarPodcast"
-						android:layout_width="fill_parent"
-						android:layout_height="20dp"
-						android:max = "100"
-						android:layout_toLeftOf="@+id/buttonPodcastStopDownload"
-						style="?android:attr/progressBarStyleHorizontal"
-						android:visibility="gone"
-						android:layout_marginTop="14dp"
-						android:paddingLeft="5dp"
-						android:paddingRight="10dp"
-						/>
+						<!--style="@style/textParagraph"-->
+						<!--android:text="Står i kø for å laste ned"-->
+						<!--android:layout_marginTop="14dp"-->
+						<!--android:paddingLeft="5dp"-->
+						<!--android:paddingRight="10dp"-->
+						<!--android:visibility="gone"-->
+						<!--/>-->
 
-					<ImageView
-						android:id="@+id/buttonPodcastPlay"
-						android:layout_width="45dp"
-						android:layout_height="45dp"
-						android:contentDescription="@string/buttonPlayPodcastDescription"
-						android:layout_alignParentRight="true"
-						android:layout_alignParentEnd="true"
-						android:background="@drawable/circle"
-						android:layout_marginRight="20dp"
-						android:layout_marginEnd="20dp"
-						android:src="@drawable/ic_play_inset"
-						/>
+					<!--<ProgressBar-->
+						<!--android:id="@+id/progressbarPodcast"-->
+						<!--android:layout_width="fill_parent"-->
+						<!--android:layout_height="20dp"-->
+						<!--android:max = "100"-->
+						<!--android:layout_toLeftOf="@+id/buttonPodcastStopDownload"-->
+						<!--style="?android:attr/progressBarStyleHorizontal"-->
+						<!--android:visibility="gone"-->
+						<!--android:layout_marginTop="14dp"-->
+						<!--android:paddingLeft="5dp"-->
+						<!--android:paddingRight="10dp"-->
+						<!--/>-->
 
-					<ImageView
-						android:id="@+id/buttonPodcastDownload"
-						android:layout_width="45dp"
-						android:layout_height="45dp"
-						android:src="@drawable/ic_download"
-						android:layout_toLeftOf="@+id/buttonPodcastPlay"
-						android:background="@drawable/circle"
-						android:layout_marginRight="10dp"
-						android:layout_marginEnd="10dp"
-						android:contentDescription="@string/buttonDownloadPodcastDescription"
-						/>
+					<!--<ImageView-->
+						<!--android:id="@+id/buttonPodcastPlay"-->
+						<!--android:layout_width="45dp"-->
+						<!--android:layout_height="45dp"-->
+						<!--android:contentDescription="@string/buttonPlayPodcastDescription"-->
+						<!--android:layout_alignParentRight="true"-->
+						<!--android:layout_alignParentEnd="true"-->
+						<!--android:background="@drawable/circle"-->
+						<!--android:layout_marginRight="20dp"-->
+						<!--android:layout_marginEnd="20dp"-->
+						<!--android:src="@drawable/ic_play_inset"-->
+						<!--/>-->
 
-					<ImageView
-						android:id="@+id/buttonPodcastDelete"
-						android:layout_width="45dp"
-						android:layout_height="45dp"
-						android:src="@drawable/ic_trash"
-						android:layout_toLeftOf="@id/buttonPodcastStopDownload"
-						android:contentDescription="@string/buttonDeletePodcastDescription"
-						android:background="@drawable/circle"
-						android:layout_marginRight="10dp"
-						android:layout_marginEnd="10dp"
-						android:visibility="gone"
-						/>
+					<!--<ImageView-->
+						<!--android:id="@+id/buttonPodcastDownload"-->
+						<!--android:layout_width="45dp"-->
+						<!--android:layout_height="45dp"-->
+						<!--android:src="@drawable/ic_download"-->
+						<!--android:layout_toLeftOf="@+id/buttonPodcastPlay"-->
+						<!--android:background="@drawable/circle"-->
+						<!--android:layout_marginRight="10dp"-->
+						<!--android:layout_marginEnd="10dp"-->
+						<!--android:contentDescription="@string/buttonDownloadPodcastDescription"-->
+						<!--/>-->
 
-					<ImageView
-						android:id="@+id/buttonPodcastStopDownload"
-						android:layout_width="45dp"
-						android:layout_height="45dp"
-						android:src="@drawable/ic_cancel_download"
-						android:layout_toLeftOf="@+id/buttonPodcastDownload"
-						android:contentDescription="@string/buttonPausePodcastDownloadDescription"
-						android:background="@drawable/circle"
-						android:layout_marginRight="10dp"
-						android:layout_marginEnd="10dp"
-						android:visibility="gone"
-						/>
-				</RelativeLayout>
-			</RelativeLayout>
+					<!--<ImageView-->
+						<!--android:id="@+id/buttonPodcastDelete"-->
+						<!--android:layout_width="45dp"-->
+						<!--android:layout_height="45dp"-->
+						<!--android:src="@drawable/ic_trash"-->
+						<!--android:layout_toLeftOf="@id/buttonPodcastStopDownload"-->
+						<!--android:contentDescription="@string/buttonDeletePodcastDescription"-->
+						<!--android:background="@drawable/circle"-->
+						<!--android:layout_marginRight="10dp"-->
+						<!--android:layout_marginEnd="10dp"-->
+						<!--android:visibility="gone"-->
+						<!--/>-->
+
+					<!--<ImageView-->
+						<!--android:id="@+id/buttonPodcastStopDownload"-->
+						<!--android:layout_width="45dp"-->
+						<!--android:layout_height="45dp"-->
+						<!--android:src="@drawable/ic_cancel_download"-->
+						<!--android:layout_toLeftOf="@+id/buttonPodcastDownload"-->
+						<!--android:contentDescription="@string/buttonPausePodcastDownloadDescription"-->
+						<!--android:background="@drawable/circle"-->
+						<!--android:layout_marginRight="10dp"-->
+						<!--android:layout_marginEnd="10dp"-->
+						<!--android:visibility="gone"-->
+						<!--/>-->
+				<!--</RelativeLayout>-->
+			<!--</RelativeLayout>-->
 		</no.srib.app.client.view.ParalaxScrollView>
 		<View
 			android:layout_width="0dip"

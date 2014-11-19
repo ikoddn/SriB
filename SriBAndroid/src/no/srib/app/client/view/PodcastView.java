@@ -45,7 +45,9 @@ import static android.support.v4.app.ActivityCompat.startActivity;
 
 public class PodcastView extends LinearLayout {
 
-    public static final int DEFAULT_IMAGE_ID = R.drawable.podcast_default_art;
+    public static final int DEFAULT_IMAGE_ID = R.drawable.griditem_podcast_default_art;
+	// create only one drawable that is the default image, then reuse this
+	private static Drawable defaultImage;
     public static final int FONT_ID = R.string.font_clairehandbold;
 
     @InjectView(R.id.imageView_podcastItem_art) ImageView imageView;
@@ -57,7 +59,6 @@ public class PodcastView extends LinearLayout {
     private String DownloadUrl = "http://podcast.srib.no:8080/podcast";
     private String fileName = "SRIB.podcast";
     private int viewWidth;
-    private Drawable defaultImage;
 
         public PodcastView(final Context context) {
 
@@ -84,10 +85,12 @@ public class PodcastView extends LinearLayout {
             ButterKnife.inject(this);
             //button.setOnClickListener();
 
-            Resources resources = context.getResources();
-            defaultImage = resources.getDrawable(DEFAULT_IMAGE_ID);
-            defaultImage = ImageUtil.resize(defaultImage, viewWidth, viewWidth,
-                    resources);
+			if(defaultImage == null) {
+				Resources resources = context.getResources();
+				defaultImage = resources.getDrawable(DEFAULT_IMAGE_ID);
+				defaultImage = ImageUtil.resize(defaultImage, viewWidth, viewWidth,
+						resources);
+			}
 
             Typeface font = FontFactory.INSTANCE.getFont(context, FONT_ID);
             dateTextView.setTypeface(font);

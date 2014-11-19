@@ -4,3 +4,9 @@ mdpi=200x200
 hdpi=300x300
 xhdpi=400x400
 xxhdpi=600x600
+
+file:griditem_podcast_default_art.png
+mdpi=200x200
+hdpi=300x300
+xhdpi=400x400
+xxhdpi=600x600
