@@ -145,6 +145,28 @@
 					android:layout_marginEnd="10dp"
 					android:visibility="gone"
 					/>
+                <ImageView
+                    android:id="@+id/buttonBack"
+                    android:src="@drawable/Back_Button"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:visibility="invisible"
+                    />
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/Microphone"
+                    android:src="@drawable/Microphone"
+                    android:visibility="invisible"
+                    />
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/Articles"
+                    android:src="@drawable/Artikkel_Bilde"
+                    android:visibility="invisible"
+                    />
+
 
 				<ImageView
 					android:id="@+id/buttonPodcastStopDownload"
