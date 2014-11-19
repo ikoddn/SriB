@@ -22,6 +22,7 @@ import no.srib.app.client.imageloader.UrlImageLoader;
 import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.service.PodcastManager;
+import no.srib.app.client.service.audioplayer.AudioPlayerService;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.Logger;
 import no.srib.app.client.util.UI;
@@ -38,6 +39,7 @@ public class PodcastActivity extends Activity {
 	@InjectView(R.id.textviewPodcastName) 			TextView textPodcastName;
 	@InjectView(R.id.textviewPodcastDescription) 	TextView textPodcastDescription;
 	@InjectView(R.id.queText) 						TextView queText;
+    @InjectView(R.id.buttonPodcastPause)            ImageView buttonPause;
 
 	private Drawable defaultPodcastImage;
 
@@ -103,36 +105,51 @@ public class PodcastActivity extends Activity {
 			});
 
 			updateUI(podcastInfo);
+            buttonPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.setPodcastAudioSource(podcast);
+                    buttonPlay.setVisibility(View.INVISIBLE);
+                    buttonPause.setVisibility(View.VISIBLE);
+                }
+            });
 
-			buttonPlay.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					MainActivity.setPodcastAudioSource(podcast);
-				}
-			});
+            buttonPause.setOnClickListener(new View.OnClickListener() {
 
-			buttonDownload.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					podcastManager.downloadPodcast(podcast);
-				}
-			});
+                @Override
+                public void onClick(View v) {
+                    Logger.d("Logger inn");
+                    AudioPlayerService.getService().pause();
+                    buttonPlay.setVisibility(View.VISIBLE);
+                    buttonPause.setVisibility(View.INVISIBLE);
+                } });
 
-			buttonDelete.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					podcastManager.deletePodcast(podcast);
-				}
-			});
 
-			buttonStopDownload.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					podcastManager.cancelDownload(podcast);
-				}
-			});
-		}
-	}
+
+            buttonDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    podcastManager.downloadPodcast(podcast);
+                }
+            });
+
+            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    podcastManager.deletePodcast(podcast);
+                }
+            });
+
+            buttonStopDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    podcastManager.cancelDownload(podcast);
+                }
+            });
+        }
+    }
+
+
 
 	public void updateUI(final PodcastManager.PodcastLocalInfo podcastInfo) {
 		Logger.i("updating UI");
