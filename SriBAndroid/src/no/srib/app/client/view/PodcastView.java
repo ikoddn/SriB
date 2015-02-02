@@ -3,12 +3,14 @@ package no.srib.app.client.view;
 import no.srib.app.client.R;
 import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.imageloader.UrlImageLoader;
+import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.FontFactory;
 import no.srib.app.client.util.ImageUtil;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -47,17 +49,13 @@ public class PodcastView extends LinearLayout {
 
     public static final int DEFAULT_IMAGE_ID = R.drawable.griditem_podcast_default_art;
 	// create only one drawable that is the default image, then reuse this
-	private static Drawable defaultImage;
+	public static Drawable defaultImage;
     public static final int FONT_ID = R.string.font_clairehandbold;
 
     @InjectView(R.id.imageView_podcastItem_art) ImageView imageView;
     @InjectView(R.id.textView_podcastItem_date) TextView dateTextView;
     @InjectView(R.id.textView_podcastItem_programname) TextView programNameTextView;
-//    @InjectView(R.id.download_podcast) ImageView button;
-//	@InjectView(R.id.podcastDownloadProgressBar) ProgressBar progressBar;
 
-    private String DownloadUrl = "http://podcast.srib.no:8080/podcast";
-    private String fileName = "SRIB.podcast";
     private int viewWidth;
 
         public PodcastView(final Context context) {
@@ -101,49 +99,22 @@ public class PodcastView extends LinearLayout {
             dateTextView.setText(formattedDate);
             programNameTextView.setText(podcast.getProgram());
 
-			// TODO: if this is downloading... register with the podcast downloader somehow
-			Logger.i("inital update progressbar for: " + podcast.getProgram());
-//			updateProgressBar(podcast.getPercentDownloaded());
-//			podcast.registerProgressBar(this);
-
-//			button.setOnClickListener(new OnClickListener() {
-//
-//                @Override
-//                public void onClick(View arg0) {
-//                    podcast.download();
-//                }
-//
-//            });
-
-
 			final String imageUrl = podcast.getImageUrl();
 
             if (imageUrl == null || imageUrl.trim().isEmpty()) {
                 imageView.setImageDrawable(defaultImage);
             } else {
-                UrlImageLoader urlImageLoader = UrlImageLoaderProvider.INSTANCE
-                        .get();
-                urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
-                        imageUrl, defaultImage);
+				UrlImageLoader urlImageLoader = UrlImageLoaderProvider.INSTANCE
+						.get();
+				// images for downloaded podcasts should be available even when there is no net
+				if(UrlImageLoaderSimple.INSTANCE.hasInCache(imageUrl))
+					urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
+							UrlImageLoaderSimple.INSTANCE.getLocalURL(imageUrl), defaultImage);
+				else
+					urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
+							imageUrl, defaultImage);
             }
         }
-
-//		public void updateProgressBar(final int percent) {
-//			//TODO: update the progress bar
-//			Logger.i("updating progressbar: " + percent);
-//
-//			UI.runOnUI(new Runnable() {
-//				@Override
-//				public void run() {
-////					if(percent > 0 && progressBar.getVisibility() == INVISIBLE)
-////						progressBar.setVisibility(VISIBLE);
-////					else if(percent <= 0 && progressBar.getVisibility() == VISIBLE)
-////						progressBar.setVisibility(INVISIBLE);
-////
-////					progressBar.setProgress(percent);
-//				}
-//			});
-//		}
     }
 
 

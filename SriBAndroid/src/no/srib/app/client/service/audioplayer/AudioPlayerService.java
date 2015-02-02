@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import no.srib.app.client.R;
 import no.srib.app.client.event.listener.AudioPlayerListener;
+import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.BaseService;
@@ -11,8 +12,12 @@ import no.srib.app.client.service.PodcastManager;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateHandler;
 import no.srib.app.client.service.audioplayer.state.StateListener;
+import no.srib.app.client.util.AudioMetaUtil;
+import no.srib.app.client.util.DeviceUtil;
 import no.srib.app.client.util.Logger;
+import no.srib.app.client.view.PodcastView;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -26,6 +31,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.RemoteControlClient;
 import android.os.Binder;
+import android.os.Build;
 import android.util.Log;
 
 /**
@@ -172,13 +178,7 @@ public class AudioPlayerService extends BaseService {
 		try {
 			mediaPlayer.setDataSource(dataSource);
 			stateHandler.setState(State.STOPPED);
-		} catch (IllegalArgumentException e) {
-			throw new AudioPlayerException(e);
-		} catch (SecurityException e) {
-			throw new AudioPlayerException(e);
-		} catch (IllegalStateException e) {
-			throw new AudioPlayerException(e);
-		} catch (IOException e) {
+		} catch (IllegalArgumentException | SecurityException | IllegalStateException | IOException e) {
 			throw new AudioPlayerException(e);
 		}
 	}
@@ -200,32 +200,54 @@ public class AudioPlayerService extends BaseService {
 			// register stuff...
 			audioManager.registerMediaButtonEventReceiver(mediaButtonEventReceiver);
 
-			// build the PendingIntent for the remote control client
-			Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-			mediaButtonIntent.setComponent(mediaButtonEventReceiver);
+			// only use lockscreen widgets for ice cream sandwich +
+			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+				// build the PendingIntent for the remote control client
+				Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+				mediaButtonIntent.setComponent(mediaButtonEventReceiver);
 
-			// create and register the remote control client
-			PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0);
-			remoteControlClient = new RemoteControlClient(mediaPendingIntent);
-			remoteControlClient.setTransportControlFlags(
-//				RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE
-//						| RemoteControlClient.FLAG_KEY_MEDIA_NEXT
-//						| RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS
-					RemoteControlClient.FLAG_KEY_MEDIA_PLAY
-							| RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
-			);
-			audioManager.registerRemoteControlClient(remoteControlClient);
+				// create and register the remote control client
+				PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0);
+				remoteControlClient = new RemoteControlClient(mediaPendingIntent);
+				remoteControlClient.setTransportControlFlags(
+						RemoteControlClient.FLAG_KEY_MEDIA_PLAY
+						| RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
+				);
+				audioManager.registerRemoteControlClient(remoteControlClient);
 
-			RemoteControlClient.MetadataEditor editor = remoteControlClient.editMetadata(true);
-			Bitmap dummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.podcsat_art_design_placeholder);
+				RemoteControlClient.MetadataEditor editor = remoteControlClient.editMetadata(true);
+				// TODO: fix this
+				Bitmap defaultAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.griditem_podcast_default_art);
 
-			editor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, dummyAlbumArt);
-			editor.putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, (long)1000);
-			editor.putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "Artist");
-			editor.putString(MediaMetadataRetriever.METADATA_KEY_TITLE, "Title");
-			editor.apply();
+				String title = AudioMetaUtil.getProgramName(this);
 
-			remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+				editor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, defaultAlbumArt);
+				// TODO: fix duration
+//				editor.putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, getDuration());
+//				editor.putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "Artist");
+				editor.putString(MediaMetadataRetriever.METADATA_KEY_TITLE, title);
+				editor.apply();
+
+				if(getDataSourceType() == DataSourceType.PODCAST) {
+					DeviceUtil.DisplayProperties display = DeviceUtil.getDisplayProperties(getApplicationContext());
+					String imageUrl = getCurrentPodcast().getImageUrl();
+					if(imageUrl != null && !imageUrl.equals("")) {
+						UrlImageLoaderSimple.INSTANCE.loadUrl(imageUrl, display.width, display.height, new UrlImageLoaderSimple.ImageLoaderCallback() {
+
+							@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+							@Override
+							public void update(Bitmap bitmap) {
+								RemoteControlClient.MetadataEditor editor = remoteControlClient.editMetadata(true);
+
+								editor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, bitmap);
+								editor.apply();
+							}
+						});
+					}
+				}
+
+				remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+			}
 			// Start playback.
 			switch (stateHandler.getState()) {
 				case STOPPED:
@@ -250,7 +272,10 @@ public class AudioPlayerService extends BaseService {
 	 */
 	public void pause() {
 		audioManager.abandonAudioFocus(afChangeListener);
-		remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
+		// only use lockscreen widgets for ice cream sandwich +
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
+		}
 		switch (stateHandler.getState()) {
 		case STARTED:
 			mediaPlayer.pause();
@@ -266,7 +291,10 @@ public class AudioPlayerService extends BaseService {
 	 */
 	public void stop() {
 		audioManager.abandonAudioFocus(afChangeListener);
-		remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
+		// only use lockscreen widgets for ice cream sandwich +
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
+		}
 		switch (stateHandler.getState()) {
 		case COMPLETED:
 		case STARTED:
@@ -406,7 +434,7 @@ public class AudioPlayerService extends BaseService {
 
 		PodcastManager.PodcastLocalInfo podcastMeta = PodcastManager.getInstance().getLocalInfo(currentPodcast);
 
-		String url = "";
+		String url;
 		if(podcastMeta.getDownloadedPercent() > 0)
 			url = podcastMeta.getLocalFile().toString();
 		else

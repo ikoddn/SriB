@@ -82,9 +82,9 @@ import no.srib.app.client.view.CircleIshPageIndicator;
 public class MainActivity extends FragmentActivity {
 	private static MainActivity inst;
 
-    private ProgressBar bar;
-    private int status;
-    private Handler handler;
+//    private ProgressBar bar;
+//    private int status;
+//    private Handler handler;
     private static final int SEEKBAR_UPDATE_INTERVAL = 1000;
     private SharedPreferences sharedPref;
     private CircleIshPageIndicator viewPageIndicator;
@@ -119,13 +119,11 @@ public class MainActivity extends FragmentActivity {
 	private ArticleListAdapter articleListAdapter;
 	private PodcastGridAdapter podcastGridAdapter;
 	private ProgramSpinnerAdapter programSpinnerAdapter;
+	private ListViewItemClickListener onSpinnerSelectedListener = new ListViewItemClickListener();
 	public static Schedule schedule; // TODO: share this in a better way
 
     private Handler seekbarHandler;
     private Runnable seekbarUpdater;
-
-//	private NotificationService notification;
-//	private static MainActivity mainActivity;
 
     public MainActivity() {
         readyComponents = new EnumMap<Component, Boolean>(Component.class);
@@ -186,6 +184,7 @@ public class MainActivity extends FragmentActivity {
 		UrlImageLoaderSimple.init(this);
 		sharedPref = getSharedPreferences(
 				getString(R.string.podcast_preference_file), Context.MODE_PRIVATE);
+		Logger.d("max memory: " + Runtime.getRuntime().maxMemory());
 	}
 
 
@@ -219,7 +218,8 @@ public class MainActivity extends FragmentActivity {
 
 	public void updateContent() {
 		new ArticleAsyncTask(this, articleListAdapter).execute();
-		new PodcastAsyncTask(this, podcastGridAdapter).execute();
+		updatePodcastGridAdapter(onSpinnerSelectedListener.getCurrentSelectedProgramId());
+//		new PodcastAsyncTask(this, podcastGridAdapter).execute();
 		new PodcastProgramsAsyncTask(this, programSpinnerAdapter).execute();
 		new ScheduleAsyncTask(this, schedule).execute();
 	}
@@ -508,7 +508,24 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
+	private void updatePodcastGridAdapter(Integer program) {
+		// position 2 == downloaded podcasts
+		if (program != null && program == -1) {
+			podcastGridAdapter.setList(DataSource.podcast().getAllLocalPodcasts());
+			podcastGridAdapter.notifyDataSetChanged();
+		}
+		else {
+			new PodcastAsyncTask(MainActivity.this, podcastGridAdapter)
+					.execute(program);
+		}
+	}
+
 	private class ListViewItemClickListener implements OnItemSelectedListener {
+		private Integer currentSelectedProgramId;
+
+		public Integer getCurrentSelectedProgramId() {
+			return currentSelectedProgramId;
+		}
 
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
@@ -521,18 +538,19 @@ public class MainActivity extends FragmentActivity {
 			}
 
 			// position 2 == downloaded podcasts
-			if (position == 1) {
-				podcastGridAdapter.setList(DataSource.podcast().getAllLocalPodcasts());
-				podcastGridAdapter.notifyDataSetChanged();
-			}
-			else {
-				new PodcastAsyncTask(MainActivity.this, podcastGridAdapter)
-						.execute(programId);
+			if (position == 1)
+				programId = -1;
+
+			if((programId != null && !programId.equals(currentSelectedProgramId))
+					|| (programId == null && currentSelectedProgramId != null)) {
+				PodcastListFragment fragment = (PodcastListFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
+				GridView grid = fragment.getGridView();
+				grid.smoothScrollToPosition(0);
 			}
 
-			PodcastListFragment fragment = (PodcastListFragment) getFragment(SectionsPagerAdapter.PODCAST_FRAGMENT);
-			GridView grid = fragment.getGridView();
-			grid.smoothScrollToPosition(0);
+			currentSelectedProgramId = programId;
+
+			updatePodcastGridAdapter(currentSelectedProgramId);
 		}
 
 		@Override
@@ -540,16 +558,16 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	public static Podcast clickedPodcast;
 	private class GridViewItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View view,
 				int position, long id) {
 
-			clickedPodcast = (Podcast) view.getTag();
-
 			Intent intent = new Intent(MainActivity.this, PodcastActivity.class);
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("podcast", (Podcast) view.getTag());
+			intent.putExtras(bundle);
 			MainActivity.this.startActivity(intent);
 
 //			if(true) return;
@@ -698,7 +716,7 @@ public class MainActivity extends FragmentActivity {
 		fragment.setGridArrayAdapter(podcastGridAdapter);
 		fragment.setSpinnerListAdapter(programSpinnerAdapter);
 		fragment.setPodcastClickedListener(new GridViewItemClickListener());
-		fragment.setSpinnerListSelectedListener(new ListViewItemClickListener());
+		fragment.setSpinnerListSelectedListener(onSpinnerSelectedListener);
 	}
 
 	private void openURL(int resId) {
@@ -831,4 +849,14 @@ public class MainActivity extends FragmentActivity {
 			Logger.i("MainActivity already unregistered");
 		}
 	}
-    }
+
+	@Override
+	public void onLowMemory() {
+		UrlImageLoaderSimple.INSTANCE.onLowMemory();
+	}
+
+	@Override
+	public void onTrimMemory(int level) {
+
+	}
+}

@@ -34,7 +34,7 @@ public class PodcastListFragment extends BaseFragment {
 		}
 	}
 
-	public void setSpinnerListSelectedListener(
+	public void setSpinnerListSelectedListener (
 			final OnItemSelectedListener listener) {
 
 		if (programSpinner != null) {

@@ -8,6 +8,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 
 	enum Type {
@@ -45,6 +47,9 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 		}
 
 		newerCount = 0;
+
+//		setList(new ArrayList<ProgramName>());
+//		notifyDataSetChanged();
 	}
 
 	public void setNewerCount(final int newerCount) {
@@ -54,7 +59,8 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 	@Override
 	public int getCount() {
 		int listSize = super.getCount();
-		return listSize == 0 ? 0 : listSize + generalItems.length + 2
+		// allways show all programs and downloaded: else count list + general + subheader + dividers
+		return listSize == 0 ? 2 : listSize + generalItems.length + 2
 				* subheaders.length;
 	}
 
@@ -192,10 +198,6 @@ public class ProgramSpinnerAdapter extends ListBasedAdapter<ProgramName> {
 		if (mustInflate) {
 			resultView.setTag(itemViewType);
 		}
-
-		// hide the choose program item
-//		if(position == 0)
-//			resultView.setVisibility(View.GONE);
 
 		return resultView;
 	}

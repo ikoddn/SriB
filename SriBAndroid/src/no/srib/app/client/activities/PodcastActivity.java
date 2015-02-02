@@ -23,6 +23,7 @@ import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.service.PodcastManager;
 import no.srib.app.client.service.audioplayer.AudioPlayerService;
+import no.srib.app.client.util.DeviceUtil;
 import no.srib.app.client.util.ImageUtil;
 import no.srib.app.client.util.Logger;
 import no.srib.app.client.util.UI;
@@ -40,11 +41,13 @@ public class PodcastActivity extends Activity {
 	@InjectView(R.id.textviewPodcastDescription) 	TextView textPodcastDescription;
 	@InjectView(R.id.queText) 						TextView queText;
     @InjectView(R.id.buttonPodcastPause)            ImageView buttonPause;
-    @InjectView(R.id.Microphone)                    ImageView Microphone;
-    @InjectView(R.id.Articles)                      ImageView Articles;
+//    @InjectView(R.id.Microphone)                    ImageView Microphone;
+//    @InjectView(R.id.Articles)                      ImageView Articles;
     @InjectView(R.id.buttonBack)                    ImageView buttonBack;
 
 	private Drawable defaultPodcastImage;
+	private Podcast podcast;
+	private PodcastManager podcastManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,23 +61,12 @@ public class PodcastActivity extends Activity {
 		ButterKnife.inject(this, rootView);
 		setContentView(rootView);
 
-		final Podcast podcast = MainActivity.clickedPodcast;
-		// release the static instance to be sure we can release the view hierarchy
-		MainActivity.clickedPodcast = null;
+		podcast = (Podcast) getIntent().getExtras().get("podcast");
 
 		if(podcast == null)
 			return;
 
-		Display display = getWindowManager().getDefaultDisplay();
-		Point size = new Point();
-		int viewWidth;
-
-		if(Build.VERSION.SDK_INT < 13)
-			viewWidth = display.getWidth();
-		else {
-			display.getSize(size);
-			viewWidth = size.x;
-		}
+		int viewWidth = DeviceUtil.getDisplayProperties(this).width;
 
 		Resources resources = getResources();
 		defaultPodcastImage = resources.getDrawable(PodcastView.DEFAULT_IMAGE_ID);
@@ -96,18 +88,8 @@ public class PodcastActivity extends Activity {
 			textPodcastName.setText(podcast.getTitle());
 			textPodcastDescription.setText(podcast.getRemark());
 
-			final PodcastManager podcastManager = PodcastManager.getInstance();
-			PodcastManager.PodcastLocalInfo podcastInfo = podcastManager
-					.getLocalInfo(podcast);
-
-			podcastInfo.setDatachangeListener(new PodcastManager.OnDataChangeListener() {
-				@Override
-				public void dataChanged(PodcastManager.PodcastLocalInfo podcastInfo) {
-					updateUI(podcastInfo);
-				}
-			});
-
-			updateUI(podcastInfo);
+			podcastManager = PodcastManager.getInstance();
+			registerDatachangeListener();
             buttonPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -159,6 +141,42 @@ public class PodcastActivity extends Activity {
         }
     }
 
+	private void registerDatachangeListener() {
+		PodcastManager.PodcastLocalInfo podcastInfo = podcastManager
+				.getLocalInfo(podcast);
+
+		podcastInfo.setDatachangeListener(new PodcastManager.OnDataChangeListener() {
+			@Override
+			public void dataChanged(PodcastManager.PodcastLocalInfo podcastInfo) {
+				updateUI(podcastInfo);
+			}
+		});
+
+		updateUI(podcastInfo);
+	}
+
+	private void unregisterDatachangeListener() {
+		PodcastManager.PodcastLocalInfo podcastInfo = podcastManager
+				.getLocalInfo(podcast);
+
+		// update ui before releasing the datachange listener
+		updateUI(podcastInfo);
+		podcastInfo.removeDatachangeListener();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		Logger.d("onStop called");
+		unregisterDatachangeListener();
+	}
+
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		Logger.d("onRestart called");
+		registerDatachangeListener();
+	}
 
 
 	public void updateUI(final PodcastManager.PodcastLocalInfo podcastInfo) {

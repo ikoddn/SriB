@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
@@ -11,6 +12,8 @@ import android.widget.RemoteViews;
 import com.squareup.otto.Subscribe;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.Callable;
 
 import no.srib.app.client.MainActivity;
 import no.srib.app.client.R;
@@ -29,6 +32,8 @@ public class NotificationService implements NotificationHandler {
 	private static final int NOTIFICATION_ID = 1;
 	private static final int NOTIFICATION_DEFAULT_ART = R.drawable.notification_default_art;
 	private static final int NOTIFICATION_ICON_SMALL = R.drawable.ic_notification;
+	// store the default bitmap in a static variable to save memory, we only need one instance of this
+//	private static Bitmap defaultNotificationBitmap;
 
 	private final Context context;
 	private static NotificationManager notificationManager;
@@ -133,7 +138,16 @@ public class NotificationService implements NotificationHandler {
 
 							String imageUrl = audioService.getCurrentPodcast().getImageUrl();
 							if(imageUrl != null && !imageUrl.equals("")) {
-								UrlImageLoaderSimple.INSTANCE.loadUrl(NotificationService.this, R.id.notification_image, imageUrl, NOTIFICATION_DEFAULT_ART);
+								contentView.setImageViewResource(R.id.notification_image, NOTIFICATION_DEFAULT_ART);
+
+								UrlImageLoaderSimple.INSTANCE.loadUrl(imageUrl, 85, 85, new UrlImageLoaderSimple.ImageLoaderCallback() {
+
+									@Override
+									public void update(Bitmap bitmap) {
+										contentView.setImageViewBitmap(R.id.notification_image, bitmap);
+										NotificationService.this.update();
+									}
+								});
 							}
 							else {
 								contentView.setImageViewResource(R.id.notification_image, NOTIFICATION_DEFAULT_ART);

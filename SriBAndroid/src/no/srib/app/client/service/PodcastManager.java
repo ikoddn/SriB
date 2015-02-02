@@ -1,6 +1,8 @@
 package no.srib.app.client.service;
 
+import android.annotation.TargetApi;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import no.srib.app.client.db.DataSource;
+import no.srib.app.client.imageloader.UrlImageLoader;
+import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.Logger;
 
@@ -75,6 +79,9 @@ public class PodcastManager extends BaseService {
 		if(fileDeleted)
 			localInfo.setDownloadedBytes(0);
 
+		// delete the image as well
+		UrlImageLoaderSimple.deleteImage(podcast.getImageUrl());
+
 		Logger.d("file was deleted: " + (fileDeleted? "true": "false"));
 
 		DataSource.podcast().delete(podcast);
@@ -128,7 +135,16 @@ public class PodcastManager extends BaseService {
 			if (downloadQueue.size() > 0) {
 				downloading.set(true);
 				currentDownload = ((LinkedList<PodcastLocalInfo>) downloadQueue).poll();
-				(currentDownload.downloadTask = new DownloadPodcastTask(currentDownload)).execute();
+				currentDownload.downloadTask = new DownloadPodcastTask(currentDownload);
+
+				// download the image so it is available offline
+				UrlImageLoaderSimple.INSTANCE.download(currentDownload.podcast.getImageUrl());
+
+				// run in multiple processes so not other async tasks in the app stops working
+				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+					currentDownload.downloadTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					currentDownload.downloadTask.execute();
 			}
 			return true;
 		}
@@ -189,6 +205,10 @@ public class PodcastManager extends BaseService {
 
 		public void setDatachangeListener(OnDataChangeListener listener) {
 			dataChangeListener = listener;
+		}
+
+		public void removeDatachangeListener() {
+			dataChangeListener = null;
 		}
 
 		public void dataChanged() {
@@ -305,7 +325,7 @@ public class PodcastManager extends BaseService {
 
 			// remove the podcast local info cache to release any potential references to views
 			// by the data change listener
-			instance.podcastLocalInfoCache.remove(podcastLocalInfo.podcastId);
+//			instance.podcastLocalInfoCache.remove(podcastLocalInfo.podcastId);
 
 			// post download callback
 			// used if delete is called while downloading
