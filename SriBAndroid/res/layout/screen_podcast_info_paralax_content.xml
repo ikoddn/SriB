@@ -129,24 +129,17 @@
 			/>
 
 		<ImageView
-			android:id="@+id/buttonBack"
-			android:src="@drawable/backbutton"
-			android:layout_width="45dp"
-			android:layout_height="45dp"
-			android:visibility="visible"
-			/>
-		<ImageView
 			android:layout_width="45dp"
 			android:layout_height="45dp"
 			android:id="@+id/Microphone"
-			android:src="@drawable/microphone"
+			android:src="@drawable/ic_microphone"
 			android:visibility="invisible"
 			/>
 		<ImageView
 			android:layout_width="45dp"
 			android:layout_height="45dp"
 			android:id="@+id/Articles"
-			android:src="@drawable/artikkelbilde"
+			android:src="@drawable/ic_article_image"
 			android:visibility="invisible"
 			/>
 	</RelativeLayout>
