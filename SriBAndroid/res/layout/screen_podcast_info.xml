@@ -13,15 +13,6 @@
 		android:contentDescription="@string/podcast_image_alt"
 		/>
 
-    <ImageView
-        android:id="@+id/buttonBack"
-        android:src="@drawable/backbutton"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:visibility="visible"
-        android:layout_marginLeft="10dp"
-        />
-
     <no.srib.app.client.view.ParalaxScrollView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -32,4 +23,13 @@
 
 		<include layout="@layout/screen_podcast_info_paralax_content" />
 	</no.srib.app.client.view.ParalaxScrollView>
+
+	<ImageView
+		android:id="@+id/buttonBack"
+		android:src="@drawable/backbutton"
+		android:layout_width="45dp"
+		android:layout_height="45dp"
+		android:visibility="visible"
+		android:layout_marginLeft="10dp"
+		/>
 </RelativeLayout>
