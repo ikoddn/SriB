@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import no.srib.app.client.R;
 import no.srib.app.client.event.listener.AudioPlayerListener;
-import no.srib.app.client.imageloader.UrlImageLoaderSimple;
+import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.StreamSchedule;
 import no.srib.app.client.service.BaseService;
@@ -15,9 +15,7 @@ import no.srib.app.client.service.audioplayer.state.StateListener;
 import no.srib.app.client.util.AudioMetaUtil;
 import no.srib.app.client.util.DeviceUtil;
 import no.srib.app.client.util.Logger;
-import no.srib.app.client.view.PodcastView;
 
-import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -33,6 +31,8 @@ import android.media.RemoteControlClient;
 import android.os.Binder;
 import android.os.Build;
 import android.util.Log;
+
+import com.koushikdutta.async.future.FutureCallback;
 
 /**
  * An audio player service based on Android's {@code MediaPlayer} class.
@@ -232,17 +232,26 @@ public class AudioPlayerService extends BaseService {
 					DeviceUtil.DisplayProperties display = DeviceUtil.getDisplayProperties(getApplicationContext());
 					String imageUrl = getCurrentPodcast().getImageUrl();
 					if(imageUrl != null && !imageUrl.equals("")) {
-						UrlImageLoaderSimple.INSTANCE.loadUrl(imageUrl, display.width, display.height, new UrlImageLoaderSimple.ImageLoaderCallback() {
-
-							@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+						UrlImageLoaderProvider.INSTANCE.get().loadFromUrlWithCallback(getApplicationContext(), display.width, display.height, imageUrl, new FutureCallback<Bitmap>() {
 							@Override
-							public void update(Bitmap bitmap) {
+							public void onCompleted(Exception e, Bitmap bitmap) {
 								RemoteControlClient.MetadataEditor editor = remoteControlClient.editMetadata(true);
 
 								editor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, bitmap);
 								editor.apply();
 							}
 						});
+//						UrlImageLoaderSimple.INSTANCE.loadUrl(imageUrl, display.width, display.height, new UrlImageLoaderSimple.ImageLoaderCallback() {
+//
+//							@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//							@Override
+//							public void update(Bitmap bitmap) {
+//								RemoteControlClient.MetadataEditor editor = remoteControlClient.editMetadata(true);
+//
+//								editor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, bitmap);
+//								editor.apply();
+//							}
+//						});
 					}
 				}
 

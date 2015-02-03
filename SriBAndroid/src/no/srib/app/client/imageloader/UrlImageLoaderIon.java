@@ -1,10 +1,16 @@
 package no.srib.app.client.imageloader;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+
+import no.srib.app.client.util.ImageUtil;
 
 class UrlImageLoaderIon implements UrlImageLoader {
 
@@ -24,7 +30,22 @@ class UrlImageLoaderIon implements UrlImageLoader {
 					.error(placeholder)
 					.load(url);
 		} else {
-			Log.d("SriB", "HERE");
+			Log.e("SriB", "Image with 0 width or height");
 		}
+	}
+
+	@Override
+	public void loadFromUrlWithCallback(Context context, final int width, final int height, String url, final FutureCallback<Bitmap> callback) {
+		Ion.with(context)
+				.load(url)
+				.asByteArray()
+				.setCallback(new FutureCallback<byte[]>() {
+					@Override
+					public void onCompleted(Exception e, byte[] bytes) {
+						Bitmap bitmap = ImageUtil.decodeSampledBitmapFromByteArray(bytes, width, height);
+
+						callback.onCompleted(e, bitmap);
+					}
+				});
 	}
 }

@@ -2,11 +2,8 @@ package no.srib.app.client.activities;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -81,6 +78,7 @@ public class PodcastActivity extends Activity {
 			} else {
 				UrlImageLoader urlImageLoader = UrlImageLoaderProvider.INSTANCE
 						.get();
+
 				urlImageLoader.loadFromUrl(imagePodcastArt, viewWidth, viewWidth,
 						imageUrl, defaultPodcastImage);
 			}

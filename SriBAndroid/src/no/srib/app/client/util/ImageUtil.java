@@ -64,6 +64,35 @@ public class ImageUtil {
 		return BitmapFactory.decodeFile(localFile, options);
 	}
 
+	/**
+	 * This method differs from decodeSampledBitmapFromResource in the way that it does not try to
+	 * find the max inSampleSize the memory allows
+	 *
+	 * @param bytes
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
+	public static Bitmap decodeSampledBitmapFromByteArray(byte[] bytes,
+													 int reqWidth, int reqHeight) {
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+
+		BitmapFactory.decodeByteArray(bytes, 0,
+				bytes.length, options);
+//		BitmapFactory.decodeFile(localFile, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeByteArray(bytes, 0,
+				bytes.length, options);
+//		return BitmapFactory.decodeFile(localFile, options);
+	}
+
 	private static int calculateInSampleSize(BitmapFactory.Options options,
 			int reqWidth, int reqHeight) {
 		// Raw height and width of image

@@ -3,47 +3,22 @@ package no.srib.app.client.view;
 import no.srib.app.client.R;
 import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.imageloader.UrlImageLoader;
-import no.srib.app.client.imageloader.UrlImageLoaderSimple;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.FontFactory;
 import no.srib.app.client.util.ImageUtil;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import org.apache.http.util.ByteArrayBuffer;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import no.srib.app.client.util.Logger;
-import no.srib.app.client.util.UI;
-
-import static android.support.v4.app.ActivityCompat.startActivity;
 
 public class PodcastView extends LinearLayout {
 
@@ -99,20 +74,17 @@ public class PodcastView extends LinearLayout {
             dateTextView.setText(formattedDate);
             programNameTextView.setText(podcast.getProgram());
 
-			final String imageUrl = podcast.getImageUrl();
+			String imageUrl = podcast.getImageUrl();
 
             if (imageUrl == null || imageUrl.trim().isEmpty()) {
                 imageView.setImageDrawable(defaultImage);
             } else {
+				Logger.d("Showing image: " + imageUrl);
 				UrlImageLoader urlImageLoader = UrlImageLoaderProvider.INSTANCE
 						.get();
-				// images for downloaded podcasts should be available even when there is no net
-				if(UrlImageLoaderSimple.INSTANCE.hasInCache(imageUrl))
-					urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
-							UrlImageLoaderSimple.INSTANCE.getLocalURL(imageUrl), defaultImage);
-				else
-					urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
-							imageUrl, defaultImage);
+
+				urlImageLoader.loadFromUrl(imageView, viewWidth, viewWidth,
+						imageUrl, defaultImage);
             }
         }
     }

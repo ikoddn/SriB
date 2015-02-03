@@ -3,7 +3,11 @@ package no.srib.app.client.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.IOException;
 import java.io.Serializable;
+
+import no.srib.app.client.imageloader.UrlImageDownloader;
+import no.srib.app.client.util.Logger;
 
 public class Podcast implements Serializable {
 	public static final long serialVersionUID = 1L;
@@ -45,6 +49,23 @@ public class Podcast implements Serializable {
 		this.remark = remark;
 		this.title = title;
 		this.imageUrl = imageUrl;
+
+		// images for downloaded podcasts should be available even when there is no net
+		initImage();
+	}
+
+	private void readObject(java.io.ObjectInputStream stream)
+			throws IOException, ClassNotFoundException {
+		stream.defaultReadObject();
+		initImage();
+	}
+
+	private void initImage() {
+		Logger.d("The image url is: " + imageUrl);
+		if(UrlImageDownloader.INSTANCE.hasLocalCache(imageUrl)) {
+			this.imageUrl = UrlImageDownloader.INSTANCE.getLocalURL(imageUrl);
+			Logger.d("Local image for: " + program + " found: reassigning imageurl to: " + this.imageUrl);
+		}
 	}
 
 	public String getImageUrl() {

@@ -20,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -58,7 +57,7 @@ import no.srib.app.client.fragment.LiveRadioSectionFragment;
 import no.srib.app.client.activities.PodcastActivity;
 import no.srib.app.client.fragment.PodcastListFragment;
 import no.srib.app.client.fragment.SectionFragment;
-import no.srib.app.client.imageloader.UrlImageLoaderSimple;
+import no.srib.app.client.imageloader.UrlImageDownloader;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.model.Schedule;
 import no.srib.app.client.model.StreamSchedule;
@@ -181,7 +180,7 @@ public class MainActivity extends FragmentActivity {
 		podcastGridAdapter = new PodcastGridAdapter(this);
 
 		programSpinnerAdapter = new ProgramSpinnerAdapter(this);
-		UrlImageLoaderSimple.init(this);
+		UrlImageDownloader.init(this);
 		sharedPref = getSharedPreferences(
 				getString(R.string.podcast_preference_file), Context.MODE_PRIVATE);
 		Logger.d("max memory: " + Runtime.getRuntime().maxMemory());
@@ -852,7 +851,7 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	public void onLowMemory() {
-		UrlImageLoaderSimple.INSTANCE.onLowMemory();
+//		UrlImageDownloader.INSTANCE.onLowMemory();
 	}
 
 	@Override

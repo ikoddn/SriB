@@ -1,6 +1,5 @@
 package no.srib.app.client.service;
 
-import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
 
@@ -10,7 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -19,8 +17,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import no.srib.app.client.db.DataSource;
-import no.srib.app.client.imageloader.UrlImageLoader;
-import no.srib.app.client.imageloader.UrlImageLoaderSimple;
+import no.srib.app.client.imageloader.UrlImageDownloader;
 import no.srib.app.client.model.Podcast;
 import no.srib.app.client.util.Logger;
 
@@ -80,7 +77,7 @@ public class PodcastManager extends BaseService {
 			localInfo.setDownloadedBytes(0);
 
 		// delete the image as well
-		UrlImageLoaderSimple.deleteImage(podcast.getImageUrl());
+		UrlImageDownloader.deleteImage(podcast.getImageUrl());
 
 		Logger.d("file was deleted: " + (fileDeleted? "true": "false"));
 
@@ -138,7 +135,7 @@ public class PodcastManager extends BaseService {
 				currentDownload.downloadTask = new DownloadPodcastTask(currentDownload);
 
 				// download the image so it is available offline
-				UrlImageLoaderSimple.INSTANCE.download(currentDownload.podcast.getImageUrl());
+				UrlImageDownloader.INSTANCE.download(currentDownload.podcast.getImageUrl());
 
 				// run in multiple processes so not other async tasks in the app stops working
 				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)

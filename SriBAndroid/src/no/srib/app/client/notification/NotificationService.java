@@ -9,16 +9,15 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.squareup.otto.Subscribe;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Callable;
-
 import no.srib.app.client.MainActivity;
 import no.srib.app.client.R;
 import no.srib.app.client.event.ManualExitEvent;
-import no.srib.app.client.imageloader.UrlImageLoaderSimple;
+import no.srib.app.client.imageloader.UrlImageLoaderProvider;
 import no.srib.app.client.service.audioplayer.AudioPlayerService;
 import no.srib.app.client.service.audioplayer.state.State;
 import no.srib.app.client.service.audioplayer.state.StateListener;
@@ -140,14 +139,23 @@ public class NotificationService implements NotificationHandler {
 							if(imageUrl != null && !imageUrl.equals("")) {
 								contentView.setImageViewResource(R.id.notification_image, NOTIFICATION_DEFAULT_ART);
 
-								UrlImageLoaderSimple.INSTANCE.loadUrl(imageUrl, 85, 85, new UrlImageLoaderSimple.ImageLoaderCallback() {
-
+								UrlImageLoaderProvider.INSTANCE.get().loadFromUrlWithCallback(context, 85, 85, imageUrl, new FutureCallback<Bitmap>() {
 									@Override
-									public void update(Bitmap bitmap) {
+									public void onCompleted(Exception e, Bitmap bitmap) {
 										contentView.setImageViewBitmap(R.id.notification_image, bitmap);
 										NotificationService.this.update();
 									}
 								});
+//								if(false) {
+//									UrlImageLoaderSimple.INSTANCE.loadUrl(imageUrl, 85, 85, new UrlImageLoaderSimple.ImageLoaderCallback() {
+//
+//										@Override
+//										public void update(Bitmap bitmap) {
+//											contentView.setImageViewBitmap(R.id.notification_image, bitmap);
+//											NotificationService.this.update();
+//										}
+//									});
+//								}
 							}
 							else {
 								contentView.setImageViewResource(R.id.notification_image, NOTIFICATION_DEFAULT_ART);
